@@ -1,0 +1,62 @@
+﻿@model IEnumerable<RabbitFarmLocal.Models.MatingModel>
+
+@ViewBag.Message
+<h2>Покрытия крольчихи @ViewBag.LinkableId</h2>
+
+<p>
+    @Html.ActionLink("Новое покрытие", "MateCreate", new { Id = @ViewBag.LinkableId })
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Date)
+        </th>
+
+        <th>
+            @Html.DisplayNameFor(model => model.MotherId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FatherId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Status)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+<tr>
+    <td>
+        @Html.DisplayFor(modelItem => item.Date)
+    </td>
+
+    <td>
+        @Html.DisplayFor(modelItem => item.MotherId)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.FatherId)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Status)
+    </td>
+        <td>
+            @Html.ActionLink("Редактировать", "MateEdit", new { id = item.Id, motherId = item.MotherId, fatherId = item.FatherId, date = item.Date })
+        </td>
+
+    @if (item.ParturationId == null)
+    {
+        <td>
+            @Html.ActionLink("Новый окрол", "ParturCreate", new { mateId = item.Id, motherId = item.MotherId, fatherId = item.FatherId, mateDate = item.Date }) | |
+            @Html.ActionLink("Прохолост", "FailMate", new { id = item.Id, rabId= @ViewBag.LinkableId }, new { onclick = "return confirm('Вы уверены, что хотите отметить это покрытие как ложное?');" })
+
+        </td>
+    }
+
+</tr>
+    }
+
+</table>
+<div>
+    @Html.ActionLink("Назад к кроликам", "ViewRabbits","Home", routeValues: null, htmlAttributes: null)
+</div>

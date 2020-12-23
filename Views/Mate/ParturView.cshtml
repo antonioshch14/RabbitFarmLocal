@@ -1,0 +1,121 @@
+﻿@using RabbitFarmLocal.Models
+@model IEnumerable<RabbitFarmLocal.Models.ParturationModel>
+
+@{
+    ViewBag.Title = "ParturView";
+}
+
+<h2>@ViewBag.Name</h2>
+
+<p>
+    @Html.ActionLink("Назад к покрытиям", "MateView", new { Id = @ViewBag.LinkableId })
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.MateDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Date)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MotherId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Children)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Males)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Females)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DiedChild)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SeparationDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Cage)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DateNestRemoval)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MateId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Comment)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FatherId)
+        </th>
+
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+<tr>
+    <td>
+        @Html.DisplayFor(modelItem => item.MateDate)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Date)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.MotherId)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Children)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Males)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Females)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.DiedChild)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.SeparationDate)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Cage)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.DateNestRemoval)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.MateId)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Comment)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.FatherId)
+    </td>
+
+    <td>
+        @Html.ActionLink("Редактировать", "ParturEdit", new
+        {
+            id = item.Id,
+            date = item.Date,
+            motherId = item.MotherId,
+            children = item.Children,
+       males = item.Males,
+            females = item.Females,
+            diedChild = item.DiedChild,
+            separationDate = item.SeparationDate,
+            cage = item.Cage,
+            comment = item.Comment,
+       dateNestRemoval = item.DateNestRemoval
+        })
+
+    </td>
+</tr>
+    }
+
+</table>

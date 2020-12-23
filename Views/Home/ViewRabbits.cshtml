@@ -1,0 +1,113 @@
+﻿@model IEnumerable<RabbitFarmLocal.Models.DLRabbitModel>
+
+
+@{
+    ViewBag.Title = "Список кроликов";
+}
+
+<h2>ViewRabbits</h2>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+<p>
+    @Html.ActionLink("Добавить кролика", "AddRabbit")
+</p>
+<!--<p>
+    @Html.ActionLink("Обновить статус", "UpdateStatus")
+</p>-->
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.RabbitId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Cage)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Gender)
+        </th>
+        <th class="d-none d-sm-table-cell">
+            @Html.DisplayNameFor(model => model.Breed)
+        </th>
+        <th class="d-none d-sm-table-cell">
+            @Html.DisplayNameFor(model => model.Collor)
+            </th>
+
+<th class="d-none d-sm-table-cell">
+            @Html.DisplayNameFor(model => model.Mother)
+            </th>
+<th class="d-none d-sm-table-cell">
+            @Html.DisplayNameFor(model => model.Father)
+            </th>
+<th class="d-none d-sm-table-cell">
+            @Html.DisplayNameFor(model => model.IsAlive)
+            </th>
+<th class="d-none d-sm-table-cell">
+            @Html.DisplayNameFor(model => model.Born)
+            </th>
+<th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.RabbitId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Cage)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Gender)
+            </td>
+            <td class="d-none d-sm-table-cell">
+                @Html.DisplayFor(modelItem => item.Breed)
+            </td>
+            <td class="d-none d-sm-table-cell">
+                @Html.DisplayFor(modelItem => item.Collor)
+            </td>
+
+            <td class="d-none d-sm-table-cell">
+                @Html.DisplayFor(modelItem => item.Mother)
+            </td>
+            <td class="d-none d-sm-table-cell">
+                @Html.DisplayFor(modelItem => item.Father)
+            </td>
+            <td class="d-none d-sm-table-cell">
+                @Html.DisplayFor(modelItem => item.IsAlive)
+            </td>
+            <td class="d-none d-sm-table-cell">
+                @Html.DisplayFor(modelItem => item.Born)
+            </td>
+
+            <td onclick="Toggle(@item.Id)">...</td>
+
+        </tr>
+        <tr>
+            <td style="display: none " colspan="4" Id="@item.Id">
+                <a style="display:none"> @Html.DisplayFor(modelItem => item.Id)</a>
+                @Html.ActionLink("Редактировать", "Edit", item) |
+                @Html.ActionLink("Коментарий", "CommentsView", new { id = item.RabbitId }) |
+                @Html.ActionLink("Подробно", "FUllRabbitView", item) |
+                @Html.ActionLink("Покрытия", "MateView", "Mate", routeValues: new { id = item.RabbitId }, htmlAttributes: null) |
+                @Html.ActionLink("Окролы", "ParturView", "Mate", routeValues: new { id = item.RabbitId }, htmlAttributes: null) |
+
+                @Html.ActionLink("В историю", "DeadRabbit", new { id = item.RabbitId }, new { onclick = "return confirm('Вы уверены, что хотите перенести кролика в историю?');" }) |
+                @Html.ActionLink("Удалить", "Delete", new { id = item.RabbitId }, new { onclick = "return confirm('Вы уверены, что хотите удалить всю информацию про кролика " + item.RabbitId + "?');" })
+
+            </td>
+        </tr>
+
+
+    }
+
+</table>
+
+<script type="text/javascript">
+    function Toggle(Id) {
+        $('#' + Id).toggle();
+        
+
+    }
+
+</script>

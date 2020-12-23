@@ -1,0 +1,46 @@
+﻿@model IEnumerable<RabbitFarmLocal.Models.CommentsModel>
+
+
+@ViewBag.Message
+<h2>Коментарии кролика @ViewBag.LinkableId</h2>
+
+<p>
+    @Html.ActionLink("Create New", "CommentCreate", new { Id=@ViewBag.LinkableId })
+</p>
+<table class="table">
+    <tr>
+       
+        <th>
+            @Html.DisplayNameFor(model => model.Comment)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Date)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        
+        <td>
+            @Html.DisplayFor(modelItem => item.Comment)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Date)
+        </td>
+        <td>
+            @Html.ActionLink("Редактировать", "CommentetEdit", new { comId=item.Id, radId = item.RabbitId, com= item.Comment }) 
+
+
+            @using (Html.BeginForm("CommentetDelete", "Home"))
+            {
+                <input type="hidden" name="comId" value="@item.Id" />
+                <input type="hidden" name="rabId" value="@item.RabbitId" />
+                <input type="submit" value="Удалить" onclick="return confirm('Вы уверены, что хотите удалить = @item.Comment')" />
+            }
+
+        </td>
+    </tr>
+}
+
+</table>

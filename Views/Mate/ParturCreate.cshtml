@@ -1,0 +1,94 @@
+﻿@model RabbitFarmLocal.Models.ParturationModel
+
+@{
+    ViewData["Title"] = "ParturCreate";
+}
+
+<h2>@ViewBag.Name</h2>
+
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="ParturCreate">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <div class="form-group">
+                <label asp-for="Date" class="control-label"></label>
+                <input asp-for="Date" class="form-control" />
+                <span asp-validation-for="Date" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MotherId" class="control-label"></label>
+                <input asp-for="MotherId" class="form-control" />
+                <span asp-validation-for="MotherId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Children" class="control-label"></label>
+                <input asp-for="Children" class="form-control" />
+                <span asp-validation-for="Children" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Males" class="control-label"></label>
+                <input asp-for="Males" class="form-control" />
+                <span asp-validation-for="Males" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Females" class="control-label"></label>
+                <input asp-for="Females" class="form-control" />
+                <span asp-validation-for="Females" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DiedChild" class="control-label"></label>
+                <input asp-for="DiedChild" class="form-control" />
+                <span asp-validation-for="DiedChild" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SeparationDate" class="control-label"></label>
+                <input asp-for="SeparationDate" class="form-control" />
+                <span asp-validation-for="SeparationDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Cage" class="control-label"></label>
+                <input asp-for="Cage" class="form-control" />
+                <span asp-validation-for="Cage" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DateNestRemoval" class="control-label"></label>
+                <input asp-for="DateNestRemoval" class="form-control" />
+                <span asp-validation-for="DateNestRemoval" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MateId" class="control-label"></label>
+                <input asp-for="MateId" class="form-control" />
+                <span asp-validation-for="MateId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Comment" class="control-label"></label>
+                <input asp-for="Comment" class="form-control" />
+                <span asp-validation-for="Comment" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FatherId" class="control-label"></label>
+                <input asp-for="FatherId" class="form-control" />
+                <span asp-validation-for="FatherId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MateDate" class="control-label"></label>
+                <input asp-for="MateDate" class="form-control" />
+                <span asp-validation-for="MateDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Сохранить" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-controller="Mate" asp-action="ParturView" asp-route-id= "@Model.MotherId">Назад к окролам </a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

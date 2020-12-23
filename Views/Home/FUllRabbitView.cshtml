@@ -1,0 +1,250 @@
+﻿@model RabbitFarmLocal.Models.FullRabbitModel
+
+@{
+    ViewBag.Title = "Кролик" + Model.RabbitId;
+}
+
+<h2>Вся информация на кролика @Model.RabbitId</h2>
+
+<div>
+    
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.RabbitId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.RabbitId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Cage)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Cage)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Gender)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Gender)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Breed)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Breed)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Collor)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Collor)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Age)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Age)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Descent)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Descent)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.MattingCount)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MattingCount)
+        </dd>
+       
+            <dt>
+                @Html.DisplayNameFor(model => model.ParturCount)
+            </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ParturCount)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ChildrenCount)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ChildrenCount)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.DiedChildrenCount)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DiedChildrenCount)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.AverChildCount)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AverChildCount)
+        </dd>
+       
+        <dt>
+            @Html.DisplayNameFor(model => model.IsAlive)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IsAlive)
+        </dd>
+        <h4>Покрытия</h4>
+        <table class="table">
+
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => Model.Matting[0].Date)
+                </th>
+                @if (Model.Gender == "самка")
+                {
+                    <th>
+                        @Html.DisplayNameFor(model => Model.Matting[0].FatherId)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => Model.Matting[0].Status)
+                    </th>
+                }
+                else
+                {
+                    <th>
+                        @Html.DisplayNameFor(model => model.Matting[0].MotherId)
+                    </th>
+                }
+
+
+
+                <th></th>
+            </tr>
+
+            @foreach (var item in Model.Matting)
+            {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Date)
+            </td>
+            @if (Model.Gender == "самка")
+            {
+                <td>
+                    @Html.DisplayFor(modelItem => item.FatherId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+            }
+            else
+            {
+                <td>
+                    @Html.DisplayFor(modelItem => item.MotherId)
+                </td>
+
+            }
+
+
+
+        </tr>
+            }
+
+        </table>
+        @if (Model.Gender == "самка")
+        {
+            <h4>Окролы</h4>
+            <td>
+                <table class="table">
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => Model.Parturation[0].Date)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => Model.Parturation[0].Children)
+                        </th>
+
+                        <th>
+                            @Html.DisplayNameFor(model => Model.Parturation[0].DiedChild)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => Model.Parturation[0].SeparationDate)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => Model.Parturation[0].Comment)
+                        </th>
+
+                        <th></th>
+                    </tr>
+
+                    @foreach (var item in Model.Parturation)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Date)
+                            </td>
+
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Children)
+                            </td>
+
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DiedChild)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.SeparationDate)
+                            </td>
+
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Comment)
+                            </td>
+
+
+                        </tr>
+                    }
+
+                </table>
+            </td>
+        }
+
+
+
+
+        <h4>Коментарии</h4>
+        <table class="table">
+            @foreach (var item in Model.Comments)
+            {
+                <tr>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Comment)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Date)
+                    </td>
+
+                </tr>
+            }
+
+        </table>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Назад к кроликам", "ViewRabbits")
+</p>

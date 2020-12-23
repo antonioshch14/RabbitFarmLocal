@@ -1,0 +1,73 @@
+﻿@model RabbitFarmLocal.Models.InpRAbbitModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>@ViewBag.Name</h1>
+
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="RabbitId" class="control-label"></label>
+                <input asp-for="RabbitId" class="form-control" />
+                <span asp-validation-for="RabbitId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Cage" class="control-label"></label>
+                <input asp-for="Cage" class="form-control" />
+                <span asp-validation-for="Cage" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RabbitGender" class="control-label"></label>
+                <input asp-for="RabbitGender" class="form-control" />
+                <span asp-validation-for="RabbitGender" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Breed" class="control-label"></label>
+                <input asp-for="Breed" class="form-control" />
+                <span asp-validation-for="Breed" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Collor" class="control-label"></label>
+                <input asp-for="Collor" class="form-control" />
+                <span asp-validation-for="Collor" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Born" class="control-label"></label>
+                <input asp-for="Born" class="form-control" value="@ViewBag.Born" />
+                <span asp-validation-for="Born" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Mother" class="control-label"></label>
+                <input asp-for="Mother" class="form-control" />
+                <span asp-validation-for="Mother" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Father" class="control-label"></label>
+                <input asp-for="Father" class="form-control" />
+                <span asp-validation-for="Father" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsAlive" /> @Html.DisplayNameFor(model => model.IsAlive)
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Сохранить" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-controller="Home" asp-action="ViewRabbits"> К кроликам</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
