@@ -1,4 +1,5 @@
 ﻿@model RabbitFarmLocal.Models.ParturationModel
+@using static RabbitFarmLocal.Controllers.MyFunctions;
 
 @{
     ViewData["Title"] = "ParturEdit";
@@ -12,17 +13,13 @@
     <div class="col-md-4">
         <form asp-action="ParturEdit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            
+
             <div class="form-group">
                 <label asp-for="Date" class="control-label"></label>
-                <input asp-for="Date" class="form-control"  value="@ViewBag.MateDate" />
-                <span asp-validation-for="Date" class="text-danger" ></span>
+                <input asp-for="Date" class="form-control" value="@ViewBag.MateDate" data-date-format="yyyy-MM-dd" type="text" placeholder="yyyy-MM-dd" />
+                <span asp-validation-for="Date" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="MotherId" class="control-label"></label>
-                <input asp-for="MotherId" class="form-control" />
-                <span asp-validation-for="MotherId" class="text-danger"></span>
-            </div>
+           
             <div class="form-group">
                 <label asp-for="Children" class="control-label"></label>
                 <input asp-for="Children" class="form-control" />
@@ -43,41 +40,35 @@
                 <input asp-for="DiedChild" class="form-control" />
                 <span asp-validation-for="DiedChild" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="SeparationDate" class="control-label"></label>
-                <input asp-for="SeparationDate" class="form-control" value="@ViewBag.SeparationDate"/>
-                <span asp-validation-for="SeparationDate" class="text-danger"></span>
+                <label asp-for="SeparatedView" class="control-label"> Рассажены @ViewBag.SeparationDate </label>
+                @*<input asp-for="Separated" class="form-control" value="@ViewBag.SeparationDate" data-date-format="yyyy-MM-dd" type="text" placeholder="yyyy-MM-dd"/>*@
+                @*<div> @Html.DropDownListFor(model => model.SeparatedView, new SelectList(Enum.GetValues(typeof(YesNo))))</div>*@
+                <select asp-for="SeparatedView" asp-items="Html.GetEnumSelectList<YesNo>()"  value="@Model.Separated" ></select>
+
+                <span asp-validation-for="SeparatedView" class="text-danger"></span>
             </div>
+            
             <div class="form-group">
-                <label asp-for="Cage" class="control-label"></label>
-                <input asp-for="Cage" class="form-control" />
-                <span asp-validation-for="Cage" class="text-danger"></span>
+                <label asp-for="NestRemovedView" class="control-label"> гнездо убрано @ViewBag.DateNestRemoval</label>
+                @*<input asp-for="DateNestRemoval" class="form-control" value="@ViewBag.DateNestRemoval" data-date-format="yyyy-MM-dd" type="text" placeholder="yyyy-MM-dd" />*@
+                <select asp-for="NestRemovedView" asp-items="Html.GetEnumSelectList<YesNo>()" value="@Model.NestRemoved"></select>
+                <span asp-validation-for="NestRemovedView" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="DateNestRemoval" class="control-label"></label>
-                <input asp-for="DateNestRemoval" class="form-control" value="@ViewBag.DateNestRemoval" />
-                <span asp-validation-for="DateNestRemoval" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MateId" class="control-label"></label>
-                <input asp-for="MateId" class="form-control" />
-                <span asp-validation-for="MateId" class="text-danger"></span>
-            </div>
+
             <div class="form-group">
                 <label asp-for="Comment" class="control-label"></label>
                 <input asp-for="Comment" class="form-control" />
                 <span asp-validation-for="Comment" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="FatherId" class="control-label"></label>
-                <input asp-for="FatherId" class="form-control" />
-                <span asp-validation-for="FatherId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MateDate" class="control-label"></label>
-                <input asp-for="MateDate" class="form-control" />
-                <span asp-validation-for="MateDate" class="text-danger"></span>
-            </div>
+
+            @*@Html.HiddenFor(model => model.SeparationDate)
+        @Html.HiddenFor(model => model.DateNestRemoval)*@
+            @*@Html.TextBoxFor(model => model.SeparationDate, "{0:dd-MM-yyyy}", htmlAttributes: new { @type = "hidden" })
+            @Html.TextBoxFor(model => model.DateNestRemoval, "{0:dd-MM-yyyy}", htmlAttributes: new { @type = "hidden" })*@
+            @Html.HiddenFor(model=>Model.MotherId)
+            @Html.HiddenFor(model=>Model.ECaller)
             <div class="form-group">
                 <input type="submit" value="Сохранить" class="btn btn-primary" />
             </div>

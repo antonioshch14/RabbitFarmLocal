@@ -1,0 +1,68 @@
+﻿@model IEnumerable<RabbitFarmLocal.Models.WeightModel>
+
+@{
+    ViewData["Title"] = "RabWeitgView";
+}
+
+
+
+<p>
+    @Html.ActionLink("Новое взвешивание", "RabWeightCreate", new { rabId = ViewBag.RabId }, new { @class = "compItem" })
+</p>
+<h4>Взвешивание кролика @ViewBag.RabId</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.DateString)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Weight)
+            </th>
+
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateString)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Weight)
+                </td>
+
+                <td>
+                    @Html.ActionLink("Редактировать", "RabWeightEdit", new { rabId = item.RabId, weightId = item.Id, CalledFrom = 0 }, new { @class = "compItem" }) | 
+                    |
+                    @Html.ActionLink("Удалить", "RabWeightDelete", new { rabId = item.RabId, weightId = item.Id, CalledFrom = 0 }, new
+               {
+                   onclick = "return confirm('Вы уверены, что хотите удалить взвешивание " + item.DateString + "?');"
+               })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div id="modDialog" class="modal fade">
+    <div id="dialogContent" class="modal-dialog"></div>
+</div>
+@section scripts
+{
+    <script type="text/javascript">
+
+        $(function () {
+            $.ajaxSetup({ cache: false });
+            $(".compItem").click(function (e) {
+
+                e.preventDefault();
+                $.get(this.href, function (data) {
+                    $('#dialogContent').html(data);
+                    $('#modDialog').modal('show');
+                });
+            });
+        })
+    </script>
+}

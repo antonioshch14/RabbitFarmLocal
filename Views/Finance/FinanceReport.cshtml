@@ -1,0 +1,157 @@
+﻿@model RabbitFarmLocal.Models.FinRepModel
+@{
+    ViewData["Title"] = "FinanceReport";
+}
+<a class="btn btn-link" href="@Url.Action("SelectPeriodForFinRep")">Выбрать другие даты</a>
+<h1>Финансовый отчет с @ViewBag.StDat до @ViewBag.FinDat</h1>
+
+<div>
+
+    <hr />
+    <table class="table-sm table-bordered">
+        <tbody>
+            <tr class="col-5 font-weight-bold">
+                <td class="col-5">
+                    @Html.DisplayNameFor(model => model.BenefitWithOurConsum)
+                </td>
+                <td class="col-1">
+                    @Html.DisplayFor(model => model.BenefitWithOurConsum)
+                </td>
+            </tr>
+            <tr class="col-5 font-weight-bold">
+                <td class="col-5">
+                    @Html.DisplayNameFor(model => model.BenefitTotal)
+                </td>
+                <td class="col-1">
+                    @Html.DisplayFor(model => model.BenefitTotal)
+                </td>
+            </tr>
+            <tr class="col-5 font-weight-bold">
+                <td>
+                    @Html.DisplayNameFor(model => model.EarnedTotal)
+                </td>
+                <td class="col-1">
+                    @Html.DisplayFor(model => model.EarnedTotal)
+                </td>
+            </tr>
+
+            <tr class="font-weight-bold">
+                <td class="col-5">
+                    @Html.DisplayNameFor(model => model.EarnedTotalWIthOurConsum)
+                </td>
+                <td class="col-1">
+                    @Html.DisplayFor(model => model.EarnedTotalWIthOurConsum)
+                </td>
+            </tr>
+            <tr class="font-weight-bold">
+                <td class="col-5">
+                    @Html.DisplayNameFor(model => model.EatenByUs)
+                </td>
+                <td class="col-1">
+                    @Html.DisplayFor(model => model.EatenByUs)
+                </td>
+            </tr>
+            <tr>
+                <td class="col-5">
+                    @Html.DisplayNameFor(model => model.SoldAsMeat)
+                </td>
+                <td class="col-1">
+                    @Html.DisplayFor(model => model.SoldAsMeat)
+                </td>
+            </tr>
+            <tr>
+                <td class="col-5">
+                    @Html.DisplayNameFor(model => model.SoldForBread)
+                </td>
+                <td class="col-1">
+                    @Html.DisplayFor(model => model.SoldForBread)
+                </td>
+            </tr>
+            <tr>
+                <td class="col-5">
+                    @Html.DisplayNameFor(model => model.SoldCanned)
+                </td>
+                <td class="col-1">
+                    @Html.DisplayFor(model => model.SoldCanned)
+                </td>
+            </tr>
+
+
+            <tr class="col-5 font-weight-bold">
+                <td class="col-5">
+                    @Html.DisplayNameFor(model => model.SpentTotal)
+                </td>
+                <td class="col-1">
+                    @Html.DisplayFor(model => model.SpentTotal)
+                </td>
+            </tr>
+            <tr>
+                <td class="col-5">
+                    @Html.DisplayNameFor(model => model.SpentOnGrain)
+                </td>
+                <td class="col-1">
+                    @Html.DisplayFor(model => model.SpentOnGrain)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.SpentOnHay)
+                </td>
+                <td class="col-1">
+                    @Html.DisplayFor(model => model.SpentOnHay)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.SpentOnMed)
+                </td>
+                <td class="col-1">
+                    @Html.DisplayFor(model => model.SpentOnMed)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.SpentOnHay)
+                </td>
+                <td class="col-1">
+                    @Html.DisplayFor(model => model.SpentOnHay)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.SpentOnHay)
+                </td>
+                <td class="col-1">
+                    @Html.DisplayFor(model => model.SpentOnHay)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.SpentOnSuplim)
+                </td>
+                <td class="col-1">
+                    @Html.DisplayFor(model => model.SpentOnSuplim)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.SpentOnBuild)
+                </td>
+                <td class="col-1">
+                    @Html.DisplayFor(model => model.SpentOnBuild)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.SpentOnRepair)
+                </td>
+                <td class="col-1">
+                    @Html.DisplayFor(model => model.SpentOnRepair)
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+
+</div>
+

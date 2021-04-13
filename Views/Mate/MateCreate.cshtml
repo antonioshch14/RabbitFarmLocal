@@ -4,52 +4,93 @@
     ViewBag.Title = "MateCreate";
 }
 
-<h2>@ViewBag.Name</h2>
+<hr />
+<div class="modal-content">
 
+    <h6>@ViewBag.Name</h6>
+    <div class="col-sm">
+        <form asp-action="MateCreate">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-@using (Html.BeginForm()) 
-{
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            @Html.LabelFor(model => model.Date, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Date, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Date, "", new { @class = "text-danger" })
+            <div class="form-group">
+                <label asp-for="Date" class="control-label"></label>
+                <input asp-for="Date" class="form-control" />
+                <span asp-validation-for="Date" class="text-danger"></span>
             </div>
-        </div>
 
-        
+            <div class="form-group">
+                <label asp-for="FatherId" class="control-label"></label>
+                @*<input asp-for="FatherId" class="form-control" />*@
+            <select asp-for="FatherId" class="form-select">
+                <option selected> выбрать самца</option>
+                @foreach (var item in Model.Relations)
+                {
+                   <option value="@item.ChildId">@item.ChildId</option>
+                   
+                }
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.MotherId, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.MotherId, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
-                @Html.ValidationMessageFor(model => model.MotherId, "", new { @class = "text-danger" })
+            </select>
+                <span asp-validation-for="FatherId" class="text-danger"></span>
             </div>
-        </div>
+            @Html.HiddenFor(model => Model.MotherId)
+            @Html.HiddenFor(model=>Model.ECaller)
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.FatherId, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.FatherId, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.FatherId, "", new { @class = "text-danger" })
+            <div class="form-group">
+                <input type="submit" value="Сохранить" class="btn btn-primary" />
             </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Создать" class="btn btn-default" />
-            </div>
-        </div>
+        </form>
     </div>
-}
+    <h6>@ViewBag.Message</h6>
+    @*<div style="overflow: auto" class="table-responsive">*@
+        <div class="container">
+            <h5>Проверка родственных связей</h5>
+            <table class="table table-bordered">
 
-<div>
-    @Html.ActionLink("Назад к кроликам", "ViewRabbits")
+                <tr style="font-size: 0.8rem">
+                    <th style="width: 10%">
+                        Самец
+                    </th>
+                    <th class="w-10 d-none d-sm-table-cell" style="width: 10%">
+                        @Html.DisplayNameFor(model => Model.Relations[0].MatchMatherStep)
+                    </th>
+
+                    <th class="w-10 d-none d-sm-table-cell" style="width: 10%">
+                        @Html.DisplayNameFor(model => Model.Relations[0].MatchFatherStep)
+                    </th>
+                    <th style="width: 25%">
+                        @Html.DisplayNameFor(model => Model.Relations[0].MotherMatchPath)
+                    </th>
+
+                    <th style="width: 25%">
+                        @Html.DisplayNameFor(model => Model.Relations[0].FatherMatchPath)
+                    </th>
+
+                </tr>
+
+                @foreach (var item in Model.Relations)
+                {
+                    <tr @{ if (item.MatchFatherStep > 0 || item.MatchMatherStep > 0) { <text> class="table-warning" </text>  } else { <text> class="table-success" </text>  } }>
+                        <td style="width: 10%">
+                            ^@Html.DisplayFor(modelItem => item.ChildId)
+                        </td>
+                        <td class="d-none d-sm-table-cell" style="width: 10%">
+                            @Html.DisplayFor(modelItem => item.MatchMatherStep)
+                        </td>
+                        <td class="d-none d-sm-table-cell " style="width: 10%">
+                            @Html.DisplayFor(modelItem => item.MatchFatherStep)
+                        </td>
+                        <td style="width: 25%">
+                            +@Html.DisplayFor(modelItem => item.MotherMatchPath)
+                        </td>
+                        <td style="width: 25%">
+                            ^@Html.DisplayFor(modelItem => item.FatherMatchPath)
+                        </td>
+
+                    </tr>
+                }
+
+            </table>
+        </div>
+    @*</div>*@
 </div>
 

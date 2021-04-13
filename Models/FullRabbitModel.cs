@@ -78,6 +78,9 @@ namespace RabbitFarmLocal.Models
                 else return 0;
             }
         }
+        
+        public DescentModel DescentData { get; set; }
+        public List<WeightModel> Weights { get; set; }
 
     }
 

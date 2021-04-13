@@ -1,0 +1,87 @@
+﻿@model RabbitFarmLocal.Models.SettingsModel
+
+@{
+    ViewData["Title"] = "SettingsEdit";
+}
+
+<h1>Настройки</h1>
+
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="SettingsEdit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="MaleGrowDays" class="control-label"></label>
+                <input asp-for="MaleGrowDays" class="form-control" />
+                <span asp-validation-for="MaleGrowDays" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FemaleGrowDays" class="control-label"></label>
+                <input asp-for="FemaleGrowDays" class="form-control" />
+                <span asp-validation-for="FemaleGrowDays" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PregnantDays" class="control-label"></label>
+                <input asp-for="PregnantDays" class="form-control" />
+                <span asp-validation-for="PregnantDays" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CheckPart" class="control-label"></label>
+                <input asp-for="CheckPart" class="form-control" />
+                <span asp-validation-for="CheckPart" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NestRemoalDays" class="control-label"></label>
+                <input asp-for="NestRemoalDays" class="form-control" />
+                <span asp-validation-for="NestRemoalDays" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PutNestDays" class="control-label"></label>
+                <input asp-for="PutNestDays" class="form-control" />
+                <span asp-validation-for="PutNestDays" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FeedDays" class="control-label"></label>
+                <input asp-for="FeedDays" class="form-control" />
+                <span asp-validation-for="FeedDays" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RestDays" class="control-label"></label>
+                <input asp-for="RestDays" class="form-control" />
+                <span asp-validation-for="RestDays" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AllParturViewPeriod" class="control-label"></label>
+                <input asp-for="AllParturViewPeriod" class="form-control" />
+                <span asp-validation-for="AllParturViewPeriod" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AllMateViewPeriod" class="control-label"></label>
+                <input asp-for="AllMateViewPeriod" class="form-control" />
+                <span asp-validation-for="AllMateViewPeriod" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DefaultPrice" class="control-label"></label>
+                <input asp-for="DefaultPrice" class="form-control" />
+                <span asp-validation-for="DefaultPrice" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FinRepDate" class="control-label"></label>
+                <input asp-for="FinRepDate" class="form-control" />
+                <span asp-validation-for="FinRepDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Сохранить" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-controller="Home" asp-action="ViewRabbits" >К кроликам</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,183 @@
+﻿@model IEnumerable<RabbitFarmLocal.Models.ParturationModel>
+@using RabbitFarmLocal.Controllers
+
+@{
+    ViewData["Title"] = "AllParturView";
+}
+
+<table class="table">
+    <tr>
+        
+        <th>
+            @Html.DisplayNameFor(model => model.DateString)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MotherId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Children)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Cage)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.NestRemoved)
+        </th>
+
+        <th>
+            @Html.DisplayNameFor(model => model.Comment)
+        </th>
+      
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+<tr data-toggle="modal" data-target="#myModal-@item.Id" 
+    @if (item.SeparationDate == null) {<text>class="modal-body table-success"</text> }>
+   
+    <td>
+        @Html.DisplayFor(modelItem => item.DateString)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.MotherId)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Children)
+    </td>
+    
+    <td>
+        @Html.DisplayFor(modelItem => item.Cage)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.NestRemoved)
+    </td>
+
+    <td>
+        @Html.DisplayFor(modelItem => item.Comment)
+    </td>
+
+    <div class="modal" id="myModal-@item.Id">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Окрол крольчихи @Html.DisplayFor(modelItem => item.MotherId)</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    @*<table class="table">*@
+
+                    <div>
+                        @Html.DisplayNameFor(model => model.MateDateString)
+                        @Html.DisplayFor(modelItem => item.MateDateString)
+                    </div>
+                    <div>
+                        @Html.DisplayNameFor(model => model.DateString)
+                        @Html.DisplayFor(modelItem => item.DateString)
+                    </div>
+
+                    <div>
+                        @Html.DisplayNameFor(model => model.Children)
+                        @Html.DisplayFor(modelItem => item.Children)
+                    </div>
+                    <div>
+                        @Html.DisplayNameFor(model => model.Males)
+                        @Html.DisplayFor(modelItem => item.Males)
+                    </div>
+                    <div>
+                        @Html.DisplayNameFor(model => model.Females)
+                        @Html.DisplayFor(modelItem => item.Females)
+                    </div>
+                    <div>
+                        @Html.DisplayNameFor(model => model.DiedChild)
+                        @Html.DisplayFor(modelItem => item.DiedChild)
+                    </div>
+
+                    <div>
+                        @Html.DisplayNameFor(model => model.Separated)
+                        @Html.DisplayFor(modelItem => item.Separated)
+                    </div>
+                    <div>
+                        @Html.DisplayNameFor(model => model.Cage)
+                        @Html.DisplayFor(modelItem => item.Cage)
+                    </div>
+                    <div>
+                        @Html.DisplayNameFor(model => model.NestRemoved)
+                        @Html.DisplayFor(modelItem => item.NestRemoved)
+                    </div>
+
+                    <div>
+                        @Html.DisplayNameFor(model => model.Comment)
+                        @Html.DisplayFor(modelItem => item.Comment)
+                    </div>
+                    <div>
+                        @Html.DisplayNameFor(model => model.FatherId)
+                        @Html.DisplayFor(modelItem => item.FatherId)
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                   
+                    <a class="btn btn-info" href="@Url.Action("ParturEdit", "Mate", new {id = item.Id, caller=@Caller.allPartur})">Редактировать</a>
+                    <a class="btn btn-danger" data-toggle="modal" data-target="#delete-@item.Id">Удалить</a>
+                    @if (item.SeparationDate == null)
+                    {
+                        <a class="btn btn-info compItem" href="@Url.Action("PreFattenigCreate","Mate", new { partId = item.Id, caller = @Caller.allPartur })">Рассадить</a>
+                    }
+                    else
+                    {
+                        <div >
+                            @Html.ActionLink("Откорм", "FatteningView", new { partId = item.Id })
+                        </div>
+                    }
+                </div>
+
+            </div>
+        </div>
+        <div class="modal" id="delete-@item.Id">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Вы уврены, что хотите удалить</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+
+                    <div class="modal-body">
+                        окрол крольчихи @item.MotherId от @item.DateString?
+                        Связанное покрытие также будет удалено!
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn-danger" href="@Url.Action("DeleteParturation","Mate",new { id = item.Id, rabId = item.MotherId, mateId = item.MateId, caller=@Caller.allPartur })">Удалить</a>
+                    </div> <button type="button" class="btn btn-info" data-dismiss="modal">Не удалять</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</tr>
+    }
+
+</table>
+<div id="modDialog" class="modal fade">
+    <div id="dialogContent" class="modal-dialog"></div>
+</div>
+
+@section scripts
+{
+    <script type="text/javascript">
+
+        $(function () {
+            $.ajaxSetup({ cache: false });
+            $(".compItem").click(function (e) {
+
+                e.preventDefault();
+                $.get(this.href, function (data) {
+                    $('#dialogContent').html(data);
+                    $('#modDialog').modal('show');
+                });
+            });
+        })
+
+    </script>
+}

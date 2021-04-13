@@ -1,4 +1,5 @@
 ﻿@using RabbitFarmLocal.Models
+@using RabbitFarmLocal.Controllers
 @model IEnumerable<RabbitFarmLocal.Models.ParturationModel>
 
 @{
@@ -13,10 +14,10 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.MateDate)
+            @Html.DisplayNameFor(model => model.MateDateString)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Date)
+            @Html.DisplayNameFor(model => model.DateString)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.MotherId)
@@ -33,25 +34,20 @@
         <th>
             @Html.DisplayNameFor(model => model.DiedChild)
         </th>
+
         <th>
-            @Html.DisplayNameFor(model => model.SeparationDate)
+            @Html.DisplayNameFor(model => model.Separated)
         </th>
+
         <th>
-            @Html.DisplayNameFor(model => model.Cage)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DateNestRemoval)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.MateId)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Comment)
+            @Html.DisplayNameFor(model => model.NestRemoved)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.FatherId)
         </th>
-
+        <th>
+            @Html.DisplayNameFor(model => model.Comment)
+        </th>
         <th></th>
     </tr>
 
@@ -59,10 +55,10 @@
     {
 <tr>
     <td>
-        @Html.DisplayFor(modelItem => item.MateDate)
+        @Html.DisplayFor(modelItem => item.MateDateString)
     </td>
     <td>
-        @Html.DisplayFor(modelItem => item.Date)
+        @Html.DisplayFor(modelItem => item.DateString)
     </td>
     <td>
         @Html.DisplayFor(modelItem => item.MotherId)
@@ -79,43 +75,62 @@
     <td>
         @Html.DisplayFor(modelItem => item.DiedChild)
     </td>
+
     <td>
-        @Html.DisplayFor(modelItem => item.SeparationDate)
+        @Html.DisplayFor(modelItem => item.Separated)
+    </td>
+
+    <td>
+        @Html.DisplayFor(modelItem => item.NestRemoved)
     </td>
     <td>
-        @Html.DisplayFor(modelItem => item.Cage)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.DateNestRemoval)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.MateId)
+        @Html.DisplayFor(modelItem => item.FatherId)
     </td>
     <td>
         @Html.DisplayFor(modelItem => item.Comment)
     </td>
     <td>
-        @Html.DisplayFor(modelItem => item.FatherId)
-    </td>
-
-    <td>
-        @Html.ActionLink("Редактировать", "ParturEdit", new
+        @Html.ActionLink("Редактировать", "ParturEdit", new {id = item.Id }) 
+        @Html.ActionLink("Удалить", "DeleteParturation", new { id = item.Id, rabId = item.MotherId, mateId = item.MateId }, new
         {
-            id = item.Id,
-            date = item.Date,
-            motherId = item.MotherId,
-            children = item.Children,
-       males = item.Males,
-            females = item.Females,
-            diedChild = item.DiedChild,
-            separationDate = item.SeparationDate,
-            cage = item.Cage,
-            comment = item.Comment,
-       dateNestRemoval = item.DateNestRemoval
-        })
+            onclick = "return confirm('Вы уверены, что хотите удалить окрол " + item.DateString + "? Связанное покрытие также будет удалено: " +
+       item.MateId + "');"
+        }) |
+        @if (item.SeparationDate == null)
+        {
+
+            @Html.ActionLink("Рассадить", "PreFattenigCreate", new { partId = item.Id, caller = Caller.mate }, new { @class = "compItem" })
+        }
+        else
+        {
+            @Html.ActionLink("Откорм", "FatteningView", new { partId = item.Id })
+        }
+
 
     </td>
 </tr>
     }
 
 </table>
+<div id="modDialog" class="modal fade">
+    <div id="dialogContent" class="modal-dialog"></div>
+</div>
+
+@section scripts
+{
+    <script type="text/javascript">
+
+        $(function () {
+            $.ajaxSetup({ cache: false });
+            $(".compItem").click(function (e) {
+
+                e.preventDefault();
+                $.get(this.href, function (data) {
+                    $('#dialogContent').html(data);
+                    $('#modDialog').modal('show');
+                });
+            });
+        })
+        
+    </script>
+}

@@ -1,0 +1,46 @@
+﻿@model RabbitFarmLocal.Models.ParturationModel
+
+
+<hr />
+<div class="modal-content">
+    <h4>Укажите колличество крольчат</h4>
+    <div class="col-md-4">
+        <form asp-action="FattenigCreate">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="Children" class="control-label"></label>
+                <input asp-for="Children" class="form-control" />
+                <span asp-validation-for="Children" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Males" class="control-label"></label>
+                <input asp-for="Males" class="form-control" />
+                <span asp-validation-for="Males" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Females" class="control-label"></label>
+                <input asp-for="Females" class="form-control" />
+                <span asp-validation-for="Females" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DiedChild" class="control-label"></label>
+                <input asp-for="DiedChild" class="form-control" />
+                <span asp-validation-for="DiedChild" class="text-danger"></span>
+            </div>
+            @Html.HiddenFor(model => Model.Id)
+            @Html.HiddenFor(model => Model.ECaller)
+            @Html.HiddenFor(model => Model.MotherId)
+            @Html.HiddenFor(model => Model.Date)
+            <div class="form-group">
+                <input type="submit" value="Рассадить" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

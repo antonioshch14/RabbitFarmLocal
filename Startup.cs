@@ -16,6 +16,10 @@ using Microsoft.Extensions.Hosting;
 using DataLibrary;
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
+//using RabbitFarmLocal.Scheduling;
+using RabbitFarmLocal.Scheduler;
+using RabbitFarmLocal.Start;
+using RabbitFarmLocal.messaging;
 
 namespace RabbitFarmLocal
 {
@@ -38,7 +42,14 @@ namespace RabbitFarmLocal
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
             services.AddRazorPages();
-           // services.AddSingleton<IDataAccess, DataAccess>();
+            services.AddSingleton<IHostedService, UpdateRabbitStatus>();
+            services.AddSingleton<IHostedService, SendMessage>();
+            services.AddServerSideBlazor();
+            //services.AddSingleton<Settings>();
+            Settings.GetSettings();
+            MyTelegram.GetTelegram();
+            // services.AddHostedService<TimedHostedService>();// scheduling test
+            // services.AddSingleton<IDataAccess, DataAccess>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,18 +68,18 @@ namespace RabbitFarmLocal
             }
             app.UseHttpsRedirection();
             // DateTime
-            var supportedCultures = new[]
-                {
-                   new CultureInfo("en-US"),
+            //var supportedCultures = new[]
+            //    {
+            //       new CultureInfo("en-US"),
 
-                };
+            //    };
 
-            app.UseRequestLocalization(new RequestLocalizationOptions
-            {
-                DefaultRequestCulture = new RequestCulture("en-US"), //en-GB ru-RU
-                SupportedCultures = supportedCultures,
-                SupportedUICultures = supportedCultures
-            }); 
+            //app.UseRequestLocalization(new RequestLocalizationOptions
+            //{
+            //    DefaultRequestCulture = new RequestCulture("en-US"), //en-GB ru-RU
+            //    SupportedCultures = supportedCultures,
+            //    SupportedUICultures = supportedCultures
+            //}); 
             // end DateTime
             app.UseStaticFiles();
             //Routing.Include(app);
@@ -85,6 +96,7 @@ namespace RabbitFarmLocal
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
+                endpoints.MapBlazorHub();
             });
         }
     }

@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection;
 using System.Web;
 
 namespace RabbitFarmLocal.Controllers
@@ -25,12 +28,48 @@ namespace RabbitFarmLocal.Controllers
             return $"{date.Year}-{month}-{day}";
 
         }
-        public static string DateToStringTan(DateTime date)
+        public static string DateToString(DateTime? _date)
         {
-            string day = (date.Day < 10 ? "0" : "") + date.Day;
-            string month = (date.Month < 10 ? "0" : "") + date.Month;
+            string day;
+            string month;
+            DateTime date;
+            if (_date == null) {
+                date = DateTime.Now;
+                day = (date.Day < 10 ? "0" : "") + date.Day;
+                month = (date.Month < 10 ? "0" : "") + date.Month;
+            }
+            else
+            {
+                date = (DateTime)_date;
+                day = (date.Day < 10 ? "0" : "") + date.Day;
+                month = (date.Month < 10 ? "0" : "") + date.Month;
+            }
+            return $"{date.Year}-{month}-{day}";
 
-            return $"{day}/{month}/{date.Year}";
+        }
+        public static string DateToStringRU(DateTime? init_date)
+        {
+            if (init_date == null) return "не уст.";
+            else
+            {
+                DateTime date = (DateTime)init_date;
+                string day = (date.Day < 10 ? "0" : "") + date.Day;
+                var enumMonth = (Months)date.Month;
+                string month = enumMonth.ToString();
+
+                return $"{day}-{month}-{date.Year}";
+            }
+
+        }
+        public static string DateToStringRU(DateTime date)
+        {
+                
+                string day = (date.Day < 10 ? "0" : "") + date.Day;
+                var enumMonth = (Months)date.Month;
+                string month = enumMonth.ToString();
+
+                return $"{day}-{month}-{date.Year}";
+            
 
         }
         public static DateTime StringToDateTan(string date)
@@ -43,5 +82,83 @@ namespace RabbitFarmLocal.Controllers
 
             return dateTime;
         }
+        public enum Months
+        {
+            Янв=1,
+            Фев,
+            Мар,
+            Апр,
+            Май,
+            Июнь,
+            Июль,
+            Авг,
+            Сент,
+            Окт,
+            Нояб,
+            Дек
+        }
+        public enum YesNo
+        {   
+            [Description("Нет")]
+            [Display(Name = "Нет")]
+            No,
+            [Description("Да")]
+            [Display(Name = "Да")]
+            Yes
+        }
+           public class Age
+        {
+            DateTime date;
+            private TimeSpan ts ;
+            public double daysTot ;
+            public double years ;
+            public double months ;
+            public double days;
+            public Age(DateTime date) { //sets the age until now
+                this.date = date;
+                this.ts = (DateTime.Today - date);
+                this.daysTot = ts.TotalDays;
+                this.years = Math.Floor(this.daysTot / 365);
+                this.months = Math.Floor(daysTot % 365 / 30);
+                this.days = daysTot % 365 % 30;
+
+            }
+            public Age(DateTime date,DateTime until) //sets the age from  date to until
+            {
+                this.date = date;
+                this.ts = (until-date );
+                this.daysTot = ts.TotalDays;
+                this.years = Math.Floor(this.daysTot / 365);
+                this.months = Math.Floor(daysTot % 365 / 30);
+                this.days = daysTot % 365 % 30;
+
+            }
+
+        }
+        public static DisplayAttribute GetDisplayAttributesFrom(Enum enumValue, Type enumType)
+        {
+            return enumType.GetMember(enumValue.ToString())
+                           .First()
+                           .GetCustomAttribute<DisplayAttribute>();
+        }
+    }
+    public class _Caller
+    {
+        public int Caller { get; set; }
+        public Caller ECaller { get; set; }
+
+    }
+    public enum Caller
+    {
+        rabbits,
+        allmate,
+        allPartur,//2
+        report,
+        fattening,
+        mate,
+        allfatt,
+        fattPerStat,
+        fatWeight
+
     }
 }

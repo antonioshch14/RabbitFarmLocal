@@ -1,0 +1,290 @@
+﻿@model List<RabbitFarmLocal.Models.FatteningModel>
+@using RabbitFarmLocal.Controllers
+
+
+@{
+    ViewData["Title"] = "AllFatteningView";
+}
+<a data-toggle="modal" data-target="#ShowHiden" class="btn btn-info">Показать откорм по статусу</a>
+<div class="modal fade" id="ShowHiden">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Выберите статус и срок с рождения крольчат</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="FattStatusView">
+                    <div class="form-group">
+                        <label for="Status">Выберите статус</label>
+                        <select type="text" name="Status" class="form-control" id="Status" asp-items="Html.GetEnumSelectList<FatStatus>()"></select>
+
+                    </div>
+                    <div class="form-group">
+                        <label for="Dates">Дней с рождения</label>
+                        <input type="text" name="Dates" class="form-control" id="Dates" value="360">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Показать</button>
+                </form>
+
+            </div>
+        </div>
+        <div class="modal-footer">
+
+        </div>
+    </div>
+</div>
+<button class="btn btn-success" id="WeightButton" onclick="FillWeightOn()">Запонить вес для всех</button>
+
+
+
+
+<h4>@ViewBag.Message1</h4>
+@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>*@
+
+@using (Html.BeginForm("AllFatteningView", "Mate", FormMethod.Post, new { @class = "form-horizontal" }))
+{
+    <div class="container">
+        <table class="table">
+
+            <thead>
+                <tr>
+                    <th class="col-2">
+                        @Html.DisplayNameFor(model => Model[0].Age)
+                    </th>
+                    <th class="col-2 d-none d-sm-table-cell">
+                        @Html.DisplayNameFor(model => Model[0].RabPartId)
+                    </th>
+                    <th class="col-1 col-sm-2">
+                        @Html.DisplayNameFor(model => Model[0].Cage)
+                    </th>
+                    <th class="col-2 col-sm-4">
+                        @Html.DisplayNameFor(model => Model[0].Collor)
+                    </th>
+                    <th class="col-1 d-none d-sm-table-cell">
+                        @Html.DisplayNameFor(model => Model[0].LastWeight)
+                    </th>
+                    <th class="col-2 col-sm-4">
+                        @Html.DisplayNameFor(model => Model[0].StatusForAllFattView)
+                    </th>
+                    <th class="col-2 d-none d-sm-table-cell">
+                        @Html.DisplayNameFor(model => Model[0].Comment)
+                    </th>
+                    <th class="col-2 d-none weight" id="WeightFiled">
+                        @Html.DisplayNameFor(model => Model[0].NewWeight)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Count; i++)
+                {
+
+                    <tr id="row-@i" class="Modals" data-toggle="modal" data-target="#modal-@Model[i].PartId-@Model[i].RabPartId">
+
+                        <td class="col-2 ">
+                            @Html.DisplayFor(modelItem => Model[i].Age)
+                        </td>
+                        <td class="col-2 d-none d-sm-table-cell">
+                            @Html.DisplayFor(modelItem => Model[i].RabPartId)
+                        </td>
+                        <td class="col-1 col-sm-2">
+                            @Html.DisplayFor(modelItem => Model[i].Cage)
+                        </td>
+                        <td class="col-2 col-sm-4">
+                            @Html.DisplayFor(modelItem => Model[i].Collor)
+                        </td>
+                        <td class="col-1 d-none d-sm-table-cell">
+                            @Html.DisplayFor(modelItem => Model[i].LastWeight)
+                        </td>
+                        <td class="col-2 col-sm-4">
+                            @Html.DisplayFor(modelItem => Model[i].StatusForAllFattView)
+                        </td>
+                        <td class="col-2 d-none d-sm-table-cell">
+                            @Html.DisplayFor(modelItem => Model[i].Comment)
+                        </td>
+                        <td class="col-2 d-none weight" id="WeightFiled">
+                            @*@Html.DisplayFor(modelItem => Model[i].NewWeight)*@
+                            @*<input asp-for="Model[i].NewWeight" class="form-control" asp-format="{0:yyyy-MM-dd}" />
+                                <span asp-validation-for="item.NewWeight" class="text-danger"></span>*@
+                            @Html.EditorFor(model => Model[i].NewWeight, new { @class = "NewWeight", htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => Model[i].NewWeight, "", new { @class = "text-danger" })
+                        </td>
+                        @Html.HiddenFor(model => Model[i].RabPartId)
+                        @Html.HiddenFor(model => Model[i].PartId)
+                        @Html.HiddenFor(model => Model[i].WeightDate)
+                        <div class="modal fade" id="modal-@Model[i].PartId-@Model[i].RabPartId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Кролик @Model[i].RabPartId</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div>
+                                            @Html.DisplayNameFor(model => Model[0].BornString)
+                                            @Html.DisplayFor(modelItem => Model[i].BornString)
+                                        </div>
+                                        <div>
+                                            @Html.DisplayNameFor(model => Model[0].Age)
+                                            @Html.DisplayFor(modelItem => Model[i].Age)
+                                        </div>
+                                        <div>
+                                            @Html.DisplayNameFor(model => Model[0].Cage)
+                                            @Html.DisplayFor(modelItem => Model[i].Cage)
+                                        </div>
+
+                                        <div>
+                                            @Html.DisplayNameFor(model => Model[0].RabPartId)
+                                            @Html.DisplayFor(modelItem => Model[i].RabPartId)
+                                        </div>
+                                        <div>
+                                            @Html.DisplayNameFor(model => Model[0].Collor)
+                                            @Html.DisplayFor(modelItem => Model[i].Collor)
+                                        </div>
+                                        <div>
+                                            @Html.DisplayNameFor(model => Model[0].LastWeight)
+                                            @Html.DisplayFor(modelItem => Model[i].LastWeight)
+                                        </div>
+                                        <div>
+                                            @Html.DisplayNameFor(model => Model[0].WeightDateString)
+                                            @Html.DisplayFor(modelItem => Model[i].WeightDateString)
+                                        </div>
+                                        <div>
+                                            @Html.DisplayNameFor(model => Model[0].StatusForAllFattView)
+                                            @Html.DisplayFor(modelItem => Model[i].StatusForAllFattView)
+                                        </div>
+                                        <div>
+                                            @Html.DisplayNameFor(model => Model[0].Comment)
+                                            @Html.DisplayFor(modelItem => Model[i].Comment)
+                                        </div>
+
+                                    </div>
+                                    <div class="modal-footer d-block">
+                                        @if ((int)Model[i].Status < 2)
+                                        {
+                                            <a class="d-block btn btn-link compItem" href="@Url.Action("FattKilled", "Mate", new { PartId = Model[i].PartId, rabId = Model[i].RabPartId, CalledFrom = Caller.allfatt})">Забит на мясо</a>
+                                        }
+                                        <a class="d-block btn btn-link compItem" href="@Url.Action("FattEdit", "Mate", new {PartId = Model[i].PartId, rabId = Model[i].RabPartId, CalledFrom = Caller.allfatt})">Редактировать</a>
+
+                                        <a class="d-block btn btn-link compItem" href="@Url.Action("FatWeightCreate", "Weight", new {partId = Model[i].PartId, rabId = Model[i].RabPartId, CalledFrom = Caller.allfatt})">Новое взвешивание</a>
+                                        <a class="d-block btn btn-link" href="@Url.Action("FatWeightView", "Weight", new {rabId = Model[i].RabPartId, partId = Model[i].PartId })">Взвешивания</a>
+                                        <a class="d-block btn btn-link" href="@Url.Action("FatteningView", "Mate", new {partId = Model[i].PartId})">Окрол</a>
+                                        @if ((int)Model[i].Status < 2)
+                                        {
+                                            <a class="btn btn-danger" data-toggle="modal" data-target="#dieditself-@Model[i].PartId-@Model[i].RabPartId">Сам умер</a>
+                                        }
+                                        <a class="btn btn-danger" data-toggle="modal" data-target="#delete-@Model[i].PartId-@Model[i].RabPartId">Удалить</a>
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal" id="delete-@Model[i].PartId-@Model[i].RabPartId">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Вы уврены, что хотите удалить кролика @Model[i].PartId?</h4>
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <a class="btn btn-danger" href="@Url.Action("FattDelete","Mate",new { PartId = Model[i].PartId, rabId = Model[i].RabPartId, CalledFrom = Caller.allfatt })">Удалить</a>
+                                    </div> <button type="button" class="btn btn-info" data-dismiss="modal">Не удалять</button>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal" id="dieditself-@Model[i].PartId-@Model[i].RabPartId">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Подтвердите что кролик @Model[i].RabPartId умер сам</h4>
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <a class="btn btn-danger" href="@Url.Action("FattDelete","Mate",new { PartId = Model[i].PartId, rabId = Model[i].RabPartId, CalledFrom = Caller.allfatt })">Отметить как умер сам</a>
+                                    </div> <button type="button" class="btn btn-info" data-dismiss="modal">Отменить</button>
+
+                                </div>
+                            </div>
+                        </div>
+                    </tr>
+
+
+                }
+            </tbody>
+        </table>
+        <div class="form-group d-none" id="SaveButton">
+            <div class="col-md-offset-2 col-md-10">
+
+                <input type="submit" value="Сохранить взвешивания" class="btn btn-success" />
+            </div>
+        </div>
+    </div>
+
+}
+
+<div id="modDialog" class="modal fade">
+    <div id="dialogContent" class="modal-dialog"></div>
+</div>
+@*@{
+    var myChart = new Chart(width: 600, height: 400)
+        .AddTitle("Chart Title")
+        .AddSeries(
+            name: "Employee",
+            xValue: new[] { "Peter", "Andrew", "Julie", "Mary", "Dave" },
+            yValues: new[] { "2", "6", "4", "5", "3" })
+        .Write();*@
+}
+
+@section scripts
+{
+    <script type="text/javascript">
+
+        $('form input').keydown(function (e) {
+            if (e.keyCode == 13) {
+                e.preventDefault();
+                return false;
+            }
+        });
+        $(function () {
+            $.ajaxSetup({ cache: false });
+            $(".compItem").click(function (e) {
+
+                e.preventDefault();
+                $.get(this.href, function (data) {
+                    $('#dialogContent').html(data);
+                    $('#modDialog').modal('show');
+                });
+            });
+        });
+        function FillWeightOn() {
+            if ($('#WeightButton').hasClass('btn-success')) {
+                $('.weight').removeClass('d-none');
+                $('.Modals').removeAttr('data-toggle');
+                $('#WeightButton').removeClass('btn-success').addClass('btn-danger')
+            } else {
+                $('.weight').addClass('d-none');
+                $('.Modals').attr('data-toggle', 'modal');
+                $('#WeightButton').removeClass('btn-danger').addClass('btn-success')
+            }
+
+        }
+        $("input").change(function () {
+            if ($(this).val() !== 0) $(this).closest('tr').addClass('modal-body table-success');
+            else $(this).closest('tr').removeClass('modal-body table-success');
+            $('#SaveButton').removeClass('d-none')
+        });
+
+    </script>
+}
+
+@*@(await Html.RenderComponentAsync<RazorComponentLibrary.ExamplComponent>(RenderMode.ServerPrerendered))*@

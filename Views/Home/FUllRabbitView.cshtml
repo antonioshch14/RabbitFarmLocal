@@ -27,14 +27,6 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Gender)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Gender)
-        </dd>
-
-        <dt>
             @Html.DisplayNameFor(model => model.Breed)
         </dt>
 
@@ -72,10 +64,10 @@
         <dd>
             @Html.DisplayFor(model => model.MattingCount)
         </dd>
-       
-            <dt>
-                @Html.DisplayNameFor(model => model.ParturCount)
-            </dt>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ParturCount)
+        </dt>
 
         <dd>
             @Html.DisplayFor(model => model.ParturCount)
@@ -101,7 +93,7 @@
         <dd>
             @Html.DisplayFor(model => model.AverChildCount)
         </dd>
-       
+
         <dt>
             @Html.DisplayNameFor(model => model.IsAlive)
         </dt>
@@ -109,6 +101,48 @@
         <dd>
             @Html.DisplayFor(model => model.IsAlive)
         </dd>
+        <h4>Родословная</h4>
+        <table class="table">
+
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => Model.DescentData.Parents[0].Step)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => Model.DescentData.Parents[0].Id)
+                </th>
+
+                <th>
+                    @Html.DisplayNameFor(model => Model.DescentData.Parents[0].FatherId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => Model.DescentData.Parents[0].MotherId)
+                </th>
+                <th></th>
+            </tr>
+
+            @foreach (var item in Model.DescentData.Parents)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Step)
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FatherId)
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MotherId)
+                    </td>
+
+                </tr>
+            }
+
+        </table>
         <h4>Покрытия</h4>
         <table class="table">
 
@@ -139,30 +173,30 @@
 
             @foreach (var item in Model.Matting)
             {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Date)
-            </td>
-            @if (Model.Gender == "самка")
-            {
-                <td>
-                    @Html.DisplayFor(modelItem => item.FatherId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Status)
-                </td>
-            }
-            else
-            {
-                <td>
-                    @Html.DisplayFor(modelItem => item.MotherId)
-                </td>
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Date)
+                    </td>
+                    @if (Model.Gender == "самка")
+                    {
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FatherId)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Status)
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            @Html.DisplayFor(modelItem => item.MotherId)
+                        </td>
 
-            }
+                    }
 
 
 
-        </tr>
+                </tr>
             }
 
         </table>
@@ -222,7 +256,36 @@
             </td>
         }
 
+        <h4>Взвешивания</h4>
+        <td>
+            <table class="table">
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => Model.Weights[0].DateString)
+                    </th>
+                    
+                    <th>
+                        @Html.DisplayNameFor(model => Model.Weights[0].Weight)
+                    </th>
 
+                    <th></th>
+                </tr>
+
+                @foreach (var item in Model.Weights)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.DateString)
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Weight)
+                        </td>
+                    </tr>
+                }
+
+            </table>
+        </td>
 
 
         <h4>Коментарии</h4>

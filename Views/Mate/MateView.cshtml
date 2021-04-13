@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<RabbitFarmLocal.Models.MatingModel>
+@using RabbitFarmLocal.Controllers
 
 @ViewBag.Message
 <h2>Покрытия крольчихи @ViewBag.LinkableId</h2>
@@ -9,11 +10,11 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Date)
+            @Html.DisplayNameFor(model => model.DateString)
         </th>
 
         <th>
-            @Html.DisplayNameFor(model => model.MotherId)
+            @Html.DisplayNameFor(model => model.NestPut)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.FatherId)
@@ -21,6 +22,7 @@
         <th>
             @Html.DisplayNameFor(model => model.Status)
         </th>
+        >
         <th></th>
     </tr>
 
@@ -28,11 +30,12 @@
     {
 <tr>
     <td>
-        @Html.DisplayFor(modelItem => item.Date)
+        @Html.DisplayFor(modelItem => item.DateString)
     </td>
 
+    
     <td>
-        @Html.DisplayFor(modelItem => item.MotherId)
+        @Html.DisplayFor(modelItem => item.NestPut)
     </td>
     <td>
         @Html.DisplayFor(modelItem => item.FatherId)
@@ -40,15 +43,20 @@
     <td>
         @Html.DisplayFor(modelItem => item.Status)
     </td>
-        <td>
-            @Html.ActionLink("Редактировать", "MateEdit", new { id = item.Id, motherId = item.MotherId, fatherId = item.FatherId, date = item.Date })
-        </td>
+
+    <td>
+        @Html.ActionLink("Удалить", "DeleteMate", new { id = item.Id, rabId = item.MotherId, caller=Caller.mate}, new
+   {
+       onclick = "return confirm('Вы уверены, что хотите удалить покрытие " + item.DateString + "?');"
+   }) | 
+        @Html.ActionLink("Редактировать", "MateEdit", new { id = item.Id, caller = Caller.mate }) | 
+    </td>
 
     @if (item.ParturationId == null)
     {
         <td>
-            @Html.ActionLink("Новый окрол", "ParturCreate", new { mateId = item.Id, motherId = item.MotherId, fatherId = item.FatherId, mateDate = item.Date }) | |
-            @Html.ActionLink("Прохолост", "FailMate", new { id = item.Id, rabId= @ViewBag.LinkableId }, new { onclick = "return confirm('Вы уверены, что хотите отметить это покрытие как ложное?');" })
+            @Html.ActionLink("Новый окрол", "ParturCreate", new { mateId = item.Id, motherId = item.MotherId, fatherId = item.FatherId, mateDate = item.Date, caller=Caller.mate}) |
+            @Html.ActionLink("Прохолост", "FailMate", new { id = item.Id, rabId = @ViewBag.LinkableId, caller = Caller.mate }, new { onclick = "return confirm('Вы уверены, что хотите отметить это покрытие как ложное?');" })
 
         </td>
     }

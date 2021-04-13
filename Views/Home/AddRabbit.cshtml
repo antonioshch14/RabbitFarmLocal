@@ -1,104 +1,67 @@
-﻿@using RabbitFarmLocal.Models
-@model RabbitFarmLocal.Models.InpRAbbitModel
-
-@{
-    ViewBag.Title = "AddRabbit";
-}
-
-<h2>Добавить кролика</h2>
+﻿@model RabbitFarmLocal.Models.InpRAbbitModel
+@using RabbitFarmLocal.Models
 
 
-@using (Html.BeginForm()) 
-{
-    @Html.AntiForgeryToken()
-    
-<div class="form-horizontal">
-    <h4>Кролик</h4>
     <hr />
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-    <div class="form-group">
-        @Html.LabelFor(model => model.RabbitId, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.RabbitId, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.RabbitId, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.Cage, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.Cage, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.Cage, "", new { @class = "text-danger" })
-        </div>
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(model => model.RabbitGender, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.DropDownListFor(model => model.RabbitGender, new SelectList(Enum.GetValues(typeof(Gender))))
+    <div class="modal-content">
+        <h4>Занести в базу нового кролика</h4>
+        <div class="col-md-6 col-sm-12">
+            <form asp-action="AddRabbit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="RabbitId" class="control-label"></label>
+                    <input asp-for="RabbitId" class="form-control" />
+                    <span asp-validation-for="RabbitId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Cage" class="control-label"></label>
+                    <input asp-for="Cage" class="form-control" />
+                    <span asp-validation-for="Cage" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="RabbitGender" class="control-label"></label>
+                    <select asp-for="RabbitGender" asp-items="Html.GetEnumSelectList<Gender>()"></select>
+                    <span asp-validation-for="RabbitGender" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Breed" class="control-label"></label>
+                    <input asp-for="Breed" class="form-control" />
+                    <span asp-validation-for="Breed" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Collor" class="control-label"></label>
+                    <input asp-for="Collor" class="form-control" />
+                    <span asp-validation-for="Collor" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Born" class="control-label"></label>
+                    <input asp-for="Born" class="form-control" />
+                    <span asp-validation-for="Born" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Mother" class="control-label"></label>
+                    <input asp-for="Mother" class="form-control" />
+                    <span asp-validation-for="Mother" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Father" class="control-label"></label>
+                    <input asp-for="Father" class="form-control" />
+                    <span asp-validation-for="Father" class="text-danger"></span>
+                </div>
+                <div class="form-group form-check">
+                    <label class="form-check-label">
+                        <input class="form-check-input" asp-for="IsAlive" /> @Html.DisplayNameFor(model => model.IsAlive)
+                    </label>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Занести нового кролика" class="btn btn-primary" />
+                </div>
+            </form>
         </div>
     </div>
 
    
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.Breed, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.Breed, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.Breed, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.Collor, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.Collor, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.Collor, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.Born, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.Born,  new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.Born, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.Mother, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.Mother, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.Mother, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.Father, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.Father, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.Father, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.IsAlive, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10 col-xs-6 pull-right">
-            <div class="checkbox">
-                @Html.EditorFor(model => model.IsAlive)
-                @Html.ValidationMessageFor(model => model.IsAlive, "", new { @class = "text-danger" })
-            </div>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Занести кролика" class="btn btn-default" />
-        </div>
-    </div>
-</div>
-}
-
-<div>
-    @Html.ActionLink("Обратно к кроликам", "ViewRabbits")
-</div>
-
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    }

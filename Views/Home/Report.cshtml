@@ -1,0 +1,361 @@
+﻿@model RabbitFarmLocal.Models.ReportModel
+@using RabbitFarmLocal.Controllers
+@using RabbitFarmLocal.Start;
+
+@{
+    ViewData["Title"] = "Report";
+}
+
+<h4>Отчет</h4>
+
+<div>
+
+    <hr />
+    <table class="table-sm table-bordered">
+        <tbody>
+            <tr class="col-5 font-weight-bold">
+                <td>
+                    @Html.DisplayNameFor(model => model.TotalRabits)
+                </td>
+                <td class="col-1">
+                    @Html.DisplayFor(model => model.TotalRabits)
+                </td>
+            </tr>
+            <tr class="font-weight-bold">
+                <td class="col-5">
+                    @Html.DisplayNameFor(model => model.Females)
+                </td>
+                <td class="col-1">
+                    @Html.DisplayFor(model => model.Females)
+                </td>
+            </tr>
+            <tr>
+                <td class="col-5">
+                    @Html.DisplayNameFor(model => model.ReadyFemales)
+                </td>
+                <td class="col-1">
+                    @Html.DisplayFor(model => model.ReadyFemales)
+                </td>
+            </tr>
+            <tr>
+                <td class="col-5">
+                    @Html.DisplayNameFor(model => model.GrowFemales)
+                </td>
+                <td class="col-1">
+                    @Html.DisplayFor(model => model.GrowFemales)
+                </td>
+            </tr>
+            <tr>
+                <td class="col-5">
+                    @Html.DisplayNameFor(model => model.PregnantFemales)
+                </td>
+                <td class="col-1">
+                    @Html.DisplayFor(model => model.PregnantFemales)
+                </td>
+            </tr>
+            <tr>
+                <td class="col-5">
+                    @Html.DisplayNameFor(model => model.FeedFemales)
+                </td>
+                <td class="col-1">
+                    @Html.DisplayFor(model => model.FeedFemales)
+                </td>
+            </tr>
+            <tr>
+                <td class="col-5">
+                    @Html.DisplayNameFor(model => model.RestFemales)
+                </td>
+                <td class="col-1">
+                    @Html.DisplayFor(model => model.RestFemales)
+                </td>
+            </tr>
+            <tr class="font-weight-bold">
+                <td class="col-5">
+                    @Html.DisplayNameFor(model => model.Males)
+                </td>
+                <td class="col-1">
+                    @Html.DisplayFor(model => model.Males)
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-5">
+                    @Html.DisplayNameFor(model => model.GrowMales)
+                </td>
+                <td class="col-1">
+                    @Html.DisplayFor(model => model.GrowMales)
+                </td>
+            </tr>
+            <tr class="font-weight-bold">
+                <td>
+                    @Html.DisplayNameFor(model => model.Fattening)
+                </td>
+                <td class="col-1">
+                    @Html.DisplayFor(model => model.Fattening)
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+
+
+</div>
+<br />
+@if (Model.PutNest.Count != 0)
+{
+<h4>Установить гнездо</h4>
+<td>
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => Model.PutNest[0].RabbitId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => Model.PutNest[0].Cage)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => Model.PutNest[0].DateString)
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model.PutNest)
+            {
+        <tr data-href="/Mate/PutNest?mateId=@item.Id&amp&rabId=@item.RabbitId&caller=@Caller.report"
+            @{ if (item.Alert) { <text> class="compItem table-warning" </text>  } else { <text> class="compItem" </text>  } }>
+            <td>
+                @Html.DisplayFor(modelItem => item.RabbitId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Cage)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateString)
+            </td>
+            @*<td>@Html.ActionLink("Go", "PutNest", "Mate", new { mateId = item.Id, rabId = item.RabbitId, calledFrom = 0 }, new { @class = "compItem" })</td>*@
+
+        </tr>
+            }
+
+    </table>
+</td>
+}
+@if (Model.RemoveNest.Count != 0)
+{
+<h4>Убрать гнездо</h4>
+<td>
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => Model.RemoveNest[0].RabbitId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => Model.RemoveNest[0].Cage)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => Model.RemoveNest[0].DateString)
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model.RemoveNest)
+            {
+        <tr data-href="/Mate/RemoveNest?partId=@item.Id&amp&rabId=@item.RabbitId&caller=@Caller.report"
+            @{ if (item.Alert) { <text> class="compItem table-warning" </text>  } else { <text> class="compItem" </text>  } }>
+            <td>
+                @Html.DisplayFor(modelItem => item.RabbitId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Cage)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateString)
+            </td>
+
+        </tr>
+            }
+
+    </table>
+</td>
+}
+@if (Model.CheckPart.Count != 0)
+{
+<h4>Проверить окрол</h4>
+<td>
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => Model.CheckPart[0].RabbitId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => Model.CheckPart[0].Cage)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => Model.CheckPart[0].DateString)
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model.CheckPart)
+        {
+            <tr data-toggle="modal" data-target="#checkPartModel-@item.MateId"
+                @{ if (item.Alert) { <text> class="table-warning" </text>  } else { <text> class="" </text>  } }>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RabbitId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Cage)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateString)
+                </td>
+
+            </tr>
+            <div class="modal fade" id="checkPartModel-@item.MateId" >
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Проверить окрол</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <a>
+                                крольчихи @Html.DisplayFor(modelItem => item.RabbitId) в клетке @Html.DisplayFor(modelItem => item.Cage)
+                            </a>
+                        </div>
+                        <div class="modal-footer">
+                            <a class="btn btn-info" href="@Url.Action("ParturCreate","Mate", new {mateId=@item.MateId, motherId=@item.MotherId, fatherId=@item.FatherId, mateDate=@item.Date.AddDays(-Settings.PregnantDays()), caller=@Caller.report})">Новый окрол</a>
+                            <a class="btn btn-danger" data-toggle="modal" data-target="#FailMate-@item.MateId">Прохолост</a>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Отменить</button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal" id="FailMate-@item.MateId">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <h4 class="modal-title">Вы уврены!!!</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+                        </div>
+
+                        <div class="modal-body">
+                            что хотите отметить покрытие крольчихи @item.MotherId как ложное?
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Отмена</button>
+                            <a class="btn btn-danger" href="/Mate/FailMate?id=@item.MateId&rabId=@item.MotherId&caller=@Caller.report">Прохолост</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        }
+
+    </table>
+</td>
+}
+@if (Model.Separate.Count != 0)
+{
+<h4>Рассадить кроликов</h4>
+<td>
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => Model.Separate[0].RabbitId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => Model.Separate[0].Cage)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => Model.Separate[0].DateString)
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model.Separate)
+            {
+        <tr data-href="/Mate/PreFattenigCreate?partId=@item.Id&caller=@Caller.report"
+            @{ if (item.Alert) { <text> class="compItem table-warning" </text>  } else { <text> class="compItem" </text>  } }>
+            <td>
+                @Html.DisplayFor(modelItem => item.RabbitId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Cage)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateString)
+            </td>
+
+        </tr>
+            }
+
+    </table>
+</td>
+}
+@if (Model.Mate.Count != 0)
+{
+<h4>Покрыть крольчих</h4>
+<td>
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => Model.Mate[0].RabbitId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => Model.Mate[0].Cage)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => Model.Mate[0].DateString)
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model.Mate)
+            {
+        <tr data-href="/Mate/MateCreate?Id=@item.RabbitId&caller=@Caller.report"
+            @{ if (item.Alert) { <text> class="compItem table-warning" </text>  } else { <text> class="compItem" </text>  } }>
+            <td>
+                @Html.DisplayFor(modelItem => item.RabbitId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Cage)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateString)
+            </td>
+
+        </tr>
+            }
+
+    </table>
+</td>
+}
+<div id="modDialog" class="modal fade">
+    <div id="dialogContent" class="modal-dialog"></div>
+</div>
+
+@section scripts
+{
+    <script type="text/javascript">
+
+        $(function () {
+            $.ajaxSetup({ cache: false });
+            $(".compItem").click(function (e) {
+
+                e.preventDefault();
+                $.get($(this).data("href"), function (data) {
+                    $('#dialogContent').html(data);
+                    $('#modDialog').modal('show');
+                });
+            });
+        })
+
+    </script>
+}

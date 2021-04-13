@@ -9,3 +9,6 @@
     <h4>Наш адрес</h4>
     <p class="lead">Ленинградская область, Волосовский район, деревня Молосковицы, дом 12</p>
 </div>
+<a class="btn btn-success" href="@Url.Action("CallBot", "Home")">Send report to the bot</a>
+@(await Html.RenderComponentAsync<RazorComponentLibrary.ExamplComponent>(RenderMode.ServerPrerendered))
+

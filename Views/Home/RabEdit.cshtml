@@ -1,0 +1,114 @@
+﻿@model RabbitFarmLocal.Models.DLRabbitModel
+
+@{
+    ViewData["Title"] = "Редактирвоать кролика";
+}
+
+<h1>@ViewBag.Name</h1>
+
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="RabEdit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="RabbitId" class="control-label"></label>
+                <input asp-for="RabbitId" class="form-control" />
+                <span asp-validation-for="RabbitId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Cage" class="control-label"></label>
+                <input asp-for="Cage" class="form-control" />
+                <span asp-validation-for="Cage" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RabbitGender" class="control-label"></label>
+                <select asp-for="RabbitGender" class="form-control" asp-items="Html.GetEnumSelectList<RabGender>()" value="@Model.RabbitGender"></select>
+                @*<div> @Html.DropDownListFor(model => model.RabbitGender, new SelectList(Enum.GetValues(typeof(RabGender))))</div>*@
+                <span asp-validation-for="RabbitGender" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Breed" class="control-label"></label>
+                <input asp-for="Breed" class="form-control" />
+                <span asp-validation-for="Breed" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Collor" class="control-label"></label>
+                <input asp-for="Collor" class="form-control" />
+                <span asp-validation-for="Collor" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Born" class="control-label"></label>
+                <input asp-for="Born" class="form-control" value="@Model.BornStringForEdit" asp-format="{0:yyyy-MM-dd}" />
+                <span asp-validation-for="Born" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Mother" class="control-label"></label>
+                <input asp-for="Mother" class="form-control" />
+                <span asp-validation-for="Mother" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Father" class="control-label"></label>
+                <input asp-for="Father" class="form-control" />
+                <span asp-validation-for="Father" class="text-danger"></span>
+            </div>
+           
+            <button type="button" class="btn btn-link" onclick="Toggle()">В историю</button>
+            <div id="history"
+                 @{ if (Model.IsAlive) { <text> style="display:none" </text>  } }>
+                <div class="form-group form-check">
+                    <label class="form-check-label">
+                        <input class="form-check-input" asp-for="IsAlive" onclick="TogleAlive()" /> @Html.DisplayNameFor(model => model.IsAlive)
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label asp-for="TermDate" class="control-label"></label>
+                    <input asp-for="TermDate" class="form-control" asp-format="{0:yyyy-MM-dd}" />
+                    <span asp-validation-for="TermDate" class="text-danger"></span>
+                </div>
+                
+                <label asp-for="StoredRabStatus" class="control-label"></label>
+                <select asp-for="StoredRabStatus" class="form-control" asp-items="Html.GetEnumSelectList<RabKillStatus>()"></select>
+                <span asp-validation-for="StoredRabStatus" class="text-danger"></span>
+                <div class="form-group">
+                    <label asp-for="Weight" class="control-label"></label>
+                    <input asp-for="Weight" class="form-control" />
+                    <span asp-validation-for="Weight" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Price" class="control-label"></label>
+                    <input asp-for="Price" class="form-control" />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+            </div>
+
+
+            @Html.HiddenFor(model => Model.Id)
+            <div class="form-group">
+                <input type="submit" value="Сохранить" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-controller="Home" asp-action="ViewRabbits"> К кроликам</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<script type="text/javascript">
+
+        function Toggle() {
+            $('#history').toggle();
+        }
+    var initTermDate='@Model.TermDateStringForEdit';
+    if (!$("input[type=checkbox][name=IsAlive]:checked").val()) $("input[name=TermDate]").val(initTermDate);
+        function TogleAlive() {
+
+            if (!$("input[type=checkbox][name=IsAlive]:checked").val()) $("input[name=TermDate]").val(initTermDate);
+            else $("input[name=TermDate]").val("");
+        }
+</script>
+}

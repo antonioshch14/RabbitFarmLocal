@@ -1,0 +1,112 @@
+﻿@model IEnumerable<RabbitFarmLocal.Models.FatteningModel>
+@using RabbitFarmLocal.Controllers
+
+@{
+    ViewData["Title"] = "Откорм";
+}
+
+@*<a data-toggle="modal" data-target="#ShowHiden" @Html.ActionLink("Показать скрытый откорм", "FattStatusView", new { @class = "compItem" })>Показать скрытых кроликов</a>*@
+
+
+<h4>@ViewBag.Message1</h4>
+@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>*@
+
+
+<table class="table">
+    <thead>
+        <tr>
+
+            <th>
+                @Html.DisplayNameFor(model => model.RabPartId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Cage)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Collor)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RabbitGender)
+            </th>
+
+            <th>
+                @Html.DisplayNameFor(model => model.KillDateString)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Weight)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.RabPartId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Cage)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Collor)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RabbitGender)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.KillDateString)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Weight)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @if ((int)item.Status < 2)
+                    {
+                        @Html.ActionLink("Забой", "FattKilled", new { PartId = item.PartId, rabId = item.RabPartId, CalledFrom = Caller.fattening }, new { @class = "compItem" })
+                        <a> | </a>
+                        @Html.ActionLink("Сам умер", "FattDiedItself", new { PartId = item.PartId, rabId = item.RabPartId, CalledFrom = Caller.fattening }, new { onclick = "return confirm('Подтвердите что кролик " + item.RabPartId + " умер сам?');" })
+                    }
+                    |
+                    @Html.ActionLink("Редактировать", "FattEdit", new { PartId = item.PartId, rabId = item.RabPartId, CalledFrom = Caller.fattening }, new { @class = "compItem" })
+                    |
+                    @Html.ActionLink("Удалить", "FattDelete", new { PartId = item.PartId, rabId = item.RabPartId, CalledFrom = Caller.fattening }, new { onclick = "return confirm('Подтвердите, что вы хотите удалить кролика " + item.RabPartId + "?');" })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div id="modDialog" class="modal fade">
+    <div id="dialogContent" class="modal-dialog"></div>
+</div>
+@section scripts
+{
+    <script type="text/javascript">
+
+        $(function () {
+            $.ajaxSetup({ cache: false });
+            $(".compItem").click(function (e) {
+
+                e.preventDefault();
+                $.get(this.href, function (data) {
+                    $('#dialogContent').html(data);
+                    $('#modDialog').modal('show');
+                });
+            });
+        })
+    </script>
+}

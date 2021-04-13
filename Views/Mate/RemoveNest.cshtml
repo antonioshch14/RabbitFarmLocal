@@ -1,0 +1,30 @@
+﻿@model RabbitFarmLocal.Models.ParturationModel
+
+
+<hr />
+<div class="modal-content">
+    <h4>Подтвердите или отредактируйте дату уборки от крольчихи @ViewBag.Rabbit</h4>
+    <div class="col-md-4">
+        <form asp-action="RemoveNest">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="DateNestRemoval" class="control-label"></label>
+                <input asp-for="DateNestRemoval" class="form-control" value="@ViewBag.Date" data-date-format="yyyy-MM-dd" type="text" placeholder="yyyy-MM-dd" />
+                <span asp-validation-for="DateNestRemoval" class="text-danger"></span>
+            </div>
+            @Html.HiddenFor(model => Model.Id)
+            @Html.HiddenFor(model => Model.ECaller)
+
+            <div class="form-group">
+                <input type="submit" value="Гнездо убрано" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

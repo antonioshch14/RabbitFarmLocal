@@ -8,6 +8,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RabbitFarmLocal.Models;
 using static RabbitFarmLocal.BusinessLogic.RabbitProcessor;
+using static RabbitFarmLocal.Controllers.MyFunctions;
+using static RabbitFarmLocal.BusinessLogic.DataUpdates;
+using static RabbitFarmLocal.BusinessLogic.CreateReport;
+
+using RabbitFarmLocal.Start;
+using RabbitFarmLocal.messaging;
+using RabbitFarmLocal.BusinessLogic;
 
 namespace RabbitFarmLocal.Controllers
 {
@@ -39,37 +46,40 @@ namespace RabbitFarmLocal.Controllers
         public ActionResult ViewRabbits()
         {
             ViewBag.Message = "Список кроликов";
-            var data = LoadRabbits();
-            List<DLRabbitModel> rabbit = new List<DLRabbitModel>();
-            string genderName;
-            foreach (var row in data)
-            {
-                if (row.IsMale) genderName = "самец";
-                else genderName = "самка";
-                rabbit.Add(new DLRabbitModel
-                {
-                    RabbitId = row.RabbitId,
-                    Mother = row.Mother,
-                    Father = row.Father,
-                    Gender = genderName,
-                    IsAlive = row.IsAlive,
-                    Cage = row.Cage,
-                    //BornString = row.Born.ToShortDateString(),
-                    //BornString = $"{row.Born.Year}-{month}-{day}",
-                    Id = row.Id,
-                    Breed = row.Breed,
-                    Collor = row.Collor,
-                    Born = row.Born
 
-                });
-            }
+            // var data = LoadRabbits();
+            //// var data= UpdateRabbitsStatus();
+            // List<DLRabbitModel> rabbit = new List<DLRabbitModel>();
+            // string genderName;
+            // foreach (var row in data)
+            // {
+            //     if (row.IsMale) genderName = "самец";
+            //     else genderName = "самка";
+            //     rabbit.Add(new DLRabbitModel
+            //     {
+            //         RabbitId = row.RabbitId,
+            //         Mother = row.Mother,
+            //         Father = row.Father,
+            //         Gender = genderName,
+            //         IsAlive = row.IsAlive,
+            //         Cage = row.Cage,
+            //         Id = row.Id,
+            //         Breed = row.Breed,
+            //         Collor = row.Collor,
+            //         IsMale=row.IsMale,
+            //         Born = row.Born,
+            //         StoredRabStatus=row.StoredRabStatus
 
-            return View(rabbit);
+            //     });
+            // }
+            List<DLRabbitModel> rabbits = Rabbit.LoadList();
+            return View(rabbits);
         }
         //[Authorize(Roles = "admin,owner")]
-        public ActionResult FUllRabbitView(DLRabbitModel item)
+        public ActionResult FUllRabbitView(int id)
         {
-            ViewBag.Message = "Кролик " + item.RabbitId;
+            DLRabbitModel item = Rabbit.LoadOne(id);
+            ViewBag.Message = "Кролик " + item.RabbitId + "  " +item.StoredRabStatus;
             FullRabbitModel rabbit = new FullRabbitModel
             {
                 RabbitId = item.RabbitId,
@@ -77,22 +87,25 @@ namespace RabbitFarmLocal.Controllers
                 Cage = item.Cage,
                 Collor = item.Collor,
                 Breed = item.Breed
-
             };
             if (item.IsAlive) rabbit.IsAlive = "живой";
             else rabbit.IsAlive = "история";
-            TimeSpan ts = (DateTime.Today - item.Born);
-            double daysTot = ts.TotalDays;
-            double years = Math.Floor(daysTot / 365);
-            double months = Math.Floor(daysTot % 365 / 30);
-            double days = daysTot % 365 % 30;
-            rabbit.Age = "Рожден " + item.Born.ToShortDateString() + ", сейчас " + years + " лет " + months + " месяцев " + days + " дней";
+            //TimeSpan ts = (DateTime.Today - item.Born);
+            //double daysTot = ts.TotalDays;
+            //double years = Math.Floor(daysTot / 365);
+            //double months = Math.Floor(daysTot % 365 / 30);
+            //double days = daysTot % 365 % 30;
+            Age age = new Age(item.Born);
+
+            rabbit.Age = "Рожден " + item.Born.ToShortDateString() + ", сейчас " + age.years + " лет " + age.months + " месяцев " + age.days + " дней";
             rabbit.Descent = "мать, " + item.Mother + " отец " + item.Father;
             var comments = LoadComments(item.RabbitId);
             rabbit.Comments = comments;
             rabbit.Matting = LoadMating(item.RabbitId);
-
-            rabbit.Parturation = LoadParturation(item.RabbitId);
+            rabbit.Parturation = LoadParturations(item.RabbitId);
+            var desc = LoadDescent(item.RabbitId);
+            rabbit.DescentData = desc;
+            rabbit.Weights = RabWeight.Load(item.RabbitId);
             return View(rabbit);
         }
 
@@ -108,9 +121,7 @@ namespace RabbitFarmLocal.Controllers
         //[Authorize(Roles = "admin,owner")]
         public ActionResult AddRabbit()
         {
-            ViewBag.Message = "Добавить кролика";
-
-            return View(new InpRAbbitModel());
+            return PartialView(new InpRAbbitModel());
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -122,6 +133,7 @@ namespace RabbitFarmLocal.Controllers
             {
                 int recordCreated = CreateRabbit(model.RabbitId, model.Cage, model.Breed, model.Collor, model.Born,
                     model.Mother, model.Father, model.IsAlive, model.RabbitGender);
+                UpdateRabbitsStatus();
                 //int rabbitId, int cage, bool isMale, string breed, string collor, DateTime born, int mother, int father, bool isAlive
                 return RedirectToAction("ViewRabbits");
             }
@@ -135,54 +147,36 @@ namespace RabbitFarmLocal.Controllers
             return RedirectToAction("EdditRabbit");
         }*/
         //[Authorize(Roles = "admin,owner")]
-        public ActionResult Edit(RabbitFarmLocal.Models.DLRabbitModel sourcceRabbit)
+        public ActionResult RabEdit(int id) // RabbitId  Cage  RabbitGender  Breed  BreedType Collor  Born  Mother Father IsAlive status termDate price killWeight
         {
+            DLRabbitModel rab = Rabbit.LoadOne(id);
             ViewBag.Message = "Rabbit Edit";
-            ViewBag.Name = "Редактировать кролика " + sourcceRabbit.RabbitId;
+            ViewBag.Name = "Редактировать кролика " + rab.RabbitId;
+            if (rab.IsMale) rab.RabbitGender = RabGender.male;
+            else rab.RabbitGender = RabGender.female;
 
+            ViewBag.Born = DateToString(rab.Born);
 
-            InpRAbbitModel outpRabbit = new InpRAbbitModel
-            {
-                // RabbitId  Cage  RabbitGender  Breed  BreedType Collor  Born  Mother Father IsAlive
-                RabbitId = sourcceRabbit.Id,
-                Cage = sourcceRabbit.Cage,
-                //RabbitGender=sourcceRabbit.Gender,
-                Breed = sourcceRabbit.Breed,
-                Collor = sourcceRabbit.Collor,
-                //Born=StringToDate(sourcceRabbit.BornString),
-                Mother = sourcceRabbit.Mother,
-                Father = sourcceRabbit.Father,
-                IsAlive = sourcceRabbit.IsAlive
-            };
-            if (sourcceRabbit.Gender == "самка") outpRabbit.RabbitGender = Gender.самка;
-            else outpRabbit.RabbitGender = Gender.самец;
-            //ViewBag.Born = outpRabbit.Born;
-            //ViewBag.Born = outpRabbit.Born.ToString("yyyy-MM-dd");
-            ViewBag.Born = sourcceRabbit.Born.ToShortDateString();
-
-            return View(outpRabbit);
+            return View(rab);
 
             // return View(new InpRAbbitModel()); ;
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(InpRAbbitModel model)
+        public ActionResult RabEdit(DLRabbitModel rab)
         {
             
-
-
             if (ModelState.IsValid)
             {
-                int recordCreated = EditRabbit(model.RabbitId, model.Cage, model.Breed, model.Collor, model.Born,
-                    model.Mother, model.Father, model.IsAlive, model.RabbitGender);
-                //int rabbitId, int cage, bool isMale, string breed, string collor, DateTime born, int mother, int father, bool isAlive
+                if (rab.RabbitGender == RabGender.male) rab.IsMale = true;
+                else rab.IsMale=false;
+                int recordCreated = Rabbit.EditGeneral(rab);
+                if (!rab.IsAlive) Rabbit.EditKill(rab);
+                UpdateRabbitsStatus();
                 return RedirectToAction("ViewRabbits");
             }
-            //int rabbitId, int cage, bool isMale, string breed, string collor, DateTime born, int mother, int father, bool isAlive
-
-
-
+            
             return View();
         }
 
@@ -283,17 +277,119 @@ namespace RabbitFarmLocal.Controllers
 
         public ActionResult DeadRabbit(int id)
         {
-
-            int rabbitDead = PutRabToArchive(id);
-            return RedirectToAction("ViewRabbits");
-
+            DLRabbitModel rab = Rabbit.LoadOne(id);
+            //int rabbitDead = PutRabToArchive(id);
+            return View(rab);
+        }
+        [HttpPost]
+        public ActionResult DeadRabbit(DLRabbitModel rab)
+        {
+            if (ModelState.IsValid) //SaveComment(int Id, string comment, DateTime date)
+            {
+                rab.IsAlive = false;
+                int recordCreated = Rabbit.EditKill(rab);
+            }
+            return RedirectToAction("ViewRabbits", "Home");
+        }
+       // public List <DLRabbitModel> UpdateRabbitsStatus()
+        public ActionResult SettingsEdit()
+        {
+            SettingsModel set=loadSettings();
+            return View("SettingsEdit",set);
 
         }
-        public ActionResult UpdateStatus()
+        [HttpPost]
+        //[Authorize(Roles = "admin,owner")]
+        [ValidateAntiForgeryToken]
+        public ActionResult SettingsEdit(SettingsModel model)
         {
+            
+            if (ModelState.IsValid) 
+            {
+                if (model.FinRepDate > 28 || model.FinRepDate < 1) model.FinRepDate = 1;
+                int recordCreated = editSettings(model);
+                Settings.ReloadSettings();
+                UpdateRabbitsStatus();
+                return RedirectToAction("ViewRabbits", "Home");
+            }
 
             return View();
         }
+        public ActionResult Report()
+        {
+            UpdateRabbitsStatus();
+            ReportModel rep = FillReport();
+            return View(rep);
+        }
+        public ActionResult UpdateRabbitsStatusView()
+        {
+            UpdateRabbitsStatus();
+            return RedirectToAction("ViewRabbits");
 
+        }
+        //CallBot
+        public ActionResult CallBot()
+        {
+            string? report = CreateReport.GetAlertString();
+            if (report != null) MyTelegram.SendMessageToBot(report);
+            
+            return RedirectToAction("Index");
+
+        }
+        public ActionResult NotesView(string date)
+        {
+           // DateTime? dateDateTime=null;
+           //if (date!=null) dateDateTime = StringToDate(date);
+            NoteModel note = Note.Load(date);
+            ViewBag.Date = DateToString(note.Date);
+            return View(note);
+        }
+        public ActionResult NoteCreate()
+        {
+            NoteModel nt = new NoteModel();
+            ViewBag.Date = DateToString(DateTime.Now);
+            return View(nt);
+        }
+        [HttpPost]
+        //[Authorize(Roles = "admin,owner")]
+        [ValidateAntiForgeryToken]
+        public ActionResult NoteCreate(NoteModel model)
+        {
+            if (ModelState.IsValid)
+            {
+               // model.Date = DateTime.Now;
+                int entry = Note.Create(model);
+                return RedirectToAction("NotesView", "Home");
+            }
+            return View();
+        }
+       
+        [HttpPost]
+        //[Authorize(Roles = "admin,owner")]
+        [ValidateAntiForgeryToken]
+        public ActionResult NoteEdit(NoteModel model, string Save, string Edit)
+        {
+            if (ModelState.IsValid)
+            {
+                if (Save != null)
+                {
+                    model.Date = DateTime.Now;
+                    int entry = Note.Create(model);
+                    
+                }
+                else{
+                    int entry = Note.Edit(model);
+                   
+                }
+                return RedirectToAction("NotesView", "Home");
+            }
+            return View();
+        }
+        public ActionResult NoteDelete(string date)
+        {
+        //    DateTime dateDateTime = StringToDate(date);
+            Note.Delete(date);
+            return RedirectToAction("NotesView", "Home");
+        }
     }
 }

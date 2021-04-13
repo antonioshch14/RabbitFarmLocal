@@ -1,0 +1,78 @@
+﻿@model List<RabbitFarmLocal.Models.FatteningModel>
+
+@{
+    ViewData["Title"] = "Откорм";
+}
+<div class="modal-content">
+    <h4>@ViewBag.Message1</h4>
+    <h4>@ViewBag.Message2</h4>
+
+    @using (Html.BeginForm("FattenigCreatePost", "Mate", FormMethod.Post, new { @class = "form-horizontal" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <table class="table">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <thead>
+                <tr>
+
+                    <th>
+                        @Html.DisplayNameFor(model => Model[0].RabPartId)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => Model[0].Cage)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => Model[0].Collor)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => Model[0].RabbitGender)
+                    </th>
+
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (var i = 0; i < Model.Count; i++)
+                {
+                    <tr>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => Model[i].RabPartId)
+                            @*@Html.EditorFor(model => Model[i].RabPartId, new { htmlAttributes = new { disabled = "disabled" } })*@
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => Model[i].Cage, new { @class = "Cage", htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => Model[i].Cage, "", new { @class = "text-danger" })
+                        </td>
+                        <td>
+
+                            @Html.EditorFor(model => Model[i].Collor, new { @class = "Collor", htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => Model[i].Collor, "", new { @class = "text-danger" })
+                        </td>
+                        <td>
+
+                            @Html.DropDownListFor(model => Model[i].RabbitGender, new SelectList(Enum.GetValues(typeof(Gender))))
+                        </td>
+                        @Html.HiddenFor(model => Model[i].PartId)
+                        @Html.HiddenFor(model => Model[i].RabPartId)
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @Html.HiddenFor(model => Model[0].ECaller)
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+
+                <input type="submit" value="Сохранить" class="btn btn-default" />
+            </div>
+        </div>
+
+    }
+</div>
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

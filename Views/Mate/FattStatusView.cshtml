@@ -1,0 +1,231 @@
+﻿@model IEnumerable<RabbitFarmLocal.Models.FatteningModel>
+@using RabbitFarmLocal.Models
+@using RabbitFarmLocal.Controllers
+
+
+@{
+    ViewData["Title"] = "FattStatusView";
+}
+<a data-toggle="modal" data-target="#ShowHiden" class="btn btn-info">Показать откорм по статусу</a>
+<div class="modal fade" id="ShowHiden">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Выберите статус и срок с рождения крольчат</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="FattStatusView">
+                    <div class="form-group">
+                        <label for="Status">Выберите статус</label>
+                        <select type="text" name="Status" class="form-control" id="Status" asp-items="Html.GetEnumSelectList<FatStatus>()"></select>
+
+                    </div>
+                    <div class="form-group">
+                        <label for="Dates">Дней с рождения</label>
+                        <input type="text" name="Dates" class="form-control" id="Dates" value="360">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Показать</button>
+                </form>
+
+            </div>
+        </div>
+        <div class="modal-footer">
+
+        </div>
+    </div>
+</div>
+
+<h4>@ViewBag.Message</h4>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            @if (@ViewBag.Status == FatStatus.alive || @ViewBag.Status == FatStatus.left4Bread)
+            {
+                <th>
+                    @Html.DisplayNameFor(model => model.BornString)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Age)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Cage)
+                </th>
+
+                <th>
+                    @Html.DisplayNameFor(model => model.Collor)
+                </th>
+
+                <th>
+                    @Html.DisplayNameFor(model => model.RabbitGender)
+                </th>
+            }
+            else
+            {
+                <th>
+                    @Html.DisplayNameFor(model => model.KillDateString)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AgeKilled)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Weight)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Price)
+                </th>
+            }
+
+
+            <th>
+                @Html.DisplayNameFor(model => model.Comment)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr data-toggle="modal" data-target="#myModal-@item.RabPartId-@item.PartId"
+            @*data-href="/Mate/FattEdit?PartId=@item.PartId&rabId=@item.RabPartId&CalledFrom=@Caller.fattPerStat" class="compItem"*@>
+
+            @if (@ViewBag.Status == FatStatus.alive || @ViewBag.Status == FatStatus.left4Bread)
+            {
+                <td>
+                    @Html.DisplayFor(modelItem => item.BornString)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Age)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Cage)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Collor)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.RabbitGender)
+                </td>
+            }
+            else
+            {
+                <td>
+                    @Html.DisplayFor(modelItem => item.KillDateString)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AgeKilled)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Weight)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+            }
+
+
+            <td>
+                @Html.DisplayFor(modelItem => item.Comment)
+            </td>
+        </tr>
+            
+            <div class="modal" id="myModal-@item.RabPartId-@item.PartId">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Подробно о кролике</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+
+
+                            <div>
+                                @Html.DisplayNameFor(modelItem => item.BornString)
+                                @Html.DisplayFor(modelItem => item.BornString)
+                            </div>
+
+                            <div>
+                                @Html.DisplayNameFor(model => model.Collor)
+                                @Html.DisplayFor(modelItem => item.Collor)
+                            </div>
+                            <div>
+                                @Html.DisplayNameFor(model => model.RabbitGender)
+                                @Html.DisplayFor(modelItem => item.RabbitGender)
+                            </div>
+                            @if (@ViewBag.Status == FatStatus.alive || @ViewBag.Status == FatStatus.left4Bread)
+                            {
+                                <div>
+                                    @Html.DisplayNameFor(model => model.Age)
+                                    @Html.DisplayFor(modelItem => item.Age)
+                                </div>
+
+                                <div>
+                                    @Html.DisplayNameFor(model => model.Cage)
+                                    @Html.DisplayFor(modelItem => item.Cage)
+                                </div>
+                            }
+                            else
+                            {
+                                <div>
+                                    @Html.DisplayNameFor(model => model.KillDateString)
+                                    @Html.DisplayFor(modelItem => item.KillDateString)
+                                </div>
+
+                                <div>
+                                    @Html.DisplayNameFor(model => model.AgeKilled)
+                                    @Html.DisplayFor(modelItem => item.AgeKilled)
+                                </div>
+                                <div>
+                                    @Html.DisplayNameFor(model => model.Weight)
+                                    @Html.DisplayFor(modelItem => item.Weight)
+                                </div>
+                                <div>
+                                    @Html.DisplayNameFor(model => model.Price)
+                                    @Html.DisplayFor(modelItem => item.Price)
+                                </div>
+                            }
+                            <div>
+                                @Html.DisplayNameFor(model => model.Comment)
+                                @Html.DisplayFor(modelItem => item.Comment)
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+
+                            <a class="btn btn-info compItem" href="@Url.Action("FattEdit", "Mate", new { PartId = item.PartId, rabId = item.RabPartId, CalledFrom = Caller.fattPerStat })">Редактировать</a>
+                            <a class="btn btn-link" href="@Url.Action("FatteningView", "Mate", new { partId = item.PartId  })">Окрол</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+     }
+    </tbody>
+</table>
+<div id="modDialog" class="modal fade">
+    <div id="dialogContent" class="modal-dialog"></div>
+</div>
+
+@section scripts
+{
+    <script type="text/javascript">
+
+        $(function () {
+            $.ajaxSetup({ cache: false });
+            $(".compItem").click(function (e) {
+
+                e.preventDefault();
+                $.get(this.href, function (data) {
+                    $('#dialogContent').html(data);
+                    $('#modDialog').modal('show');
+                });
+            });
+        });
+
+
+    </script>
+}

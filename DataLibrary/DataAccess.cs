@@ -40,6 +40,14 @@ namespace DataLibrary
             }
 
         }
+        public static T LoadDataOneLine <T>(string sql)
+        {
+            using (IDbConnection cnn = new MySqlConnection("Server=127.0.0.1;Port=3306;database=rabbitfarm;user id=root; password=Kukuruza144;"))
+            {
+                return cnn.Query<T>(sql).SingleOrDefault();
+            }
+
+        }
         public static int SaveDataRabbit<T>(string sql, T data)
         {
             using (IDbConnection cnn = new MySqlConnection("Server=127.0.0.1;Port=3306;database=rabbitfarm;user id=root; password=Kukuruza144;Charset=utf8;"))
@@ -47,6 +55,26 @@ namespace DataLibrary
                 return cnn.Execute(sql, data);
             }
         }
+        public static int SaveDataRabbit<T>(string sql, List<T> data)
+        {
+            using (IDbConnection cnn = new MySqlConnection("Server=127.0.0.1;Port=3306;database=rabbitfarm;user id=root; password=Kukuruza144;Charset=utf8;"))
+            {
+                foreach(var d in data)
+                {
+                    cnn.Execute(sql, d);
+                }
+                return 1;
+            }
+        }
+        public static int SaveData (string sql)
+        {
+            using (IDbConnection cnn = new MySqlConnection("Server=127.0.0.1;Port=3306;database=rabbitfarm;user id=root; password=Kukuruza144;Charset=utf8;"))
+            {
+                return cnn.Execute(sql);
+            }
+        }
+
+
     }
 
 }
