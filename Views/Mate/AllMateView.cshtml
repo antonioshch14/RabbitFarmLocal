@@ -38,120 +38,109 @@
     <tbody>
         @foreach (var item in Model)
         {
-        <tr>
+            <tr>
 
-            <td>
-                @Html.DisplayFor(modelItem => item.DateString)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MotherId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cage)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PutNestString)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FatherId)
-            </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateString)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MotherId)
+                </td>
+                <td class="partView" onclick="replaceContentsOfDiv(@item.Cage)">
+                    @Html.DisplayFor(modelItem => item.Cage)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PutNestString)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FatherId)
+                </td>
 
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td class="dropdown">
-                <button type="button" class="btn dropdown-toggle" data-toggle="dropdown"></button>
-                <div class="dropdown-menu">
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+                <td class="dropdown">
+                    <button type="button" class="btn dropdown-toggle" data-toggle="dropdown"></button>
+                    <div class="dropdown-menu">
 
-                    <a class="dropdown-item" data-toggle="modal" data-target="#myModal-@item.Id">Удалить</a>
-                    <a class="dropdown-item compItem" href="/Mate/MateEdit?id=@item.Id&caller=@Caller.allmate">Редактировать</a>
-                    @if (item.ParturationId == null)
-                    {
-                        <a class="dropdown-item compItem" href="/Mate/ParturCreate?mateId=@item.Id&motherId=@item.MotherId&fatherId=@item.FatherId&mateDate=@item.Date&caller=@Caller.allmate">Новый окрол</a>
-                        <a class="dropdown-item" data-toggle="modal" data-target="#FailMate-@item.Id">Прохолост</a>
-                    }
-
-                </div>
-            </td>
-            <div class="modal" id="myModal-@item.Id">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-
-                        <div class="modal-header">
-                            <h4 class="modal-title">Вы уврены!!!</h4>
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-
-                        </div>
-                        @if (item.ParturationId == null || item.ParturationId == -1)
+                        <a class="dropdown-item" data-toggle="modal" data-target="#myModal-@item.Id">Удалить</a>
+                        <a class="dropdown-item compItem" href="/Mate/MateEdit?id=@item.Id&caller=@Caller.allmate">Редактировать</a>
+                        @if (item.ParturationId == null)
                         {
-                            <div class="modal-body">
-                                Что хотите удалить покрытие  крольчихи @item.MotherId от @item.DateString?
-                            </div>
-
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-primary " data-dismiss="modal">Отмена</button>
-                                <a class="btn btn-danger" href="/Mate/DeleteMate?id=@item.Id&rabId=@item.MotherId&caller=@Caller.allmate">Удалить</a>
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="modal-body">
-                                Увы, нельзя удалить покрытие  крольчихи @item.MotherId от @item.DateString потому, что уже создан окрол привязанный к этому покрытию. Вы можете удалить окрол вместе с покрытием.
-                            </div>
-
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-primary " data-dismiss="modal">Отмена</button>
-
-                            </div>
+                            <a class="dropdown-item compItem" href="/Mate/ParturCreate?mateId=@item.Id&motherId=@item.MotherId&fatherId=@item.FatherId&mateDate=@item.Date&caller=@Caller.allmate">Новый окрол</a>
+                            <a class="dropdown-item" data-toggle="modal" data-target="#FailMate-@item.Id">Прохолост</a>
                         }
 
                     </div>
-                </div>
-            </div>
-            <div class="modal" id="FailMate-@item.Id">
-                <div class="modal-dialog">
-                    <div class="modal-content">
+                </td>
+                <div class="modal" id="myModal-@item.Id">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
 
-                        <div class="modal-header">
-                            <h4 class="modal-title">Вы уврены!!!</h4>
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <div class="modal-header">
+                                <h4 class="modal-title">Вы уврены!!!</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+                            </div>
+                            @if (item.ParturationId == null || item.ParturationId == -1)
+                            {
+                                <div class="modal-body">
+                                    Что хотите удалить покрытие  крольчихи @item.MotherId от @item.DateString?
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary " data-dismiss="modal">Отмена</button>
+                                    <a class="btn btn-danger" href="/Mate/DeleteMate?id=@item.Id&rabId=@item.MotherId&caller=@Caller.allmate">Удалить</a>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="modal-body">
+                                    Увы, нельзя удалить покрытие  крольчихи @item.MotherId от @item.DateString потому, что уже создан окрол привязанный к этому покрытию. Вы можете удалить окрол вместе с покрытием.
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary " data-dismiss="modal">Отмена</button>
+
+                                </div>
+                            }
 
                         </div>
-
-                        <div class="modal-body">
-                            что хотите отметить покрытие крольчихи @item.MotherId от @item.DateString как ложное?
-                        </div>
-
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-primary" data-dismiss="modal">Отмена</button>
-                            <a class="btn btn-danger" href="/Mate/FailMate?id=@item.Id&rabId=@item.MotherId&caller=@Caller.allmate">Прохолост</a>
-                        </div>
-
                     </div>
                 </div>
-            </div>
-            @*<td>
-            @Html.ActionLink("Удалить", "DeleteMate", new { id = item.Id, rabId = item.MotherId }, new
-            {
-                onclick = "return confirm('Вы уверены, что хотите удалить покрытие " + item.DateString + "?');"
-            }) |
-            @Html.ActionLink("Редактировать", "MateEdit", new { id = item.Id, motherId = item.MotherId, fatherId = item.FatherId, date = item.Date, putNest = item.PutNest }) |
-        </td>
+                <div class="modal" id="FailMate-@item.Id">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
 
-        @if (item.ParturationId == null)
-        {
-            <td>
-                @Html.ActionLink("Новый окрол", "ParturCreate", new { mateId = item.Id, motherId = item.MotherId, fatherId = item.FatherId, mateDate = item.Date }) |
-                @Html.ActionLink("Прохолост", "FailMate", new { id = item.Id, rabId = @ViewBag.LinkableId }, new { onclick = "return confirm('Вы уверены, что хотите отметить это покрытие как ложное?');" })
+                            <div class="modal-header">
+                                <h4 class="modal-title">Вы уврены!!!</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
 
-            </td>
-        }*@
-        </tr>
+                            </div>
+
+                            <div class="modal-body">
+                                что хотите отметить покрытие крольчихи @item.MotherId от @item.DateString как ложное?
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-dismiss="modal">Отмена</button>
+                                <a class="btn btn-danger" href="/Mate/FailMate?id=@item.Id&rabId=@item.MotherId&caller=@Caller.allmate">Прохолост</a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </tr>
         }
     </tbody>
 </table>
 <div id="modDialog" class="modal fade">
     <div id="dialogContent" class="modal-dialog"></div>
+</div>
+<div id="CageImage" class="modal fade">
+    <div id="dialogCageImage" class="modal-dialog"></div>
+    
 </div>
 
 @section scripts
@@ -170,5 +159,27 @@
             });
         })
 
+        function replaceContentsOfDiv(CageId) {
+            $.ajax({
+                url: '@Url.Action("CageDetail", "Cage")',
+                data: { _id: CageId },
+                type: "POST",
+                success: function (data) {
+                    $('#dialogCageImage').html(data);
+                    $('#CageImage').modal('show');
+                }
+            });
+        };
+
     </script>
 }
+@*function replaceContentsOfDiv(CageId) {
+        $.ajax({
+            url: '@Url.Action("_allCagesmage", "Cage")',
+            data: { _id: CageId},
+            type: "POST",
+            success: function (data) {
+            $('.Cage').html(data);
+            }
+            });
+            };*@

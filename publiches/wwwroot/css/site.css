@@ -4,13 +4,15 @@ for details on configuring this project to bundle and minify static web assets. 
 
 a.navbar-brand {
     white-space: normal;
-    text-align: center;
-    word-break: break-all;
+    /*text-align: center;
+    word-break: break-all;*/
 }
-
+td.partView {
+    color: #0324fc;
+}
 /* Provide sufficient contrast against white background */
 a {
-  color: #0366d6;
+    color: #0366d6;
 }
 
 .btn-primary {

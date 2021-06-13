@@ -13,7 +13,9 @@ namespace RabbitFarmLocal.BusinessLogic
         public static ReportModel FillReport()
         {
             ReportModel rep = new ReportModel(); //TotalRabits Females GrowFemales Males GrowMales PregnantFemales FeedFemales RestFemales PutNest RemoveNest Separate Mate
-            int daysBackToUpdateRabbits = 720;
+           int daysBackToUpdateRabbits = 720;
+            //DateTime loadFromMate = DateTime.Today.AddDays(-Settings.FeedDays()-Settings.RestDays()-20);
+            //DateTime loadFromPartur = DateTime.Today.AddDays(-Settings.PregnantDays() - 20);
             DateTime loadFrom = DateTime.Today.AddDays(-daysBackToUpdateRabbits);
             var parturs = LoadParturation(loadFrom);
             var mattings = LoadMating(loadFrom);
@@ -91,7 +93,7 @@ namespace RabbitFarmLocal.BusinessLogic
                         case Status.readyFemale:
                             rep.ReadyFemales++;
                             Mate mate = new Mate();
-                            if (partur != null) mate.Date = partur.Date.AddDays(Settings.FeedDays());
+                            if (partur != null) mate.Date = partur.Date.AddDays(Settings.FeedDays() + Settings.RestDays());
                             else mate.Date = rab.Born.AddDays(Settings.FemaleGrowDays());
                             //mate.Date = DateTime.Now.AddDays(-1);
                             mate.Cage = rab.Cage;

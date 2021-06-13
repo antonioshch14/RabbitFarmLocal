@@ -336,6 +336,14 @@ namespace RabbitFarmLocal.Controllers
             return RedirectToAction("Index");
 
         }
+        public ActionResult CallBotFin()
+        {
+            string report = FinReport.MonthReportString();
+            MyTelegram.SendFinMessageToBot(report);
+
+            return RedirectToAction("Index");
+
+        }
         public ActionResult NotesView(string date)
         {
            // DateTime? dateDateTime=null;

@@ -1,0 +1,182 @@
+﻿@model IEnumerable<RabbitFarmLocal.Models.CageModel>
+
+@{
+    ViewData["Title"] = "CagesView";
+}
+
+<h1>Клетки</h1>
+<div id="modDialog" class="modal fade">
+    <div id="dialogContent" class="modal-dialog"></div>
+</div>
+<div class="Cage">
+    <canvas id="cageImage" width="300" height="300"></canvas>
+    <div id="jsonString" class="d-none">@ViewBag.caJson</div>
+    <div id="CageHighlight" class="d-none">0</div>
+    <script src="~/js/cageImage.js?version=1.0"></script>
+</div>
+
+@*<partial name="_allCagesmage" class="Cage" />*@
+@*@Url.Action("_allCagesmage", "Cage", new { _id = "0" })*@
+@*<div class="Cage"></div>*@
+<p>
+    <a class="btn btn-info compItem" href="@Url.Action("Create")">Создать новую</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th class="col-2">
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th class="col-2">
+                @Html.DisplayNameFor(model => model.Row)
+            </th>
+            <th class="col-2">
+                @Html.DisplayNameFor(model => model.Level)
+            </th>
+            <th class="col-2">
+                @Html.DisplayNameFor(model => model.PositionInRow)
+            </th>
+            <th class="col-2 d-none d-sm-table-cell">
+                @Html.DisplayNameFor(model => model.Width)
+            </th>
+            <th class="col-2 d-none d-sm-table-cell">
+                @Html.DisplayNameFor(model => model.Depth)
+            </th>
+            <th class="col-2 d-none d-sm-table-cell">
+                @Html.DisplayNameFor(model => model.Height)
+            </th>
+            <th class="col-2 d-none d-sm-table-cell">
+                @Html.DisplayNameFor(model => model.MadeString)
+            </th>
+            <th class="col-4">
+                @Html.DisplayNameFor(model => model.Type)
+            </th>
+
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            @*<tr data-toggle="modal" data-target="#myModal-@item.Id">*@
+            <tr href="#myModal-@item.Id" role="button" id="@item.Id" class="tableRow" onclick="replaceContentsOfDiv(@item.Id)">
+                <td class="col-2">
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td class="col-2">
+                    @Html.DisplayFor(modelItem => item.Row)
+                </td>
+                <td class="col-2">
+                    @Html.DisplayFor(modelItem => item.Level)
+                </td>
+                <td class="col-2">
+                    @Html.DisplayFor(modelItem => item.PositionInRow)
+                </td>
+                <td class="col-2 d-none d-sm-table-cell">
+                    @Html.DisplayFor(modelItem => item.Width)
+                </td>
+                <td class="col-2 d-none d-sm-table-cell">
+                    @Html.DisplayFor(modelItem => item.Depth)
+                </td>
+                <td class="col-2 d-none d-sm-table-cell">
+                    @Html.DisplayFor(modelItem => item.Height)
+                </td>
+                <td class="col-2 d-none d-sm-table-cell">
+                    @Html.DisplayFor(modelItem => item.MadeString)
+                </td>
+
+                <td class="col-4">
+                    @Html.DisplayFor(modelItem => item.Type)
+                </td>
+
+            </tr>
+            <div class="modal fade" id="myModal-@item.Id">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Клетка @item.Id</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div>
+                                @Html.DisplayNameFor(model => model.Row)
+                                @Html.DisplayFor(modelItem => item.Row)
+                            </div>
+                            <div>
+                                @Html.DisplayNameFor(model => model.Level)
+                                @Html.DisplayFor(modelItem => item.Level)
+                            </div>
+                            <div>
+                                @Html.DisplayNameFor(model => model.PositionInRow)
+                                @Html.DisplayFor(modelItem => item.PositionInRow)
+                            </div>
+                            <div>
+                                @Html.DisplayNameFor(model => model.Width)
+                                @Html.DisplayFor(modelItem => item.Width)
+                            </div>
+                            <div>
+                                @Html.DisplayNameFor(model => model.Depth)
+                                @Html.DisplayFor(modelItem => item.Depth)
+                            </div>
+                            <div>
+                                @Html.DisplayNameFor(model => model.Height)
+                                @Html.DisplayFor(modelItem => item.Height)
+                            </div>
+                            <div>
+                                @Html.DisplayNameFor(model => model.MadeString)
+                                @Html.DisplayFor(modelItem => item.MadeString)
+                            </div>
+                            <div>
+                                @Html.DisplayNameFor(model => model.Type)
+                                @Html.DisplayFor(modelItem => item.Type)
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <a class="btn btn-info compItem" href="@Url.Action("Edit", new {id=@item.Id})">Редактировать</a>
+                            @*<a class="btn btn-danger" data-toggle="modal" data-target="#DeleteModel-@item.Id">Удалить</a>*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </tbody>
+</table>
+
+
+<div id="modDialog" class="modal fade">
+    <div id="dialogContent" class="modal-dialog"></div>
+</div>
+
+@section scripts
+{
+    <script type="text/javascript">
+        function replaceContentsOfDiv(CageId) {
+        $.ajax({
+            url: '@Url.Action("_allCagesmage", "Cage")',
+            data: { _id: CageId},
+            type: "POST",
+            success: function (data) {
+                $('.Cage').html(data);
+            }
+        });
+        };
+        $(function () {
+            $.ajaxSetup({ cache: false });
+            $(".compItem").click(function (e) {
+
+                e.preventDefault();
+                $.get(this.href, function (data) {
+                    $('#dialogContent').html(data);
+                    $('#modDialog').modal('show');
+                });
+            });
+        })
+        $('.tableRow')
+            .on("dblclick", function () {
+                $('#myModal-' + this.id).modal('toggle');
+            });
+
+    </script>
+}

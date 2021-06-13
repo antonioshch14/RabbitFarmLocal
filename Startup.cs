@@ -44,7 +44,9 @@ namespace RabbitFarmLocal
             services.AddRazorPages();
             services.AddSingleton<IHostedService, UpdateRabbitStatus>();
             services.AddSingleton<IHostedService, SendMessage>();
-            services.AddServerSideBlazor();
+            services.AddSingleton<IHostedService, FinReportForMonth>();
+          
+            //services.AddServerSideBlazor();
             //services.AddSingleton<Settings>();
             Settings.GetSettings();
             MyTelegram.GetTelegram();
@@ -95,8 +97,8 @@ namespace RabbitFarmLocal
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapRazorPages();
-                endpoints.MapBlazorHub();
+                //endpoints.MapRazorPages();
+                //endpoints.MapBlazorHub();
             });
         }
     }

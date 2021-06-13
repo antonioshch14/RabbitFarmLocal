@@ -96,7 +96,7 @@ namespace RabbitFarmLocal.Controllers
             int year = 2021;
             ViewBag.finDates = Settings.FinRepDate();
             ViewBag.year = year;
-             List<FinRepModel> FinList = ReportForYear(year);
+            List<FinRepModel> FinList = ReportForYear(year);
             return View(FinList);
         }
         [HttpPost]

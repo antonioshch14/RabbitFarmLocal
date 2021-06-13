@@ -74,7 +74,7 @@ namespace RabbitFarmLocal.BusinessLogic
                                 }
                             }
                         }
-                        if (age.TotalDays < Settings.FemaleGrowDays()) rab.StoredRabStatus = Status.growFemale; //gow fem
+                        if (age.TotalDays < Settings.FemaleGrowDays()) rab.StoredRabStatus = Status.growFemale; //grow fem
                         else rab.StoredRabStatus = Status.readyFemale;
                     }
                 }

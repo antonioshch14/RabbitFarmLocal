@@ -1,25 +1,25 @@
 ﻿@model IEnumerable<RabbitFarmLocal.Models.DLRabbitModel>
 @using System.Web.Helpers
+@using RabbitFarmLocal.Controllers
 
 @*@{
-    var myChart = new Chart(width: 600, height: 400)
-       .AddTitle("Employees")
-       .AddSeries(chartType: "column",
-          xValue: new[] { "Peter", "Andrew", "Julie", "Mary", "Dave" },
-          yValues: new[] { "2", "6", "4", "5", "3" })
-       .Write();
-}*@
+        var myChart = new Chart(width: 600, height: 400)
+           .AddTitle("Employees")
+           .AddSeries(chartType: "column",
+              xValue: new[] { "Peter", "Andrew", "Julie", "Mary", "Dave" },
+              yValues: new[] { "2", "6", "4", "5", "3" })
+           .Write();
+    }*@
 
 <h2>Кролики</h2>
 
 
-@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>*@
 
-@*@(await Html.RenderComponentAsync<RazorComponentLibrary.ExamplComponent>(RenderMode.ServerPrerendered))*@
 <p>
     @Html.ActionLink("Добавить кролика", "AddRabbit", new { }, new { @class = "compItem" })
 </p>
 
+@*data-href="/Cage/CageDetail?_id=@item.Cage" class="CageImage"*@
 <!--<p>
     @Html.ActionLink("Обновить статус", "UpdateStatus")
 </p>-->
@@ -58,13 +58,13 @@
 
     @foreach (var item in Model)
     {
-        <tr data-toggle="modal" data-target="#modal-@item.Id">
-            <td>
+        <tr>
+            <td class="partView" data-toggle="modal" data-target="#modal-@item.Id">
                 @Html.DisplayFor(modelItem => item.RabbitId)
             </td>
             @if (item.IsAlive)
             {
-                <td>
+                <td class="partView" onclick="replaceContentsOfDiv(@item.Cage)">
                     @Html.DisplayFor(modelItem => item.Cage)
                 </td>
                 <td>
@@ -75,10 +75,7 @@
             {
                 <td>-</td>
                 <td>история</td>
-
             }
-
-
             <td class="d-none d-sm-table-cell">
                 @Html.DisplayFor(modelItem => item.Breed)
             </td>
@@ -96,9 +93,6 @@
             <td class="d-none d-sm-table-cell">
                 @Html.DisplayFor(modelItem => item.BornString)
             </td>
-
-            @*<td onclick="Toggle(@item.Id)">...</td>*@
-
         </tr>
         <div class="modal fade" id="modal-@item.Id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -203,40 +197,15 @@
                 </div>
             </div>
         </div>
-        <!--<div class="modal" id="d" tabindex="-1" role="dialog">
-            <td style="display: none " colspan="4" Id="@item.Id">
-                <a style="display:none"> @Html.DisplayFor(modelItem => item.Id)</a>-->
-        @*@Html.ActionLink("Редактировать", "RabEdit", new { id = item.Id }) |*@
-        @*@Html.ActionLink("Коментарий", "CommentsView", new { id = item.RabbitId }) |*@
-        @*@Html.ActionLink("Подробно", "FUllRabbitView", item) |*@
-        @*@if (!item.IsMale)
-            {
-                <a>
-                    @Html.ActionLink("Покрытия", "MateView", "Mate", routeValues: new { id = item.RabbitId }, htmlAttributes: null) |
-                </a>
-
-            }
-            else
-            {
-                <a>
-                    @Html.ActionLink("Случки", "MaleMate", "Mate", routeValues: new { id = item.RabbitId }, htmlAttributes: null) |
-                </a>
-            }*@
-        @*@Html.ActionLink("Окролы", "ParturView", "Mate", routeValues: new { id = item.RabbitId }, htmlAttributes: null) |*@
-        @*@Html.ActionLink("Взвешивание", "RabWeightView", "Weight", routeValues: new { rabId = item.RabbitId }, htmlAttributes: null) |*@
-
-        @*@Html.ActionLink("В историю", "DeadRabbit", new { id = item.RabbitId }, new { onclick = "return confirm('Вы уверены, что хотите перенести кролика в историю?');" }) |
-            @Html.ActionLink("Удалить", "Delete", new { id = item.RabbitId }, new { onclick = "return confirm('Вы уверены, что хотите удалить всю информацию про кролика " + item.RabbitId + "?');" })*@
-
-        <!--</td>
-        </div>-->
-
 
     }
 
 </table>
 <div id="modDialog" class="modal fade">
     <div id="dialogContent" class="modal-dialog"></div>
+</div>
+<div id="CageImage" class="modal fade">
+    <div id="dialogCageImage" class="modal-dialog"></div>
 </div>
 
 @section scripts
@@ -253,11 +222,18 @@
                     $('#modDialog').modal('show');
                 });
             });
-        })
-                    //function Toggle(Id) {
-                    //    $('#' + Id).toggle();
+        });
 
-
-                    //}
+         function replaceContentsOfDiv(CageId) {
+            $.ajax({
+                url: '@Url.Action("CageDetail", "Cage")',
+                data: { _id: CageId },
+                type: "POST",
+                success: function (data) {
+                    $('#dialogCageImage').html(data);
+                    $('#CageImage').modal('show');
+                }
+            });
+        };
     </script>
 }

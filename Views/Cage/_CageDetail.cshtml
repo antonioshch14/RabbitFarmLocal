@@ -1,0 +1,30 @@
+﻿@model RabbitFarmLocal.Models.CageModel;
+@using RabbitFarmLocal.Models;
+
+<div class="modal-content">
+    <div class="card" style="width: 18rem;">
+        @*<img src="..." class="card-img-top" alt="...">*@
+        <canvas id="cageImage" width="250" height="150"></canvas>
+        <div class="card-body">
+            <h5 class="card-title">Клетка № @Model.Id</h5>
+
+            <p class="card-text">Расположена </p>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">Площадь: @Model.Area() </li>
+            <li class="list-group-item">Ширина: @Model.Width</li>
+            <li class="list-group-item">Длина: @Model.Depth</li>
+            <li class="list-group-item">Высота: @Model.Height</li>
+        </ul>
+        <div class="card-body">
+            <a href="#" class="card-link">Card link</a>
+            <a href="#" class="card-link">Another link</a>
+        </div>
+    </div>
+
+</div>
+
+    <div id="jsonString" value="">@ViewBag.caJson</div>
+    <div id="CageHighlight">@Model.Id</div>
+    <script src="/js/cageImage.js"></script>
+   

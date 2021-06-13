@@ -40,7 +40,9 @@ namespace RabbitFarmLocal.Models
         [Display(Name = "Строительство")]
         Building,
         [Display(Name = "Ремонт")]
-        Repair
+        Repair,
+        [Display(Name = "Продано тушенкой")]
+        SoldASCannedMeat
 
     }
     public class FinRepSelectDates

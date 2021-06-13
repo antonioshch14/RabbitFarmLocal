@@ -55,37 +55,22 @@ namespace RabbitFarmLocal.ViewComponents
                     }
                 }
             }";
-            /*const config = {
-  type: 'line',
-  data: data,
-  options: {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top',
-      },
-      title: {
-        display: true,
-        text: 'Chart.js Line Chart'
-      }
-    }
-  },
-};*/
+           
 
             List<FinRepModel> FinList = ReportForYear(2021);
-            ChartJs chart = new ChartJs();
-            //{
-            //    type = "bar",
-            //    responsive = true
-            //};
+            ChartJs chart = new ChartJs(FinList.Count,false);
             chart.type = "bar";
             chart.responsive = true;
             chart.options.scales.yAxes.Add(new yAxes());
             chart.options.scales.yAxes[0].ticks.beginAtZero=true;
             chart.data.datasets.Add(new Dataset());
+            chart.data.datasets[0].data = new List<string>();
             chart.options.scales.yAxes.Add(new yAxes());
             chart.options.scales.yAxes[1].ticks.beginAtZero = true;
             chart.data.datasets.Add(new Dataset());
+            chart.data.datasets[1].data = new List<string>();
+            chart.options.responsive = true;
+          
             for (int i = 0; i < FinList.Count; i++)
             {
                 chart.data.datasets[0].data.Add(new string(""));
@@ -100,7 +85,6 @@ namespace RabbitFarmLocal.ViewComponents
                 
             }
             //var chart = JsonConvert.DeserializeObject<ChartJs>(chartData);
-
             var chartModel = new ChartJsViewModel
             {
                 Chart = chart,
@@ -109,7 +93,7 @@ namespace RabbitFarmLocal.ViewComponents
                     NullValueHandling = NullValueHandling.Ignore
                 })
             };
-
+            System.Diagnostics.Debug.WriteLine(chartModel.ChartJson);
             return View(chartModel);
         }
     }

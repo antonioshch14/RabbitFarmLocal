@@ -44,6 +44,9 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Finance" asp-action="FinanceRepYearly">Прибыль</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Cage" asp-action="CagesView">Клетки</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="NotesView">Заметки</a>
                         </li>
                         <li class="nav-item">
@@ -71,7 +74,8 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    <script src="~/_framework/blazor.server.js"></script>
+    @*<script src="~/_framework/blazor.server.js"></script>*@
+    <script src="_content/Blazor.Extensions.Canvas/blazor.extensions.canvas.js"></script>
     <script src="~/lib/chartjs/Chart.min.js" asp-append-version="true"></script>
 
 

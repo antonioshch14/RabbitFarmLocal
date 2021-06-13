@@ -5,6 +5,9 @@
 @{
     ViewData["Title"] = "AllFatteningView";
 }
+
+<a class="btn btn-success" href="@Url.Action("CreateCurve", "Weight")">CreateCurve</a>
+
 <a data-toggle="modal" data-target="#ShowHiden" class="btn btn-info">Показать откорм по статусу</a>
 <div class="modal fade" id="ShowHiden">
     <div class="modal-dialog">
@@ -64,10 +67,10 @@
                     <th class="col-2 col-sm-4">
                         @Html.DisplayNameFor(model => Model[0].Collor)
                     </th>
-                    <th class="col-1 d-none d-sm-table-cell">
+                    <th class="col-1 d-none d-sm-table-cell weight">
                         @Html.DisplayNameFor(model => Model[0].LastWeight)
                     </th>
-                    <th class="col-2 col-sm-4">
+                    <th class="col-2 col-sm-4 showWithWeight">
                         @Html.DisplayNameFor(model => Model[0].StatusForAllFattView)
                     </th>
                     <th class="col-2 d-none d-sm-table-cell">
@@ -83,24 +86,25 @@
                 @for (int i = 0; i < Model.Count; i++)
                 {
 
-                    <tr id="row-@i" class="Modals" data-toggle="modal" data-target="#modal-@Model[i].PartId-@Model[i].RabPartId">
+                    <tr id="row-@i" >
 
-                        <td class="col-2 ">
+                        <td class="col-2 Modals partView" data-toggle="modal" data-target="#modal-@Model[i].PartId-@Model[i].RabPartId">
                             @Html.DisplayFor(modelItem => Model[i].Age)
                         </td>
-                        <td class="col-2 d-none d-sm-table-cell">
+                        <td class="col-2 d-none d-sm-table-cell" >
                             @Html.DisplayFor(modelItem => Model[i].RabPartId)
                         </td>
-                        <td class="col-1 col-sm-2">
+                        <td class="col-1 col-sm-2 partView" onclick="replaceContentsOfDiv(@Model[i].Cage)">
                             @Html.DisplayFor(modelItem => Model[i].Cage)
                         </td>
-                        <td class="col-2 col-sm-4">
-                            @Html.DisplayFor(modelItem => Model[i].Collor)
+                        <td class="col-2 col-sm-4 "  >
+                            @if (Model[i].Collor == null || Model[i].Collor =="") {<a>...</a>}
+                            else {@Html.DisplayFor(modelItem => Model[i].Collor)}
                         </td>
-                        <td class="col-1 d-none d-sm-table-cell">
+                        <td class="col-1 d-none d-sm-table-cell weight">
                             @Html.DisplayFor(modelItem => Model[i].LastWeight)
                         </td>
-                        <td class="col-2 col-sm-4">
+                        <td class="col-2 col-sm-4 showWithWeight">
                             @Html.DisplayFor(modelItem => Model[i].StatusForAllFattView)
                         </td>
                         <td class="col-2 d-none d-sm-table-cell">
@@ -235,6 +239,9 @@
 <div id="modDialog" class="modal fade">
     <div id="dialogContent" class="modal-dialog"></div>
 </div>
+<div id="CageImage" class="modal fade">
+    <div id="dialogCageImage" class="modal-dialog"></div>
+</div>
 @*@{
     var myChart = new Chart(width: 600, height: 400)
         .AddTitle("Chart Title")
@@ -268,21 +275,42 @@
         });
         function FillWeightOn() {
             if ($('#WeightButton').hasClass('btn-success')) {
+                if ($(window).width() < 560) {
+                    
+                    $('.showWithWeight').addClass('d-none');
+                }
                 $('.weight').removeClass('d-none');
-                $('.Modals').removeAttr('data-toggle');
+               // $('.Modals').removeAttr('data-toggle');
                 $('#WeightButton').removeClass('btn-success').addClass('btn-danger')
+                
             } else {
+                if ($(window).width() < 560) {
+                    
+                    $('.showWithWeight').removeClass('d-none');
+                }
                 $('.weight').addClass('d-none');
-                $('.Modals').attr('data-toggle', 'modal');
+                //$('.Modals').attr('data-toggle', 'modal');
                 $('#WeightButton').removeClass('btn-danger').addClass('btn-success')
+                
+                
             }
-
         }
         $("input").change(function () {
             if ($(this).val() !== 0) $(this).closest('tr').addClass('modal-body table-success');
             else $(this).closest('tr').removeClass('modal-body table-success');
             $('#SaveButton').removeClass('d-none')
         });
+        function replaceContentsOfDiv(CageId) {
+            $.ajax({
+                url: '@Url.Action("CageDetail", "Cage")',
+                data: { _id: CageId },
+                type: "POST",
+                success: function (data) {
+                    $('#dialogCageImage').html(data);
+                    $('#CageImage').modal('show');
+                }
+            });
+        };
 
     </script>
 }

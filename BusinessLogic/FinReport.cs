@@ -27,6 +27,8 @@ namespace RabbitFarmLocal.BusinessLogic
             rep.SpentOnMed = sp.Where(x => x.Type == FodderName.Medicine).Sum(x => x.Price);
             rep.SpentOnRepair = sp.Where(x => x.Type == FodderName.Repair).Sum(x => x.Price);
             rep.SpentOnSuplim = sp.Where(x => x.Type == FodderName.supliments).Sum(x => x.Price);
+            
+
             foreach (var r in ft.Where(x => x.Status == FatStatus.soldAsMeat))//sold as meat
             {
                 if (r.Price == 0)
@@ -45,7 +47,7 @@ namespace RabbitFarmLocal.BusinessLogic
             }
             rep.SoldForBread = ft.Where(x => x.Status == FatStatus.sold4Bread).Sum(x => x.Price);
             rep.SoldForBread += mr.Where(x => x.StoredRabStatus == Status.sold4Bread).Sum(x => x.Price);//main rabbits
-            foreach (var r in ft.Where(x => x.Status == FatStatus.canned))
+            foreach (var r in ft.Where(x => x.Status == FatStatus.canned)) //canned: calculate all canned and summ up for eaten by us
             {
                 if (r.Price == 0) rep.EatenByUs += Math.Ceiling((double)r.Weight * (double)Settings.DefaultPrice());
                 rep.SoldCanned += r.Price;
@@ -55,6 +57,9 @@ namespace RabbitFarmLocal.BusinessLogic
                 if (r.Price == 0) rep.EatenByUs += Math.Ceiling((double)r.Weight * (double)Settings.DefaultPrice());
                 rep.SoldCanned += r.Price;
             }
+            float soldAsCanned = sp.Where(x => x.Type == FodderName.SoldASCannedMeat).Sum(x => x.Price);//if any sold then substruct from eaten by us and add to sold as meat
+            rep.SoldCanned += soldAsCanned;
+            rep.EatenByUs -= soldAsCanned;
             foreach (var r in ft.Where(x => x.Status == FatStatus.eatenByUs))
             {
                 rep.EatenByUs += Math.Ceiling((double)r.Weight * (double)Settings.DefaultPrice());
@@ -83,6 +88,21 @@ namespace RabbitFarmLocal.BusinessLogic
                 
             }
             return rep;
+        }
+        public static string MonthReportString()
+        {
+            var today = DateTime.Today;
+            DateTime repBegin = new DateTime(today.AddMonths(-1).Year, today.AddMonths(-1).Month, Settings.FinRepDate() + 1);
+            FinRepModel rep = Report(DateToString(repBegin), DateToString(today));
+            string message = string.Format(" за период с {0} по {1} \n\r", DateToStringRU(repBegin), DateToStringRU(today));
+            message += string.Format("- получили всего {0} рубл; \n\r", rep.EarnedTotal);
+            message += string.Format("- получили бы, если бы не кормили семъю {0} рубл; \n\r", rep.EarnedTotalWIthOurConsum);
+            message += string.Format("- накормили семъю на {0} рубл; \n\r", rep.EatenByUs);
+            message += string.Format("- потратили {0} рубл; \n\r", rep.SpentTotal);
+           
+            message += string.Format("- Ваша прибыль {0} рубл; \n\r", rep.BenefitTotal);
+            message += string.Format("- прибыль была бы, если бы не кормили семъю {0} рубл; \n\r", rep.BenefitWithOurConsum);
+            return message;
         }
         public string GerFinReportString (FinRepModel rep)
         {

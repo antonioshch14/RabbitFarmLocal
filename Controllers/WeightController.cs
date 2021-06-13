@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using RabbitFarmLocal.BusinessLogic;
 using RabbitFarmLocal.Models;
 using static RabbitFarmLocal.BusinessLogic.RabbitProcessor;
 using static RabbitFarmLocal.Controllers.MyFunctions;
@@ -133,6 +134,13 @@ namespace RabbitFarmLocal.Controllers
             //Age partAge = new Age(part.Date);
             ViewBag.Message1 = String.Format("Кроликов на откорм {0} ", fatt.Count());
             return View(fatt);
+        }
+        public ActionResult CreateCurve()
+        {
+            WeightLogic.CreateGrowCurve();
+
+            return View();
+
         }
 
     }

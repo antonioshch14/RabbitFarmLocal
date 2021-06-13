@@ -1,0 +1,39 @@
+﻿@model RabbitFarmLocal.Models.CageModel;
+@using RabbitFarmLocal.Models;
+
+<div class="modal-content">
+    <div class="card" style="width: 300;">
+        @*<img src="..." class="card-img-top" alt="...">*@
+        <canvas id="cageImage" width="300" height="150"></canvas>
+        <div class="card-body">
+            <h5 class="card-title">Клетка № @Model.Id</h5>
+            <p class="card-text">@Model.LocationString</p>
+            <button type="button" class="btn btn-link" onclick="Toggle()">Подробно</button>
+
+        </div>
+
+        <ul style="display:none" id="details" class="list-group list-group-flush">
+            <li class="list-group-item">Площадь: @Model.Area() см.кв</li>
+            <li class="list-group-item">Ширина: @Model.Width см</li>
+            <li class="list-group-item">Длина: @Model.Depth см</li>
+            <li class="list-group-item">Высота: @Model.Height см</li>
+        </ul>
+        @*<div class="card-body">
+                <a href="#" class="card-link">Card link</a>
+                <a href="#" class="card-link">Another link</a>
+            </div>*@
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+    </div>
+
+</div>
+
+<div class="d-none" id="jsonString" value="">@ViewBag.caJson</div>
+<div class="d-none" id="CageHighlight">@Model.Id</div>
+<script src="/js/cageImage.js"></script>
+ 
+<script type="text/javascript">
+        function Toggle() {
+            $('#details').toggle();
+        }
+    
+</script>

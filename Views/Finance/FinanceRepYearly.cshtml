@@ -38,110 +38,133 @@
     <tbody>
         @foreach (var item in Model)
         {
-        <tr data-toggle="modal" data-target="#myModal-@item.DateFromStringForEdit">
+            <tr data-toggle="modal" data-target="#myModal-@item.DateFromStringForEdit">
 
-            <div class="modal" id="myModal-@item.DateFromStringForEdit">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title">Отчет с @Html.DisplayFor(modelItem => item.DateFromString) по @Html.DisplayFor(modelItem => item.DateUntilString) (включительно) </h4>
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <div class="modal" id="myModal-@item.DateFromStringForEdit">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Отчет с @Html.DisplayFor(modelItem => item.DateFromString) по @Html.DisplayFor(modelItem => item.DateUntilString) (включительно) </h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+
+                                <div>
+                                    @Html.DisplayNameFor(model => model.EarnedTotal)
+                                    @Html.DisplayFor(modelItem => item.EarnedTotal)
+                                </div>
+                                <div>
+                                    @Html.DisplayNameFor(model => model.EarnedTotalWIthOurConsum)
+                                    @Html.DisplayFor(modelItem => item.EarnedTotalWIthOurConsum)
+                                </div>
+                                <div>
+                                    @Html.DisplayNameFor(model => model.SoldAsMeat)
+                                    @Html.DisplayFor(modelItem => item.SoldAsMeat)
+                                </div>
+                                <div>
+                                    @Html.DisplayNameFor(model => model.SoldForBread)
+                                    @Html.DisplayFor(modelItem => item.SoldForBread)
+                                </div>
+                                <div>
+                                    @Html.DisplayNameFor(model => model.SoldCanned)
+                                    @Html.DisplayFor(modelItem => item.SoldCanned)
+                                </div>
+                                <div>
+                                    @Html.DisplayNameFor(model => model.EatenByUs)
+                                    @Html.DisplayFor(modelItem => item.EatenByUs)
+                                </div>
+                                <div>
+                                    @Html.DisplayNameFor(model => model.SpentTotal)
+                                    @Html.DisplayFor(modelItem => item.SpentTotal)
+                                </div>
+                                <div>
+                                    @Html.DisplayNameFor(model => model.SpentOnGrain)
+                                    @Html.DisplayFor(modelItem => item.SpentOnGrain)
+                                </div>
+                                <div>
+                                    @Html.DisplayNameFor(model => model.SpentOnSuplim)
+                                    @Html.DisplayFor(modelItem => item.SpentOnSuplim)
+                                </div>
+                                <div>
+                                    @Html.DisplayNameFor(model => model.SpentOnHay)
+                                    @Html.DisplayFor(modelItem => item.SpentOnHay)
+                                </div>
+                                <div>
+                                    @Html.DisplayNameFor(model => model.SpentOnMed)
+                                    @Html.DisplayFor(modelItem => item.SpentOnMed)
+                                </div>
+                                <div>
+                                    @Html.DisplayNameFor(model => model.SpentOnBuild)
+                                    @Html.DisplayFor(modelItem => item.SpentOnBuild)
+                                </div>
+                                <div>
+                                    @Html.DisplayNameFor(model => model.SpentOnRepair)
+                                    @Html.DisplayFor(modelItem => item.SpentOnRepair)
+                                </div>
+                                <div>
+                                    @Html.DisplayNameFor(model => model.BenefitTotal)
+                                    @Html.DisplayFor(modelItem => item.BenefitTotal)
+                                </div>
+                                <div>
+                                    @Html.DisplayNameFor(model => model.BenefitWithOurConsum)
+                                    @Html.DisplayFor(modelItem => item.BenefitWithOurConsum)
+                                </div>
+
+                            </div>
+
+
                         </div>
-                        <div class="modal-body">
-
-                            <div>
-                                @Html.DisplayNameFor(model => model.EarnedTotal)
-                                @Html.DisplayFor(modelItem => item.EarnedTotal)
-                            </div>
-                            <div>
-                                @Html.DisplayNameFor(model => model.EarnedTotalWIthOurConsum)
-                                @Html.DisplayFor(modelItem => item.EarnedTotalWIthOurConsum)
-                            </div>
-                            <div>
-                                @Html.DisplayNameFor(model => model.SoldAsMeat)
-                                @Html.DisplayFor(modelItem => item.SoldAsMeat)
-                            </div>
-                            <div>
-                                @Html.DisplayNameFor(model => model.SoldForBread)
-                                @Html.DisplayFor(modelItem => item.SoldForBread)
-                            </div>
-                            <div>
-                                @Html.DisplayNameFor(model => model.SoldCanned)
-                                @Html.DisplayFor(modelItem => item.SoldCanned)
-                            </div>
-                            <div>
-                                @Html.DisplayNameFor(model => model.EatenByUs)
-                                @Html.DisplayFor(modelItem => item.EatenByUs)
-                            </div>
-                            <div>
-                                @Html.DisplayNameFor(model => model.SpentTotal)
-                                @Html.DisplayFor(modelItem => item.SpentTotal)
-                            </div>
-                            <div>
-                                @Html.DisplayNameFor(model => model.SpentOnGrain)
-                                @Html.DisplayFor(modelItem => item.SpentOnGrain)
-                            </div>
-                            <div>
-                                @Html.DisplayNameFor(model => model.SpentOnSuplim)
-                                @Html.DisplayFor(modelItem => item.SpentOnSuplim)
-                            </div>
-                            <div>
-                                @Html.DisplayNameFor(model => model.SpentOnHay)
-                                @Html.DisplayFor(modelItem => item.SpentOnHay)
-                            </div>
-                            <div>
-                                @Html.DisplayNameFor(model => model.SpentOnMed)
-                                @Html.DisplayFor(modelItem => item.SpentOnMed)
-                            </div>
-                            <div>
-                                @Html.DisplayNameFor(model => model.SpentOnBuild)
-                                @Html.DisplayFor(modelItem => item.SpentOnBuild)
-                            </div>
-                            <div>
-                                @Html.DisplayNameFor(model => model.SpentOnRepair)
-                                @Html.DisplayFor(modelItem => item.SpentOnRepair)
-                            </div>
-                            <div>
-                                @Html.DisplayNameFor(model => model.BenefitTotal)
-                                @Html.DisplayFor(modelItem => item.BenefitTotal)
-                            </div>
-                            <div>
-                                @Html.DisplayNameFor(model => model.BenefitWithOurConsum)
-                                @Html.DisplayFor(modelItem => item.BenefitWithOurConsum)
-                            </div>
-
-                        </div>
-
-
                     </div>
+
                 </div>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Month)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EarnedTotal)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EarnedTotalWIthOurConsum)
+                </td>
 
-            </div>
-            <td>
-                @Html.DisplayFor(modelItem => item.Month)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EarnedTotal)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EarnedTotalWIthOurConsum)
-            </td>
-
-            <td>
-                @Html.DisplayFor(modelItem => item.EatenByUs)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SpentTotal)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.BenefitTotal)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.BenefitWithOurConsum)
-            </td>
-
-        </tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EatenByUs)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SpentTotal)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BenefitTotal)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BenefitWithOurConsum)
+                </td>
+            </tr>
         }
+        <tr @*class="table-primary"*@ style="font-weight: bold">
+            <td>
+                Итог
+            </td>
+            <td>
+                @Model.Sum(x => x.EarnedTotal) 
+            </td>
+            <td>
+                @Model.Sum(x => x.EarnedTotalWIthOurConsum)
+            </td>
+
+            <td>
+                @Model.Sum(x => x.EatenByUs)
+            </td>
+            <td>
+                @Model.Sum(x => x.SpentTotal)
+            </td>
+            <td>
+                @Model.Sum(x => x.BenefitTotal)
+            </td>
+            <td>
+                @Model.Sum(x => x.BenefitWithOurConsum)
+            </td>
+        </tr>
     </tbody>
 </table>
 <a class="btn btn-link" href="@Url.Action("SelectPeriodForFinRep")">Выбрать другие даты</a>

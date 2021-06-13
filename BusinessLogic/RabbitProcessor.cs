@@ -549,6 +549,12 @@ namespace RabbitFarmLocal.BusinessLogic
                     t[0], m[0], t[1], m[1], t[2], m[2], tbl, t[2], rabId, t[3], m[3], t[4], m[4], m[5], t[3], t[3], partId, t[0]);
                 return DataAccess.LoadDataRabbit<FattWeightModel>(sql);
             }
+            public static List<FattWeightModel> LoadAll()
+            {
+                string sql = string.Format(@"SELECT w.{0} as {1}, w.{2} as {3}, w.{4} as {5}, w.{6} as {7}, w.{8} as {9}, p.birth_date as {10} FROM {11} w LEFT JOIN parturation p ON w.{6}= p.Id;",
+                    t[0], m[0], t[1], m[1], t[2], m[2], t[3], m[3], t[4], m[4], m[5], tbl);
+                return DataAccess.LoadDataRabbit<FattWeightModel>(sql);
+            }
 
         }
         public static class Note
@@ -638,6 +644,43 @@ namespace RabbitFarmLocal.BusinessLogic
                     " FROM {0} WHERE {11} ={12};", tbl, t[1], m[1], t[2], m[2], t[3], m[3], t[4], m[4], t[5], m[5],t[0],id);
                 return DataAccess.LoadDataOneLine<FinModel>(sql);
             }
+        }
+        public static class Cage
+        {
+            static readonly string tbl = "cage";
+            static readonly string[] t = new string[] { "Id", "location", "built", "width", "depth","height","type" };
+            static readonly string[] m = new string[] { "Id", "Location", "Made", "Width", "Depth", "Height", "Type" };
+            public static int Create(CageModel cg)
+            {
+                string sql = string.Format(@"insert into {0} ({1}, {2}, {3}, {4}, {5}, {6}, {7}) values(@{8}, @{9}, @{10}, @{11}, @{12}, @{13}, @{14});",
+                    tbl, t[0], t[1], t[2], t[3], t[4], t[5], t[6], m[0], m[1], m[2], m[3], m[4], m[5],m[6]);
+                return DataAccess.SaveDataRabbit<CageModel>(sql, cg);
+            }
+            public static int Edit(CageModel cg)
+            {
+                string sql = string.Format(@"UPDATE {0} SET {2}=@{9}, {3}=@{10}, {4}=@{11}, {5}=@{12}, {6}=@{13}, {7}=@{14} WHERE {1} = @{8};",
+                    tbl, t[0], t[1], t[2], t[3], t[4], t[5],t[6], m[0], m[1], m[2], m[3], m[4], m[5], m[6]);
+                return DataAccess.SaveDataRabbit<CageModel>(sql, cg);
+            }
+            public static int Delete(int cg)
+            {
+
+                string sql = String.Format("DELETE FROM {0} WHERE {1}={2};", tbl, t[0], cg);
+                return DataAccess.SaveData(sql);
+            }
+            public static List<CageModel> LoadAll()
+            {
+                string sql = string.Format(@"SELECT {1} as {8}, {2} as {9}, {3} as {10}, {4} as {11}, {5} as {12}, {6} as {13}, {7} as {14} FROM {0} ORDER BY {1} ASC;",
+                    tbl, t[0], t[1], t[2], t[3], t[4], t[5],t[6], m[0], m[1], m[2], m[3], m[4], m[5], m[6]);
+                return DataAccess.LoadDataRabbit<CageModel>(sql);
+            }
+            public static CageModel LoadOne(int Id)
+            {
+                string sql = string.Format(@"SELECT {1} as {8}, {2} as {9}, {3} as {10}, {4} as {11}, {5} as {12}, {6} as {13}, {7} as {14} FROM {0} WHERE {1}={15};",
+                    tbl, t[0], t[1], t[2], t[3], t[4], t[5], t[6], m[0], m[1], m[2], m[3], m[4], m[5], m[6],Id);
+                return DataAccess.LoadDataOneLine<CageModel>(sql);
+            }
+
         }
     }
 

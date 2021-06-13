@@ -37,6 +37,9 @@
                     @Html.DisplayFor(modelItem => item.DateString)
                 </td>
                 <td>
+                    @if (item.Type.Equals(FodderName.SoldASCannedMeat))
+                    {<a>+</a>}
+                    else { <a>-</a>}
                     @Html.DisplayFor(modelItem => item.Price)
                 </td>
                 <td>
@@ -65,6 +68,10 @@
                             </div>
                             <div>
                                 @Html.DisplayNameFor(model => model.Price)
+                                @if (item.Type.Equals(FodderName.SoldASCannedMeat))
+                                {<a>+</a>}
+                                else
+                                { <a>-</a>}
                                 @Html.DisplayFor(modelItem => item.Price)
                             </div>
                             <div>

@@ -30,6 +30,16 @@ namespace RabbitFarmLocal.messaging
                  text: "!!!Танюшечка, у вас, моя дорогая, просрочены следующие задачи: \n\r" + message
                );
         }
-
+        public static void SendFinMessageToBot(string message)
+        {
+            botClient.SendTextMessageAsync(
+                 chatId: 1528799054,
+                 text: "Антон, Ваш финансовый отчёт: \n\r" + message
+               );
+            botClient.SendTextMessageAsync(
+                 chatId: 845900431,
+                 text: "Моя дорогая Танюшечка, благодаря Вашему усердию Вы: \n\r" + message
+               );
+        }
     }
 }

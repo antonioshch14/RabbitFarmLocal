@@ -39,5 +39,11 @@ namespace RabbitFarmLocal.Models
                 return String.Format("{0}-{1}", rabAge.months, rabAge.days);
             }
         }
+        public int days { get {
+                Age rabAge = new Age(Born, Date);
+                return (int)rabAge.daysTot;
+
+            } 
+        }
     }
 }
