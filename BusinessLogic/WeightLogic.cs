@@ -73,8 +73,14 @@ namespace RabbitFarmLocal.BusinessLogic
         {
             int daysToCreateCurve = 30 * 6;
             List<FattWeightModel> weights = FattWeight.LoadAll();
+            List<FattWeightModelComarable> weightsComp=new List<FattWeightModelComarable>(weights.Count);
+            foreach(var w in weights)
+            {
+                weightsComp.Add((FattWeightModelComarable)w);
+
+            }
             // weights.Sort(delegate (FattWeightModel f1, FattWeightModel f2) { return f1.RabId.CompareTo(f2.RabId); });
-            weights.Sort();
+            weightsComp.Sort();
             Console.WriteLine("");
              List <RabWeightCurve> RWC;
 
