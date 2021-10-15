@@ -24,6 +24,7 @@ namespace RabbitFarmLocal.ViewComponents
             chart.data.datasets[0].data = new List<CharData>();
             chart.data.datasets[0].spanGaps = false;
             chart.data.datasets[0].fill = false;
+            chart.data.datasets[0].label = "Вес кролика";
             chart.options.responsive = true;
             chart.options.scales.yAxes.Add(new yAxes());
             chart.options.scales.xAxes.Add(new xAxes());
@@ -63,15 +64,15 @@ namespace RabbitFarmLocal.ViewComponents
             JsonSerializerOptions options = new()
             {
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                WriteIndented=true// change to false in production
+                WriteIndented=true// change to false in production !!!!
             };
             var chartModel = new WeightChartViewModel()
             {
                 Chart = chart,
-                  ChartJson = JsonSerializer.Serialize(chart, options)
+                ChartJson = JsonSerializer.Serialize(chart, options)
                   
               };
-            System.Diagnostics.Debug.WriteLine(chartModel.ChartJson);
+           // System.Diagnostics.Debug.WriteLine(chartModel.ChartJson);
             return View(chartModel);
         }
     }

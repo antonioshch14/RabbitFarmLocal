@@ -66,6 +66,26 @@ namespace RabbitFarmLocal.Models
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         public DateTime? WeightDate { get; set; }
+        [DisplayName("Расчитанный вес")]
+        public double ProjectedWeight { get {
+                if (Born.Year != 1)//to avoit calculation if modewl used not for view building
+                {
+                    double forecas;
+                    TimeSpan eageSpan = DateTime.Today - Born;
+                    int daysRabNow = (int)eageSpan.TotalDays;
+                    if (WeightDate.HasValue)
+                    {
+                        DateTime WD = (DateTime)WeightDate;
+                        TimeSpan TSWeight = (WD - Born);
+                        int daysWeghtMesured = (int)TSWeight.TotalDays;
+                        float riseFactor = RabbitFarmLocal.Start.WeighGrow.GetRiseFactor(daysWeghtMesured, daysRabNow);
+                        forecas = Math.Round(riseFactor * LastWeight, 1);
+                    }
+                    else forecas = Math.Round((double)RabbitFarmLocal.Start.WeighGrow.GetMeanWeight(daysRabNow), 1);
+                    return forecas;
+                } return 0;
+                
+            } }
         [DisplayName("Дата взвешивания")]
         public string WeightDateString { get { return DateToStringRU(WeightDate); } }
         [DisplayName("Цена, руб")]
@@ -108,6 +128,7 @@ namespace RabbitFarmLocal.Models
         canned=7//7
 
     }
+
 
 }
 //public enum ModesOfTransport

@@ -1,0 +1,32 @@
+﻿@model WeightChartCurveViewModel
+    <div class="chart-container" width="600" height="400">
+        <canvas id="myChart0"></canvas>
+    </div>
+
+<div class="chart-container" width="600" height="400">
+    <canvas id="myChart"></canvas>
+</div>
+<div class="chart-container" width="600" height="400">
+    <canvas id="myChart2"></canvas>
+</div>
+<div class="chart-container" width="600" height="400">
+    <canvas id="myChart3"></canvas>
+</div>
+<div class="chart-container" width="600" height="400">
+    <canvas id="myChart4"></canvas>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+         var ctx0 = document.getElementById('myChart0');
+        var myChart = new Chart(ctx0, @Html.Raw(Model.ChartJsonAllLines) );
+        var ctx = document.getElementById('myChart');
+        var myChart = new Chart(ctx, @Html.Raw(Model.ChartJsonW) );
+        var ctx2 = document.getElementById('myChart2');
+        var myChart2 = new Chart(ctx2, @Html.Raw(Model.ChartJsonF) );
+        var ctx3 = document.getElementById('myChart3');
+        var myChart3 = new Chart(ctx3, @Html.Raw(Model.ChartJsonWWOG) );
+        var ctx4 = document.getElementById('myChart4');
+        var myChart4 = new Chart(ctx4, @Html.Raw(Model.ChartJsonWST) );
+
+    });
+</script> 

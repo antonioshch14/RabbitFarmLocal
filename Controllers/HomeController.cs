@@ -46,32 +46,6 @@ namespace RabbitFarmLocal.Controllers
         public ActionResult ViewRabbits()
         {
             ViewBag.Message = "Список кроликов";
-
-            // var data = LoadRabbits();
-            //// var data= UpdateRabbitsStatus();
-            // List<DLRabbitModel> rabbit = new List<DLRabbitModel>();
-            // string genderName;
-            // foreach (var row in data)
-            // {
-            //     if (row.IsMale) genderName = "самец";
-            //     else genderName = "самка";
-            //     rabbit.Add(new DLRabbitModel
-            //     {
-            //         RabbitId = row.RabbitId,
-            //         Mother = row.Mother,
-            //         Father = row.Father,
-            //         Gender = genderName,
-            //         IsAlive = row.IsAlive,
-            //         Cage = row.Cage,
-            //         Id = row.Id,
-            //         Breed = row.Breed,
-            //         Collor = row.Collor,
-            //         IsMale=row.IsMale,
-            //         Born = row.Born,
-            //         StoredRabStatus=row.StoredRabStatus
-
-            //     });
-            // }
             List<DLRabbitModel> rabbits = Rabbit.LoadList();
             return View(rabbits);
         }
@@ -90,13 +64,7 @@ namespace RabbitFarmLocal.Controllers
             };
             if (item.IsAlive) rabbit.IsAlive = "живой";
             else rabbit.IsAlive = "история";
-            //TimeSpan ts = (DateTime.Today - item.Born);
-            //double daysTot = ts.TotalDays;
-            //double years = Math.Floor(daysTot / 365);
-            //double months = Math.Floor(daysTot % 365 / 30);
-            //double days = daysTot % 365 % 30;
             Age age = new Age(item.Born);
-
             rabbit.Age = "Рожден " + item.Born.ToShortDateString() + ", сейчас " + age.years + " лет " + age.months + " месяцев " + age.days + " дней";
             rabbit.Descent = "мать, " + item.Mother + " отец " + item.Father;
             var comments = LoadComments(item.RabbitId);

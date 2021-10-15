@@ -11,15 +11,15 @@ namespace RabbitFarmLocal.Models.Chart
         //}
         public ChartJs(int Charts, bool isNew)
         {
-            data.datasets.Add(new Dataset());
-            if (isNew)
-            {
-                data.datasets[0].data = new CharData[Charts];
-            } else
-            {
+            //data.datasets.Add(new Dataset());
+            //if (isNew)
+            //{
+            //    data.datasets[0].data = new CharData[Charts];
+            //} else
+            //{
 
-                data.datasets[0].data = new string[Charts];
-            }
+            //    data.datasets[0].data = new string[Charts];
+            //}
         }
         public string type { get; set; }
         public static int duration { get; set; }
@@ -91,6 +91,11 @@ namespace RabbitFarmLocal.Models.Chart
     {
         public Scales scales { get; set; } = new Scales();
         public bool responsive { get; set; }
+        public Display legend { get; set; }
+    }
+    public class Display
+    {
+        public bool display { get; set; }
     }
     public class Ticks
     {

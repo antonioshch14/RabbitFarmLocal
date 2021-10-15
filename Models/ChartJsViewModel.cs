@@ -16,4 +16,17 @@ namespace RabbitFarmLocal.Models
         public ChartJs Chart { get; set; }
         public string ChartJson { get; set; }
     }
+    public class WeightChartCurveViewModel
+    {
+        
+        public string ChartJsonW { get; set; }
+       
+        public string ChartJsonF { get; set; }
+        public string ChartJsonWWOG { get; set; }
+        public string ChartJsonWST { get; set; }
+        public string ChartJsonAllLines { get; set; }
+
+    }
+
+
 }

@@ -356,6 +356,17 @@
                 });
             });
         })
+        if (typeof enterMale === "undefined" || !$.isFunction(enterMale)) {
+            function enterMale(id) {
+                $("#fatherId").val(id);
+                controllSaveMateButton();
+                $("#fatherId").on("change",)
+                function controllSaveMateButton() {
+                    if ($("#fatherId").val() != 'выбрать самца') $("#SaveMate").show();
+                    else $("#SaveMate").hide();
+                }
+            }
+        }
 
     </script>
 }

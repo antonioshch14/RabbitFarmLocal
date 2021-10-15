@@ -30,7 +30,9 @@ namespace RabbitFarmLocal.BusinessLogic
                 List<Parents> par = new List<Parents>();
                 LevelOfRelations desc = new LevelOfRelations
                 {
-                    ChildId = male.Id
+                    ChildId = male.Id,
+                    NameAndCage = male.Id.ToString() + "K" + male.Cage.ToString(),
+                    Id=male.IdinDB
                 };
                 void findParent(int _id, int _step, string _path)
                 {
@@ -73,7 +75,7 @@ namespace RabbitFarmLocal.BusinessLogic
             }
             foreach(var fp in relations[0].Parents)// parents of female whose relations are checked
             {
-                foreach (var m in relations)//all males and 0 element is the famale
+                foreach (var m in relations)//all males and 0 element is the female
                 {
                     if (m.ChildId == id) continue;// scip female
                     if (fp.Id == m.ChildId)

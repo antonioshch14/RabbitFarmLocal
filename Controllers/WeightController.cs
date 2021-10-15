@@ -94,9 +94,11 @@ namespace RabbitFarmLocal.Controllers
                     FattWeight.Edit(wgt);
                 }
                 else { int recordCreated = FattWeight.Create(wgt); }
+                RabbitFarmLocal.Start.WeighGrow.UpdateWeitghCurve();
                 if (wgt.ECaller==Caller.allfatt) return RedirectToAction("AllFatteningView", "Mate");
                 return RedirectToAction("FatWeightView", "Weight", new { rabId = wgt.RabId, partId=wgt.PartId });
             }
+            
             return View(wgt);
         }
         public ActionResult FatWeightView(int rabId, int partId)
@@ -135,12 +137,12 @@ namespace RabbitFarmLocal.Controllers
             ViewBag.Message1 = String.Format("Кроликов на откорм {0} ", fatt.Count());
             return View(fatt);
         }
-        public ActionResult CreateCurve()
+        public ActionResult DrawWeightCurve()
         {
-            WeightLogic.CreateGrowCurve();
+            //WeightLogic.CreateGrowCurve();
 
+            //return RedirectToAction("AllFatteningView","Mate");
             return View();
-
         }
 
     }

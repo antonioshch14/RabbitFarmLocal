@@ -14,83 +14,109 @@
 
             <div class="form-group">
                 <label asp-for="Date" class="control-label"></label>
-                <input asp-for="Date" class="form-control" />
+                <input asp-for="Date" class="form-control" value="@ViewBag.Date" data-date-format="yyyy-MM-dd" type="text" placeholder="yyyy-MM-dd"/>
                 <span asp-validation-for="Date" class="text-danger"></span>
             </div>
 
             <div class="form-group">
                 <label asp-for="FatherId" class="control-label"></label>
                 @*<input asp-for="FatherId" class="form-control" />*@
-            <select asp-for="FatherId" class="form-select">
-                <option selected> выбрать самца</option>
-                @foreach (var item in Model.Relations)
-                {
-                   <option value="@item.ChildId">@item.ChildId</option>
-                   
-                }
+                <select asp-for="FatherId" class="form-select" id="fatherId" onchange="controllSaveMateButton()">
+                    <option selected >выбрать самца</option>
+                    @foreach (var item in Model.Relations)
+                    {
+                        <option value="@item.ChildId">@item.ChildId</option>
 
-            </select>
+                    }
+
+                </select>
                 <span asp-validation-for="FatherId" class="text-danger"></span>
             </div>
             @Html.HiddenFor(model => Model.MotherId)
-            @Html.HiddenFor(model=>Model.ECaller)
+            @Html.HiddenFor(model => Model.ECaller)
 
-            <div class="form-group">
-                <input type="submit" value="Сохранить" class="btn btn-primary" />
+            <div class="form-group" style="display:none" id="SaveMate">
+                <input type="submit"  value="Занести покрытие" class="btn btn-primary" />
             </div>
         </form>
     </div>
     <h6>@ViewBag.Message</h6>
     @*<div style="overflow: auto" class="table-responsive">*@
-        <div class="container">
-            <h5>Проверка родственных связей</h5>
-            <table class="table table-bordered">
+    <div class="container">
+        <h5>Проверка родственных связей</h5>
+        <table class="table table-bordered">
+                <tr style="font-size: small">
+                <th style="width: 10%">
+                    Самец
+                </th>
 
-                <tr style="font-size: 0.8rem">
-                    <th style="width: 10%">
-                        Самец
-                    </th>
-                    <th class="w-10 d-none d-sm-table-cell" style="width: 10%">
-                        @Html.DisplayNameFor(model => Model.Relations[0].MatchMatherStep)
-                    </th>
+                <th style="width: 10%">
+                   Совп самки
+                </th>
 
-                    <th class="w-10 d-none d-sm-table-cell" style="width: 10%">
-                        @Html.DisplayNameFor(model => Model.Relations[0].MatchFatherStep)
-                    </th>
-                    <th style="width: 25%">
-                        @Html.DisplayNameFor(model => Model.Relations[0].MotherMatchPath)
-                    </th>
+                <th style="width: 10%">
+                    Совп самца
+                </th>
+                <th style="width: 20%">
+                   Линия самки
+                </th>
 
-                    <th style="width: 25%">
-                        @Html.DisplayNameFor(model => Model.Relations[0].FatherMatchPath)
-                    </th>
+                <th style="width: 20%">
+                   Линия самца
+                </th>
 
+                <th style="width: 5%">
+                </th>
+            </tr>
+
+            @foreach (var item in Model.Relations)
+            {
+                <tr @{ if (item.MatchFatherStep > 0 || item.MatchMatherStep > 0) { <text> class="table-warning" </text>  } else { <text> class="table-success" </text>  } }
+                    onclick="enterMale(@item.ChildId)"
+                    style="font-size:small">
+                    <td style="width: 10%">
+                        ^@Html.DisplayFor(modelItem => item.NameAndCage)
+                    </td>
+                    <td style="width: 10%">
+                        @Html.DisplayFor(modelItem => item.MatchMatherStep)
+                    </td>
+                    <td style="width: 10%">
+                        @Html.DisplayFor(modelItem => item.MatchFatherStep)
+                    </td>
+                    <td style="width: 20%">
+                        +@Html.DisplayFor(modelItem => item.MotherMatchPath)
+                    </td>
+                    <td style="width: 20%">
+                        ^@Html.DisplayFor(modelItem => item.FatherMatchPath)
+                    </td>
+                    <td style="width: 5%">
+                        <a class="d-block btn btn-link" href="@Url.Action("FUllRabbitView", "Home", new {id=item.Id})">...</a>
+                    </td>
                 </tr>
+            }
 
-                @foreach (var item in Model.Relations)
-                {
-                    <tr @{ if (item.MatchFatherStep > 0 || item.MatchMatherStep > 0) { <text> class="table-warning" </text>  } else { <text> class="table-success" </text>  } }>
-                        <td style="width: 10%">
-                            ^@Html.DisplayFor(modelItem => item.ChildId)
-                        </td>
-                        <td class="d-none d-sm-table-cell" style="width: 10%">
-                            @Html.DisplayFor(modelItem => item.MatchMatherStep)
-                        </td>
-                        <td class="d-none d-sm-table-cell " style="width: 10%">
-                            @Html.DisplayFor(modelItem => item.MatchFatherStep)
-                        </td>
-                        <td style="width: 25%">
-                            +@Html.DisplayFor(modelItem => item.MotherMatchPath)
-                        </td>
-                        <td style="width: 25%">
-                            ^@Html.DisplayFor(modelItem => item.FatherMatchPath)
-                        </td>
-
-                    </tr>
-                }
-
-            </table>
-        </div>
+        </table>
+    </div>
     @*</div>*@
 </div>
 
+@section scripts
+{
+    <script type="text/javascript">
+        if (typeof enterMale === "undefined" || !$.isFunction(enterMale)) {
+            function enterMale(id) {
+                $("#fatherId").val(id);
+                controllSaveMateButton();
+                $("#fatherId").on("change",)
+                function controllSaveMateButton() {
+                    if ($("#fatherId").val() != 'выбрать самца') $("#SaveMate").show();
+                    else $("#SaveMate").hide();
+                }
+            }
+        }
+        
+
+        
+       
+    </script>
+}

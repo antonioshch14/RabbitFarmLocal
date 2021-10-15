@@ -93,7 +93,7 @@ namespace RabbitFarmLocal.ViewComponents
                     NullValueHandling = NullValueHandling.Ignore
                 })
             };
-            System.Diagnostics.Debug.WriteLine(chartModel.ChartJson);
+            //System.Diagnostics.Debug.WriteLine(chartModel.ChartJson);
             return View(chartModel);
         }
     }

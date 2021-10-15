@@ -86,6 +86,7 @@ namespace RabbitFarmWeb.Controllers
                 m += (p.ParGender==Gender.самка?"+":"^")+p.Id+ " ("+(p.Step)+") ";
             }
             ViewBag.Message = m;
+            ViewBag.Date = DateToString(DateTime.Now);
             com.Relations.RemoveRange(0, 1);
             com.ECaller = caller;
             if (caller == Caller.report) return PartialView(com);
@@ -501,6 +502,7 @@ namespace RabbitFarmWeb.Controllers
         public ActionResult AllFatteningView()
         {
             List<FatteningModel> fatt = LoadFattenigAllAlive();
+
             
             //Age partAge = new Age(part.Date);
             ViewBag.Message1 = String.Format("Кроликов на откорм {0} ",fatt.Count());
@@ -520,7 +522,7 @@ namespace RabbitFarmWeb.Controllers
                         Date = DateTime.Now.Date,
                         Weight = ft.NewWeight
                     };
-                    if (ft.WeightDate == DateTime.Now.Date)
+                    if (ft.WeightDate == DateTime.Now.Date)//update if weight for today already exists
                     {
                         List<FattWeightModel> wgtToFindIfLatestExist = FattWeight.Load(wgt.RabId, wgt.PartId);
                         wgt.Id = wgtToFindIfLatestExist.Find(x => x.Date == wgt.Date).Id;

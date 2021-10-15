@@ -416,7 +416,7 @@ namespace RabbitFarmLocal.BusinessLogic
         }
         public static List<ParentsFull> LoadParents()
         {
-            string sql = @"select rabId as Id, mother as MotherId, father as FatherId, isAlive as IsAlive, isMale as IsMale from rabbits;";
+            string sql = @"select Id as IdinDB, rabId as Id, mother as MotherId, father as FatherId, isAlive as IsAlive, isMale as IsMale, cage as Cage from rabbits;";
             List<ParentsFull> rabbits = DataAccess.LoadDataRabbit<ParentsFull>(sql);
             return rabbits;
         }
@@ -454,7 +454,10 @@ namespace RabbitFarmLocal.BusinessLogic
             }
             //string dateFrom = DateToString(until.AddDays(-period));
             string sql = @"SELECT f.partId as PartId, f.rabPartId as RabPartId, f.cage as Cage, f.collor as Collor, f.status as Status, f.rabbitGender as RabbitGender, " +
-                "f.weight as Weight, f.price as Price, f.comment as Comment, p.birth_date as Born, f.killDate as KillDate FROM fattening f LEFT JOIN parturation p ON f.partId=p.Id WHERE f.status in (" + stSQL + ") AND p.birth_date >= '" + from + "' AND p.birth_date <= '" + until + "';";
+                "f.weight as Weight, f.price as Price, f.comment as Comment, p.birth_date as Born, f.killDate as KillDate, b.weight as LastWeight FROM fattening f LEFT JOIN parturation p ON f.partId=p.Id " +
+                "LEFT JOIN (SELECT b1.*  FROM fat_weight b1 JOIN (SELECT rabId, partId, MAX(date) As maxDate FROM fat_weight GROUP BY rabId, partId ) b2 " +
+                "ON b1.rabId = b2.rabId AND b1.partId= b2.partId AND b1.date = b2.maxDate) b ON f.partId = b.partId AND f.rabPartId = b.rabId " +
+                " WHERE f.status in (" + stSQL + ") AND p.birth_date >= '" + from + "' AND p.birth_date <= '" + until + "';";
             return DataAccess.LoadDataRabbit<FatteningModel>(sql);
         }
         public static List<FatteningModel> LoadFattenigPerStatusKilled(string from, string until, params int[] stat)

@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Localization;
 using RabbitFarmLocal.Scheduler;
 using RabbitFarmLocal.Start;
 using RabbitFarmLocal.messaging;
+using RabbitFarmLocal.BusinessLogic;
 
 namespace RabbitFarmLocal
 {
@@ -49,6 +50,8 @@ namespace RabbitFarmLocal
             //services.AddServerSideBlazor();
             //services.AddSingleton<Settings>();
             Settings.GetSettings();
+            WeighGrow.GetWeightGrow();
+            //RabWeightCurve.GetRabWeightCurve();
             MyTelegram.GetTelegram();
             // services.AddHostedService<TimedHostedService>();// scheduling test
             // services.AddSingleton<IDataAccess, DataAccess>();

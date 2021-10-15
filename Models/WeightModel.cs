@@ -25,7 +25,7 @@ namespace RabbitFarmLocal.Models
         
 
     }
-    public class FattWeightModel: WeightModel
+    public class FattWeightModel: WeightModel//, IComparable
     {
       
         public int PartId { get; set; }
@@ -45,5 +45,18 @@ namespace RabbitFarmLocal.Models
 
             } 
         }
+        //int IComparable.CompareTo(object obj)
+        //{
+            
+        //        FattWeightModel r = (FattWeightModel) obj;
+               
+        //        if (this.RabId > r.RabId || this.PartId > r.PartId)
+        //            return 1;
+        //        else if (this.RabId < r.RabId || this.PartId < r.PartId)
+        //            return -1;
+        //        else
+        //            return 0;
+        //}
+ 
     }
 }

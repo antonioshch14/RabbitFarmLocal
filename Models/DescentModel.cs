@@ -42,7 +42,9 @@ namespace RabbitFarmLocal.Models
         [Display(Name = "Степень")]
         public int Step { get; set; }
         [Display(Name = "Кролик")]
-        public int Id { get; set; }
+        public int Id { get; set; }//it is an RadId, i.e. rab name
+        public int IdinDB { get; set; }//real id of rabbit
+        public int Cage { get; set; }
         [Display(Name = "Мать")]
         public int MotherId { get; set; }
         [Display(Name = "Отец")]
@@ -56,6 +58,11 @@ namespace RabbitFarmLocal.Models
         
         [Display(Name = "Кролик")]
         public int ChildId { get; set; }
+        public int Id { get; set; }
+
+        [Display(Name = "Самец")]
+        public string NameAndCage { get; set; }
+
         [Display(Name = "Совпадение в поколении самки")]
         public int MatchMatherStep { get; set; }
         [Display(Name = "Линия совпадения по самке")]

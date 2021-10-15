@@ -123,14 +123,15 @@ namespace RabbitFarmLocal.BusinessLogic
         }
         public static string? GetAlertString()
         {
-            
+            int numb = 1;
             string? message = null;
             ReportModel repport = FillReport();
             foreach (var pn in repport.PutNest)
             {
                 if (pn.Alert)
                 {
-                    message += String.Format("поставить гездо крольчихе {0} (клетка {2}) нужно было {1} \n\r", pn.RabbitId, pn.DateString,pn.Cage);
+                    message += String.Format("{3})поставить гездо крольчихе {0} (клетка {2}) нужно было {1} \n\r", pn.RabbitId, pn.DateString,pn.Cage,numb);
+                    numb++;
                     
                 }
             }
@@ -138,7 +139,8 @@ namespace RabbitFarmLocal.BusinessLogic
             {
                 if (rn.Alert)
                 {
-                    message += String.Format("убрать гездо у крольчихи {0} (клетка {2}) нужно было {1} \n\r", rn.RabbitId, rn.DateString,rn.Cage);
+                    message += String.Format("{3})убрать гездо у крольчихи {0} (клетка {2}) нужно было {1} \n\r", rn.RabbitId, rn.DateString,rn.Cage,numb);
+                    numb++;
                     
                 }
             }
@@ -146,7 +148,8 @@ namespace RabbitFarmLocal.BusinessLogic
             {
                 if (m.Alert)
                 {
-                    message += String.Format("покрыть крольчиху {0} (клетка {2}) нужно было {1} \n\r", m.RabbitId, m.DateString,m.Cage);
+                    message += String.Format("{3})покрыть крольчиху {0} (клетка {2}) нужно было {1} \n\r", m.RabbitId, m.DateString,m.Cage,numb);
+                    numb++;
                     
                 }
             }
@@ -154,7 +157,8 @@ namespace RabbitFarmLocal.BusinessLogic
             {
                 if (s.Alert)
                 {
-                    message += String.Format("рассадить крольчат от крольчихи {0} (клетка {2}) нужно было {1} \n\r", s.RabbitId, s.DateString,s.Cage);
+                    message += String.Format("{3})рассадить крольчат от крольчихи {0} (клетка {2}) нужно было {1} \n\r", s.RabbitId, s.DateString,s.Cage,numb);
+                    numb++;
                    
                 }
             }
@@ -162,7 +166,8 @@ namespace RabbitFarmLocal.BusinessLogic
             {
                 if (c.Alert)
                 {
-                    message += String.Format("проверить окрол крольчихи {0} (клетка {2}) нужно было {1} \n\r", c.RabbitId, c.DateString, c.Cage);
+                    message += String.Format("{3})проверить окрол крольчихи {0} (клетка {2}) нужно было {1} \n\r", c.RabbitId, c.DateString, c.Cage,numb);
+                    numb++;
 
                 }
             }
