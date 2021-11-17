@@ -1,4 +1,6 @@
-﻿using System;
+﻿using RabbitFarmLocal.BusinessLogic;
+using RabbitFarmLocal.Start;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -8,27 +10,52 @@ using static RabbitFarmLocal.Controllers.MyFunctions;
 
 namespace RabbitFarmLocal.Models
 {
-    public class DLRabbitModel: RabbitKillModel
+    public class DLRabbitModel :  IDescent
     {
-        public int Id { get; set; } //RabbitId Cage  RabbitGender Breed  BreedType Collor  Born Mother Father IsAlive Status 
+        private Descent DescentInstance = new Descent();
+        public string Breed { get; set; }
+        [DisplayName("Порода")]
+        public string BreedString { get; set; }
+        public Dictionary<int, int> BreedDict { get; set; }
+        public int BreedId { get; set; }
+        public void GetBreedDictionary()
+        {
+            BreedDict = DescentInstance.GetBreedDictionary(Breed);
+        }
+
+        public void CreateBreedDictionary()
+        {
+            BreedDict = BreedLogic.GetBreedDictionaryForRabit(Mother, Father);
+        }
+        public void SetBreedString()
+        {
+            Breed = DescentInstance.SetBreedString(BreedDict);
+        }
+        public void SetBreedStringToDisplay()
+        {
+            BreedString = DescentInstance.SetBreedStringToDisplay(Breed);
+        }
+
+        public int Id { get; set; }
         [DisplayName("Номер кролика")] // Id rabId cage born mother father isMale status
         public int RabbitId { get; set; }
         [DisplayName("Клетка")]
         public int Cage { get; set; }
-        
+
         public bool IsMale { get; set; }
         [DisplayName("Пол")]
         public string Gender { get; set; }
-        [DisplayName("Порода")]
-
-        public string Breed { get; set; }
         [DisplayName("Окрас")]
         public string Collor { get; set; }
 
         [DisplayName("Д.р.")]
-        public string BornString { get {
+        public string BornString
+        {
+            get
+            {
                 return DateToStringRU(Born);
-            } }
+            }
+        }
 
         [DisplayName("Д.р.")]
         [DataType(DataType.Date)]
@@ -42,28 +69,6 @@ namespace RabbitFarmLocal.Models
         public int Father { get; set; }
         [DisplayName("Живой")]
         public bool IsAlive { get; set; }
-        //[DisplayName("Статус")]
-        //public Status? RabbitStatus {
-        //    get  {
-        //        if (StoredRabStatus != null) return StoredRabStatus.Value;
-        //        else {
-        //            if (!IsAlive) return Status.history;
-        //            TimeSpan age = (DateTime.Today - Born);
-
-        //            if (IsMale)
-        //            {
-        //                if (age.TotalDays < 30 * 9) return Status.growMale;
-        //                return Status.workMale;
-        //            }
-        //            else
-        //            {
-        //                if (age.TotalDays < 30 * 9) return Status.growFemale;
-        //                return Status.readyFemale;
-        //            }
-        //        }
-
-        //    }
-        //        }
         [DisplayName("Статус")]
         public Status? StoredRabStatus { get; set; }
 
@@ -71,16 +76,18 @@ namespace RabbitFarmLocal.Models
         public string Age
         {
             get
-            { String age = "";
+            {
+                String age = "";
                 if (IsAlive)
                 {
                     Age rabAge = new Age(Born, DateTime.Today);
-                    age= String.Format(" лет:{0} мес:{1} дн:{2}", rabAge.years, rabAge.months, rabAge.days);
-                } else
+                    age = String.Format(" лет:{0} мес:{1} дн:{2}", rabAge.years, rabAge.months, rabAge.days);
+                }
+                else
                 {
-                    DateTime TermDateSub=DateTime.Today;
-                    if(TermDate != null) TermDateSub =  (DateTime)TermDate;
-                    
+                    DateTime TermDateSub = DateTime.Today;
+                    if (TermDate != null) TermDateSub = (DateTime)TermDate;
+
                     Age rabAge = new Age(Born, TermDateSub);
                     age = String.Format(" лет:{0} мес:{1} дн:{2}", rabAge.years, rabAge.months, rabAge.days);
                 }
@@ -88,10 +95,9 @@ namespace RabbitFarmLocal.Models
             }
         }
         [Display(Name = "пол")]
-        public RabGender RabbitGender { get; set; } 
-    }
-    public class RabbitKillModel //  termDate price killWeight
-    {
+        public RabGender RabbitGender { get; set; }
+        public int? PartId { get; set; }
+        public int? PartRabId { get; set; }
         [DisplayName("Дата перехода в историю г-м-д")] // TermDate Weight Price
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
@@ -103,8 +109,22 @@ namespace RabbitFarmLocal.Models
         public float Weight { get; set; }
         [DisplayName("Цена")]
         public int Price { get; set; }
-        
     }
+    //public class RabbitKillModel //  termDate price killWeight
+    //{
+    //    [DisplayName("Дата перехода в историю г-м-д")] // TermDate Weight Price
+    //    [DataType(DataType.Date)]
+    //    [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+    //    public DateTime? TermDate { get; set; } = null;
+    //    [DisplayName("Дата смерти")]
+    //    public string TermDateString { get { return DateToStringRU(TermDate); } }
+    //    public string TermDateStringForEdit { get { return DateToString(TermDate); } }
+    //    [DisplayName("Выход мяса")]
+    //    public float Weight { get; set; }
+    //    [DisplayName("Цена")]
+    //    public int Price { get; set; }
+        
+    //}
     public class RabbitModelDelete
     {
         public int RabbitId { get; set; }

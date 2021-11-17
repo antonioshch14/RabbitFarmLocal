@@ -2,25 +2,64 @@
 @using RabbitFarmLocal.Models
 
 
-    <hr />
-    <div class="modal-content">
-        <h4>Занести в базу нового кролика</h4>
-        <div class="col-md-6 col-sm-12">
-            <form asp-action="AddRabbit">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<hr />
+<div class="modal-content">
+    <h4>Занести в базу нового кролика</h4>
+    <div class="col-md-6 col-sm-12">
+        <form asp-action="AddRabbit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @if (ViewBag.Error != null)
+            {
+                <a>@ViewBag.Error</a>
+            }
+            else
+            {
                 <div class="form-group">
                     <label asp-for="RabbitId" class="control-label"></label>
-                    <input asp-for="RabbitId" class="form-control" />
+                    <input asp-for="RabbitId" class="form-control" value=@Model.RabbitId />
+                    <a>Рекомендованный номер @Model.RabbitId</a>
                     <span asp-validation-for="RabbitId" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="Cage" class="control-label"></label>
-                    <input asp-for="Cage" class="form-control" />
+                    @*<select asp-for="Cage" class="form-select" id="Cage">
+                    <option selected></option>
+                    @foreach (var item in Model.CageList)
+                    {
+                        if (item.Occupancy== occupancy.empty)
+                {
+                <option value="@item">@item</option>
+                }
+
+
+                    }
+
+                </select>*@
+                    <select id="CageList" class="form-control" asp-for="Cage" asp-items="@(new SelectList(Model.CageList, "Id", "OccupancyString"))">
+                        <option value="">Выберете клетку</option>
+                    </select>
                     <span asp-validation-for="Cage" class="text-danger"></span>
                 </div>
+                <div class="btn btn-outline-info" data-toggle="collapse" data-target="#Cage" aria-expanded="false" aria-controls="Cage">Клетки</div>
+                <br />
+                <div class="collapse" id="Cage">
+                    <canvas id="cageImage" width="300" height="300"></canvas>
+                    <div id="jsonString" class="d-none">@ViewBag.caJson</div>
+                    <div id="CageHighlight" class="d-none">0</div>
+                    @*<script src="~/js/cageImage.js"></script>*@
+                    <script type="text/javascript">
+                        initiate();
+                        drawCages();
+                        initiateSelect();
+                    </script>
+                </div>
+                <br />
                 <div class="form-group">
                     <label asp-for="RabbitGender" class="control-label"></label>
-                    <select asp-for="RabbitGender" asp-items="Html.GetEnumSelectList<Gender>()"></select>
+                    <select asp-for="RabbitGender" asp-items="Html.GetEnumSelectList<Gender>()">
+                        <option selected>@Model.RabbitGender</option>
+                    </select>
+
                     <span asp-validation-for="RabbitGender" class="text-danger"></span>
                 </div>
                 <div class="form-group">
@@ -30,22 +69,22 @@
                 </div>
                 <div class="form-group">
                     <label asp-for="Collor" class="control-label"></label>
-                    <input asp-for="Collor" class="form-control" />
+                    <input asp-for="Collor" class="form-control" value=@Model.Collor />
                     <span asp-validation-for="Collor" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="Born" class="control-label"></label>
-                    <input asp-for="Born" class="form-control" />
+                    <input asp-for="Born" class="form-control" value=@ViewBag.Date asp-format="{0:yyyy-MM-dd}" />
                     <span asp-validation-for="Born" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="Mother" class="control-label"></label>
-                    <input asp-for="Mother" class="form-control" />
+                    <input asp-for="Mother" class="form-control" value=@Model.Mother />
                     <span asp-validation-for="Mother" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="Father" class="control-label"></label>
-                    <input asp-for="Father" class="form-control" />
+                    <input asp-for="Father" class="form-control" value=@Model.Father />
                     <span asp-validation-for="Father" class="text-danger"></span>
                 </div>
                 <div class="form-group form-check">
@@ -56,12 +95,23 @@
                 <div class="form-group">
                     <input type="submit" value="Занести нового кролика" class="btn btn-primary" />
                 </div>
-            </form>
-        </div>
+            }
+
+            @Html.HiddenFor(model => Model.PartRabId)
+            @Html.HiddenFor(model => Model.PartId)
+        </form>
     </div>
+</div>
 
-   
+<script type="text/javascript">
+    initiate();
+    drawCages();
 
-    @section Scripts {
-        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    }
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+<script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>

@@ -14,8 +14,10 @@ namespace RabbitFarmLocal.Models
             [Required(ErrorMessage = "Введите номер кролика")]
             public int RabbitId { get; set; }
             [Display(Name = "Номер клетки")]
-            [Required(ErrorMessage = "Введите номер клетки")]
+            [Required(ErrorMessage = "Выберите номер клетки")]
             public int Cage { get; set; }
+            public List<ListOfCages> CageList { get; set; }
+            public int[] CageListTest { get; set; }
 
              [Display(Name = "пол")]
              public Gender RabbitGender { get; set; } = Gender.самка;
@@ -39,7 +41,8 @@ namespace RabbitFarmLocal.Models
             public int Father { get; set; } = 0;
             [Display(Name = "отметить если живой")]
             public bool IsAlive { get; set; } = true;
-            
+            public int? PartId { get; set; }
+        public int? PartRabId { get; set; }
 
 
        

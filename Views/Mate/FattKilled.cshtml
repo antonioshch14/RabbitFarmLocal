@@ -1,10 +1,12 @@
 ﻿@model RabbitFarmLocal.Models.FatteningModel
 
-<h4>Укажите вес забоя и дату</h4>
-<hr />
+
+
 <div class="modal-content">
     <div class="col-md-4">
         <form asp-action="FattKilled">
+            <h4>Укажите вес забоя и дату</h4>
+            <hr />
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <div class="form-group">
@@ -17,7 +19,9 @@
                 <select asp-for="Status" asp-items="Html.GetEnumSelectList<FatStatusKilledView>()"></select>
                 <span asp-validation-for="Status" class="text-danger"></span>
             </div>
-
+            <div asp-validation-summary="ModelOnly">
+                <span>Please correct the following errors</span>
+            </div>
             <div class="form-group">
                 <label asp-for="Weight" class="control-label"></label>
                 <input asp-for="Weight" class="form-control" />
@@ -51,3 +55,5 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+<script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>

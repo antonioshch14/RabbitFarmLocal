@@ -34,6 +34,7 @@ namespace RabbitFarmLocal.Models
         public int FatherId { get; set; }
         [Display(Name = "Линия")]
         public string Path { get; set; }
+        public bool BeginnerOfLine { get; set; } = false;
 
     }
     public class ParentsFull

@@ -12,7 +12,12 @@
     <canvas id="cageImage" width="300" height="300"></canvas>
     <div id="jsonString" class="d-none">@ViewBag.caJson</div>
     <div id="CageHighlight" class="d-none">0</div>
-    <script src="~/js/cageImage.js?version=1.0"></script>
+    <script src="~/js/cageImageForCage.js"></script>
+    <script type="text/javascript">
+        initiate();
+        drawCages();
+    </script>
+    @*<script src="~/js/cageImage.js?version=1.0"></script>*@
 </div>
 
 @*<partial name="_allCagesmage" class="Cage" />*@
@@ -134,9 +139,25 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <a class="btn btn-info compItem" href="@Url.Action("Edit", new {id=@item.Id})">Редактировать</a>
-                            @*<a class="btn btn-danger" data-toggle="modal" data-target="#DeleteModel-@item.Id">Удалить</a>*@
+                            <a class="btn btn-info compItem" href="@Url.Action("Edit", new {id=@item.Id})" data-dismiss="modal">Редактировать</a>
+                            <a class="btn btn-danger" data-toggle="modal" data-target="#delete-@item.Id">Удалить</a>
+                            
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal" id="delete-@item.Id">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Вы уврены, что хотите удалить клетку @item.Id?</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+
+                        <div class="modal-footer">
+                            <a class="btn btn-danger" href="@Url.Action("Delete","Cage",new { id=@item.Id})">Удалить</a>
+                        </div> <button type="button" class="btn btn-info" data-dismiss="modal">Не удалять</button>
+
                     </div>
                 </div>
             </div>
@@ -151,7 +172,9 @@
 
 @section scripts
 {
+    
     <script type="text/javascript">
+        drawCages();
         function replaceContentsOfDiv(CageId) {
         $.ajax({
             url: '@Url.Action("_allCagesmage", "Cage")',

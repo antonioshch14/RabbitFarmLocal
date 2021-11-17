@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.EntityFrameworkCore;
-using RabbitFarmLocal.Data;
+//using Microsoft.EntityFrameworkCore;
+//using RabbitFarmLocal.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -36,11 +36,11 @@ namespace RabbitFarmLocal
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            //services.AddDbContext<ApplicationDbContext>(options =>
+            //    options.UseSqlServer(
+            //        Configuration.GetConnectionString("DefaultConnection")));
+            //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            //    .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
             services.AddRazorPages();
             services.AddSingleton<IHostedService, UpdateRabbitStatus>();
@@ -51,6 +51,7 @@ namespace RabbitFarmLocal
             //services.AddSingleton<Settings>();
             Settings.GetSettings();
             WeighGrow.GetWeightGrow();
+            ConstantsSingelton.GetConstantSingelton();
             //RabWeightCurve.GetRabWeightCurve();
             MyTelegram.GetTelegram();
             // services.AddHostedService<TimedHostedService>();// scheduling test
@@ -63,7 +64,7 @@ namespace RabbitFarmLocal
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
+                //app.UseDatabaseErrorPage();
             }
             else
             {

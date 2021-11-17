@@ -10,13 +10,6 @@ namespace RabbitFarmLocal.BusinessLogic
 {
     public static class CheckRabbitRelations
     {
-        //public static void CheckForMails(int Id)
-        //{
-        //    List<ParentsFull> rabbits = LoadParents();
-        //    List<ParentsFull> malesAndFem = new List<ParentsFull>();
-        //    malesAndFem.Add(rabbits.Find(x => x.Id == Id));
-        //    malesAndFem.AddRange(rabbits.FindAll(x => x.IsAlive == true && x.IsMale == true));
-        //}
         public static List<LevelOfRelations> CheckRelations(int id)
         {
             List<ParentsFull> rabbits = LoadParents();

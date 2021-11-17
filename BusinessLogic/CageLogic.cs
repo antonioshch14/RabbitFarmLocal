@@ -26,6 +26,8 @@ namespace RabbitFarmLocal.BusinessLogic
             }
             int? row = null, pos = null, lev = null;
             int? r = null, p = null;//to track changes
+            List<ListOfCages> CL = RabbitFarmLocal.Start.ConstantsSingelton.GetCageLists();//cage livers
+            ListOfCages cl = new ListOfCages();
             CageAssumptions ca = new();
 
             foreach (var c in cages)
@@ -83,14 +85,20 @@ namespace RabbitFarmLocal.BusinessLogic
                     ca.Rows.Last().Frames.Last().Levels = new List<CageLevel>();
                     lev = 1;
                 }
+                cl = CL.Find(x => x.Id == c.Id);//find this cage in Cage Livers 
                 ca.Rows.Last().Frames.Last().Levels.Add(new CageLevel
                 {
                     Nr = (int)lev,
-                    Id = c.Id
+                    Id = c.Id,
+                    Oc=cl.Occupancy,
+                    Rbs=cl.Livers
                 });
 
                 lev++;
 
+
+            }
+            {
 
             }
             // ViewBag.CA = ca;

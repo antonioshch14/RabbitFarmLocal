@@ -30,7 +30,7 @@ namespace RabbitFarmLocal.BusinessLogic
         public RabWeightCurve() { }
         public int RabId { get; set; }
         public int PartId { get; set; }
-        public static int daysToStoreCurve = 30 * 6;
+        public static int daysToStoreCurve = 30 * 7;
         public GrowStat Status { get; set; }
         public Weight[] WeightArray { get; set; }
         public RabWeightCurve(int daysToStore)

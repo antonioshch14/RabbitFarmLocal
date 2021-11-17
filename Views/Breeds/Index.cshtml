@@ -1,0 +1,39 @@
+﻿@model IEnumerable<RabbitFarmLocal.Models.BreedsModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Породы</h1>
+<@*a class="btn btn-success" href="@Url.Action("PopulateBreeds", "Breeds")">Создать таблицу Породы</a>
+<a class="btn btn-success" href="@Url.Action("AssignBreedId", "Breeds")">Назначить номера пород</a>*@
+<a class="btn btn-success" href="@Url.Action("FillBreeds", "Breeds")">Определить породы основных кроликов</a>
+<a class="btn btn-success" href="@Url.Action("FillBreedForFattening", "Breeds")">Определить породы откорма</a>
+<p>
+    <a asp-action="Create">Добавить породу</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Редактировать</a> |
+                    @*<a asp-action="Details" asp-route-id="@item.Id">Details</a> |*@
+                    <a asp-action="Delete" asp-route-id="@item.Id">Удалить</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

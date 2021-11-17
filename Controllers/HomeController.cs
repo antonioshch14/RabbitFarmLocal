@@ -11,10 +11,13 @@ using static RabbitFarmLocal.BusinessLogic.RabbitProcessor;
 using static RabbitFarmLocal.Controllers.MyFunctions;
 using static RabbitFarmLocal.BusinessLogic.DataUpdates;
 using static RabbitFarmLocal.BusinessLogic.CreateReport;
+using static RabbitFarmLocal.BusinessLogic.CageLogic;
 
 using RabbitFarmLocal.Start;
 using RabbitFarmLocal.messaging;
 using RabbitFarmLocal.BusinessLogic;
+using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace RabbitFarmLocal.Controllers
 {
@@ -46,7 +49,13 @@ namespace RabbitFarmLocal.Controllers
         public ActionResult ViewRabbits()
         {
             ViewBag.Message = "Список кроликов";
+          
             List<DLRabbitModel> rabbits = Rabbit.LoadList();
+            foreach(var rab in rabbits)
+            {
+               // rab.GetBreedDictionary();
+                rab.SetBreedStringToDisplay();
+            }
             return View(rabbits);
         }
         //[Authorize(Roles = "admin,owner")]
@@ -60,7 +69,8 @@ namespace RabbitFarmLocal.Controllers
                 Gender = item.Gender,
                 Cage = item.Cage,
                 Collor = item.Collor,
-                Breed = item.Breed
+                Breed = item.Breed,
+
             };
             if (item.IsAlive) rabbit.IsAlive = "живой";
             else rabbit.IsAlive = "история";
@@ -87,25 +97,72 @@ namespace RabbitFarmLocal.Controllers
 
 
         //[Authorize(Roles = "admin,owner")]
-        public ActionResult AddRabbit()
+        public ActionResult AddRabbit(RabbitFarmLocal.Models.FatteningModel? fatt=null, string? ErrorMesssage=null)
         {
-            return PartialView(new InpRAbbitModel());
+            if (ErrorMesssage != null) ViewBag.Error = ErrorMesssage;
+            InpRAbbitModel rab = new InpRAbbitModel();
+            if (fatt!=null)
+            {
+                rab.Mother = fatt.MotherId;
+                rab.Father = fatt.FatherId;
+                rab.Born = fatt.Born;
+                rab.Collor = fatt.Collor;
+                rab.RabbitGender = fatt.RabbitGender;
+                rab.PartId = fatt.PartId;
+                rab.PartRabId = fatt.RabPartId;
+                ViewBag.Date = DateToString(rab.Born);
+                ViewBag.BreedChoseShow = false;
+
+            }
+            else
+            {
+                ViewBag.BreedChoseShow = true;
+            }
+            List<DLRabbitModel> rabbits = Rabbit.LoadList();
+            List<int> ids = (from r in rabbits select r.RabbitId).ToList();
+            ids.Sort();
+            int prev=0, length=0;
+            foreach(var i in ids) //look through the list and find the last of more than 10th in a row
+            {
+                if (i == prev + 1)
+                {                    
+                    length++;                   
+                }
+                else
+                {
+                    length = 0;
+                }
+                if(length>=10) rab.RabbitId = i+1;
+                prev = i;
+            }
+            //rab.CageListTest = RabbitFarmLocal.Start.ConstantsSingelton.GetCageNumbers();
+            rab.CageList = RabbitFarmLocal.Start.ConstantsSingelton.GetCageLists();
+            ViewBag.caJson = CageJSON(0, false);
+            return PartialView(rab);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult AddRabbit(InpRAbbitModel model)
         {
+            List<DLRabbitModel> rabbits = Rabbit.LoadList();
+            List<int> ids = (from r in rabbits select r.RabbitId).ToList();
+            if (ids.IndexOf(model.RabbitId) != -1)
+            {
+                String Error = "Такой номер кролика "+ model.RabbitId +" уже существует!!!";
+                return RedirectToAction("AddRabbit","Home", new { ErrorMesssage = Error });
+            }
             ViewBag.Message = "Add rabbit" + model.RabbitId;
-
             if (ModelState.IsValid)
             {
                 int recordCreated = CreateRabbit(model.RabbitId, model.Cage, model.Breed, model.Collor, model.Born,
-                    model.Mother, model.Father, model.IsAlive, model.RabbitGender);
+                    model.Mother, model.Father, model.IsAlive, model.RabbitGender, model.PartId, model.PartRabId) ;
+                if (recordCreated > 0 && model.PartRabId != null) 
+                    EditFattenigStatus(new FatteningModel() { PartId = (int)model.PartId, RabPartId = (int)model.PartRabId, Status = FatStatus.used4Bread });
                 UpdateRabbitsStatus();
                 //int rabbitId, int cage, bool isMale, string breed, string collor, DateTime born, int mother, int father, bool isAlive
+                ConstantsSingelton.UpdateCages();
                 return RedirectToAction("ViewRabbits");
             }
-
             return View();
         }
 
@@ -122,6 +179,9 @@ namespace RabbitFarmLocal.Controllers
             ViewBag.Name = "Редактировать кролика " + rab.RabbitId;
             if (rab.IsMale) rab.RabbitGender = RabGender.male;
             else rab.RabbitGender = RabGender.female;
+            DescentModel desc = LoadDescent(rab.RabbitId);
+            ViewBag.FirstInDescent = (desc.Parents[0].BeginnerOfLine == true && desc.Parents.Count() == 1) ?true:false;
+            ViewBag.BreedList = new SelectList(ConstantsSingelton.GetListOfBreeds(), "Id", "Name",rab.BreedId);
 
             ViewBag.Born = DateToString(rab.Born);
 
@@ -142,6 +202,7 @@ namespace RabbitFarmLocal.Controllers
                 int recordCreated = Rabbit.EditGeneral(rab);
                 if (!rab.IsAlive) Rabbit.EditKill(rab);
                 UpdateRabbitsStatus();
+                ConstantsSingelton.UpdateCages();
                 return RedirectToAction("ViewRabbits");
             }
             
@@ -247,6 +308,7 @@ namespace RabbitFarmLocal.Controllers
         {
             DLRabbitModel rab = Rabbit.LoadOne(id);
             //int rabbitDead = PutRabToArchive(id);
+            ConstantsSingelton.UpdateCages();
             return View(rab);
         }
         [HttpPost]
@@ -256,6 +318,7 @@ namespace RabbitFarmLocal.Controllers
             {
                 rab.IsAlive = false;
                 int recordCreated = Rabbit.EditKill(rab);
+                ConstantsSingelton.UpdateCages();
             }
             return RedirectToAction("ViewRabbits", "Home");
         }
@@ -367,5 +430,6 @@ namespace RabbitFarmLocal.Controllers
             Note.Delete(date);
             return RedirectToAction("NotesView", "Home");
         }
+        
     }
 }

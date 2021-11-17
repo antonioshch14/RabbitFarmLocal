@@ -5,12 +5,37 @@ using System.Web;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using static RabbitFarmLocal.Controllers.MyFunctions;
+using RabbitFarmLocal.BusinessLogic;
 
 namespace RabbitFarmLocal.Models
 {
-    public class FatteningModel: Controllers._Caller //PartId, RabPartId, Cage, Collor, DeadItself, RabbitGender, KillDate, Weight
+    public class FatteningModel: IDescent, Controllers.I_Caller
     {
-        
+        public int Caller { get; set; }
+        public Controllers.Caller ECaller { get; set; }
+
+        private Descent DescentInstance = new Descent();
+        public string Breed { get; set; }
+        [DisplayName("Порода")]
+        public string BreedString { get; set; }
+        public Dictionary<int, int> BreedDict { get; set; }
+        public void GetBreedDictionary()
+        {
+            BreedDict=DescentInstance.GetBreedDictionary(Breed);
+        }
+
+        public void CreateBreedDictionary()
+        {
+            BreedDict= BreedLogic.GetBreedDictionaryForRabit(MotherId,FatherId);
+        }
+        public void SetBreedString()
+        {
+            Breed=DescentInstance.SetBreedString(BreedDict);
+        }
+        public void SetBreedStringToDisplay()
+        {
+            BreedString=DescentInstance.SetBreedStringToDisplay(Breed);
+        }
         public FatteningModel() { }
         public DateTime Born { get; set; }
         [DisplayName("Д.р.")]
@@ -46,8 +71,7 @@ namespace RabbitFarmLocal.Models
         [Display(Name ="Пол (статус)")]        
         public string StatusForAllFattView { get {
                 DisplayAttribute stat = GetDisplayAttributesFrom(Status, typeof(FatStatus));
-
-                return ((int)Status == 1) ? String.Format("{0} {1}", stat.Name , RabbitGender.ToString()): RabbitGender.ToString(); //Description
+                return ((int)Status == 1 || (int)Status == 8) ? String.Format("{0} {1}", stat.Name , RabbitGender.ToString()): RabbitGender.ToString(); //Description
             } }
         [Display(Name = "пол")]
         public Gender RabbitGender { get; set; }
@@ -59,7 +83,9 @@ namespace RabbitFarmLocal.Models
         [DisplayName("Дата забоя")]
         public string KillDateString { get { return DateToStringRU(KillDate); } }
         [DisplayName("Выход мяса")]
+        [Range(0,15,ErrorMessage ="Выход мяса должен быть от 0 до 15")]
         public float Weight { get; set; }
+     
         [DisplayName("Вес")]
         public float LastWeight { get; set; }
         [DisplayName("Дата взвешивания")]
@@ -89,12 +115,17 @@ namespace RabbitFarmLocal.Models
         [DisplayName("Дата взвешивания")]
         public string WeightDateString { get { return DateToStringRU(WeightDate); } }
         [DisplayName("Цена, руб")]
+        [Range(0, 10000, ErrorMessage = "Цена должна быть от 0 до 10000")]
         public int Price { get; set; }
 
         [DisplayName("Коммент")]
         public string Comment { get; set; }
         [DisplayName("Новый вес")]
         public float NewWeight { get; set; }
+        [DisplayName("Мать")]
+        public int MotherId { get; set; }
+        [DisplayName("Отец")]
+        public int FatherId { get; set; }
 
 
     }
@@ -115,7 +146,9 @@ namespace RabbitFarmLocal.Models
         [Display(Name ="Оставлен на потомство")]
         used4Bread,//6
         [Display(Name = "Забит на тушенку")]
-        canned//7
+        canned,//7
+        [Display(Name = "На забой")]
+        selectedForKill//8
     }
     public enum FatStatusKilledView //alive diedItself soldAsMeat eatenByUs left4Bread sold4Bread
     {
@@ -131,16 +164,3 @@ namespace RabbitFarmLocal.Models
 
 
 }
-//public enum ModesOfTransport
-//{
-//    [Display(Name = "Driving", Description = "Driving a car")] Land,
-//    [Display(Name = "Flying", Description = "Flying on a plane")] Air,
-//    [Display(Name = "Sea cruise", Description = "Cruising on a dinghy")] Sea
-//}
-
-//void Main()
-//{
-//    ModesOfTransport TransportMode = ModesOfTransport.Sea;
-//    DisplayAttribute metadata = TransportMode.GetDisplayAttributesFrom(typeof(ModesOfTransport));
-//    Console.WriteLine("Name: {0} \nDescription: {1}", metadata.Name, metadata.Description);
-//}

@@ -28,11 +28,18 @@
                 @*<div> @Html.DropDownListFor(model => model.RabbitGender, new SelectList(Enum.GetValues(typeof(RabGender))))</div>*@
                 <span asp-validation-for="RabbitGender" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Breed" class="control-label"></label>
-                <input asp-for="Breed" class="form-control" />
-                <span asp-validation-for="Breed" class="text-danger"></span>
-            </div>
+            @if (ViewBag.FirstInDescent == true)
+            {
+               
+              
+        <div class="form-group">
+            <label asp-for="Breed" class="control-label"></label>
+            @Html.DropDownListFor(x => x.BreedId, ViewBag.BreedList as SelectList, "Выберите породу")
+            @*<select asp-for="Breed" class="form-control" asp-items="Html.DropDownList("BreedList","dd")/>*@
+            <span asp-validation-for="Breed" class="text-danger"></span>
+        </div>
+            }
+
             <div class="form-group">
                 <label asp-for="Collor" class="control-label"></label>
                 <input asp-for="Collor" class="form-control" />
@@ -53,7 +60,7 @@
                 <input asp-for="Father" class="form-control" />
                 <span asp-validation-for="Father" class="text-danger"></span>
             </div>
-           
+
             <button type="button" class="btn btn-link" onclick="Toggle()">В историю</button>
             <div id="history"
                  @{ if (Model.IsAlive) { <text> style="display:none" </text>  } }>
@@ -67,7 +74,7 @@
                     <input asp-for="TermDate" class="form-control" asp-format="{0:yyyy-MM-dd}" />
                     <span asp-validation-for="TermDate" class="text-danger"></span>
                 </div>
-                
+
                 <label asp-for="StoredRabStatus" class="control-label"></label>
                 <select asp-for="StoredRabStatus" class="form-control" asp-items="Html.GetEnumSelectList<RabKillStatus>()"></select>
                 <span asp-validation-for="StoredRabStatus" class="text-danger"></span>
@@ -85,6 +92,7 @@
 
 
             @Html.HiddenFor(model => Model.Id)
+            @Html.HiddenFor(model => Model.Breed)
             <div class="form-group">
                 <input type="submit" value="Сохранить" class="btn btn-primary" />
             </div>

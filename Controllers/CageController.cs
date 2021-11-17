@@ -40,14 +40,16 @@ namespace RabbitFarmLocal.Controllers
             if (ModelState.IsValid)
             {
                 int recordCreated = Cage.Create(model);
+                RabbitFarmLocal.Start.ConstantsSingelton.UpdateCages();
             }
+            
             return RedirectToAction("CagesView");
         }
         public ActionResult Edit(int Id)
         {
             CageModel cage = Cage.LoadOne(Id);
             ViewBag.MadeDate = DateToString(cage.Made);
-            return View(cage);
+            return PartialView(cage);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -56,6 +58,7 @@ namespace RabbitFarmLocal.Controllers
             if (ModelState.IsValid)
             {
                 int recordCreated = Cage.Edit(model);
+                RabbitFarmLocal.Start.ConstantsSingelton.UpdateCages();
             }
             return RedirectToAction("CagesView");
         }
@@ -76,6 +79,11 @@ namespace RabbitFarmLocal.Controllers
             ViewBag.Id = _id;
             return PartialView();
         }
-        
+        public ActionResult Delete(int id)
+        {
+            int recordDeleted = Cage.Delete(id);
+            return RedirectToAction("CagesView");
+        }
+
     }
 }

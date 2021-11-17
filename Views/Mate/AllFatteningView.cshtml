@@ -8,7 +8,7 @@
 
 <a class="btn btn-success" href="@Url.Action("DrawWeightCurve", "Weight")">CreateCurve</a>
 
-<a data-toggle="modal" data-target="#ShowHiden" class="btn btn-info">Показать откорм по статусу</a>
+<button data-toggle="modal" data-target="#ShowHiden" class="btn btn-primary">Показать откорм по статусу</button>
 <div class="modal fade" id="ShowHiden">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -58,17 +58,17 @@
                     <th class="col-2">
                         @Html.DisplayNameFor(model => Model[0].Age)
                     </th>
-                    <th class="col-2 d-none d-sm-table-cell">
+                    <th class="col-1 d-none d-sm-table-cell">
                         @Html.DisplayNameFor(model => Model[0].RabPartId)
                     </th>
                     <th class="col-1 col-sm-2">
                         @Html.DisplayNameFor(model => Model[0].Cage)
                     </th>
-                    <th class="col-2 col-sm-4">
+                    <th class="col-1 col-sm-4">
                         @Html.DisplayNameFor(model => Model[0].Collor)
                     </th>
-                    <th class="col-1 d-none d-sm-table-cell weight">
-                        @Html.DisplayNameFor(model => Model[0].LastWeight)
+                    <th class="col-3 d-none d-sm-table-cell weight">
+                        @Html.DisplayNameFor(model => Model[0].BreedString)
                     </th>
                     <th class="col-1 d-none d-sm-table-cell weight">
                         @Html.DisplayNameFor(model => Model[0].ProjectedWeight)
@@ -89,25 +89,26 @@
                 @for (int i = 0; i < Model.Count; i++)
                 {
 
-                <tr id="row-@i">
+                <tr id="row-@i" @if (Model[i].Status== FatStatus.selectedForKill) {<text>class="table-warning"</text> }
+                    >
 
                     <td class="col-2 Modals partView" data-toggle="modal" data-target="#modal-@Model[i].PartId-@Model[i].RabPartId">
                         @Html.DisplayFor(modelItem => Model[i].Age)
                     </td>
-                    <td class="col-2 d-none d-sm-table-cell">
+                    <td class="col-1 d-none d-sm-table-cell">
                         @Html.DisplayFor(modelItem => Model[i].RabPartId)
                     </td>
                     <td class="col-1 col-sm-2 partView" onclick="replaceContentsOfDiv(@Model[i].Cage)">
                         @Html.DisplayFor(modelItem => Model[i].Cage)
                     </td>
-                    <td class="col-2 col-sm-4 ">
+                    <td class="col-1 col-sm-4 ">
                         @if (Model[i].Collor == null || Model[i].Collor == "")
                         {<a>...</a>}
                         else
                         {@Html.DisplayFor(modelItem => Model[i].Collor)}
                     </td>
-                    <td class="col-1 d-none d-sm-table-cell weight">
-                        @Html.DisplayFor(modelItem => Model[i].LastWeight)
+                    <td class="col-3 d-none d-sm-table-cell weight">
+                        @Html.DisplayFor(modelItem => Model[i].BreedString)
                     </td>
                     <td class="col-1 d-none d-sm-table-cell weight">
                         @Html.DisplayFor(modelItem => Model[i].ProjectedWeight)
@@ -156,6 +157,18 @@
                                         @Html.DisplayFor(modelItem => Model[i].RabPartId)
                                     </div>
                                     <div>
+                                        @Html.DisplayNameFor(model => Model[0].MotherId)
+                                        @Html.DisplayFor(model => Model[i].MotherId)
+                                    </div>
+                                    <div>
+                                        @Html.DisplayNameFor(model => Model[0].FatherId)
+                                        @Html.DisplayFor(model => Model[i].FatherId)
+                                    </div>
+                                    <div>
+                                        @Html.DisplayNameFor(model => Model[0].BreedString)
+                                        @Html.DisplayFor(model => Model[i].BreedString)
+                                    </div>
+                                    <div>
                                         @Html.DisplayNameFor(model => Model[0].Collor)
                                         @Html.DisplayFor(modelItem => Model[i].Collor)
                                     </div>
@@ -185,20 +198,41 @@
                                     @if ((int)Model[i].Status < 2)
                                     {
                                         <a class="d-block btn btn-link compItem" href="@Url.Action("FattKilled", "Mate", new { PartId = Model[i].PartId, rabId = Model[i].RabPartId, CalledFrom = Caller.allfatt})">Забит на мясо</a>
+                                        <a class="d-block btn btn-link compItem" href="@Url.Action("AddRabbit", "Home", new FatteningModel(){ MotherId = Model[i].MotherId,
+                                                                                        FatherId=Model[i].FatherId,Born=Model[i].Born,RabPartId=Model[i].RabPartId,PartId=Model[i].PartId,
+                                                                                        RabbitGender=Model[i].RabbitGender,Collor=Model[i].Collor})">Перенести в кролики</a>
+
                                     }
                                     <a class="d-block btn btn-link compItem" href="@Url.Action("FattEdit", "Mate", new {PartId = Model[i].PartId, rabId = Model[i].RabPartId, CalledFrom = Caller.allfatt})">Редактировать</a>
 
                                     <a class="d-block btn btn-link compItem" href="@Url.Action("FatWeightCreate", "Weight", new {partId = Model[i].PartId, rabId = Model[i].RabPartId, CalledFrom = Caller.allfatt})">Новое взвешивание</a>
                                     <a class="d-block btn btn-link" href="@Url.Action("FatWeightView", "Weight", new {rabId = Model[i].RabPartId, partId = Model[i].PartId })">Взвешивания</a>
                                     <a class="d-block btn btn-link" href="@Url.Action("FatteningView", "Mate", new {partId = Model[i].PartId})">Окрол</a>
+
                                     @if ((int)Model[i].Status < 2)
                                     {
                                         <a class="btn btn-danger" data-toggle="modal" data-target="#dieditself-@Model[i].PartId-@Model[i].RabPartId">Сам умер</a>
+                                        <a class="btn btn-warning" data-toggle="modal" data-target="#selectForKill-@Model[i].PartId-@Model[i].RabPartId">На забой</a>
                                     }
                                     <a class="btn btn-danger" data-toggle="modal" data-target="#delete-@Model[i].PartId-@Model[i].RabPartId">Удалить</a>
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
 
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal" id="selectForKill-@Model[i].PartId-@Model[i].RabPartId">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Вы уврены, что хотите отметить этого кролика в забой?</h4>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <a class="btn btn-warning" href="@Url.Action("SelectForKill","Mate",new { PartId = Model[i].PartId, rabId = Model[i].RabPartId})">На забой</a>
+                                </div> <button type="button" class="btn btn-info" data-dismiss="modal">Не забивать</button>
+
                             </div>
                         </div>
                     </div>
@@ -263,7 +297,7 @@
             yValues: new[] { "2", "6", "4", "5", "3" })
         .Write();*@
 }
-
+<script src="/js/cageImage.js"></script>
 @section scripts
 {
     <script type="text/javascript">

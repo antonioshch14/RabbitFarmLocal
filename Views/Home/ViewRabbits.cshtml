@@ -2,14 +2,6 @@
 @using System.Web.Helpers
 @using RabbitFarmLocal.Controllers
 
-@*@{
-        var myChart = new Chart(width: 600, height: 400)
-           .AddTitle("Employees")
-           .AddSeries(chartType: "column",
-              xValue: new[] { "Peter", "Andrew", "Julie", "Mary", "Dave" },
-              yValues: new[] { "2", "6", "4", "5", "3" })
-           .Write();
-    }*@
 
 <h2>Кролики</h2>
 
@@ -19,11 +11,9 @@
     @Html.ActionLink("Добавить кролика", "AddRabbit", new { }, new { @class = "compItem" })
 </p>
 
-@*data-href="/Cage/CageDetail?_id=@item.Cage" class="CageImage"*@
-<!--<p>
-    @Html.ActionLink("Обновить статус", "UpdateStatus")
-</p>-->
+
 <a class="btn btn-success" href="@Url.Action("UpdateRabbitsStatusView", "Home")">Обновить статус</a>
+
 
 <table class="table">
     <tr>
@@ -37,7 +27,7 @@
             @Html.DisplayNameFor(model => model.StoredRabStatus)
         </th>
         <th class="d-none d-sm-table-cell">
-            @Html.DisplayNameFor(model => model.Breed)
+            @Html.DisplayNameFor(model => model.BreedString)
         </th>
         <th class="d-none d-sm-table-cell">
             @Html.DisplayNameFor(model => model.Collor)
@@ -77,7 +67,7 @@
                 <td>история</td>
             }
             <td class="d-none d-sm-table-cell">
-                @Html.DisplayFor(modelItem => item.Breed)
+                @Html.DisplayFor(modelItem => item.BreedString)
             </td>
             <td class="d-none d-sm-table-cell">
                 @Html.DisplayFor(modelItem => item.Collor)
@@ -118,8 +108,8 @@
                             @Html.DisplayFor(modelItem => item.StoredRabStatus)
                         </div>
                         <div>
-                            @Html.DisplayNameFor(model => model.Breed)
-                            @Html.DisplayFor(modelItem => item.Breed)
+                            @Html.DisplayNameFor(model => model.BreedString)
+                            @Html.DisplayFor(modelItem => item.BreedString)
                         </div>
                         <div>
                             @Html.DisplayNameFor(model => model.Collor)
@@ -207,7 +197,7 @@
 <div id="CageImage" class="modal fade">
     <div id="dialogCageImage" class="modal-dialog"></div>
 </div>
-
+<script src="/js/cageImage.js"></script>
 @section scripts
 {
     <script type="text/javascript">

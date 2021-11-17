@@ -1,4 +1,4 @@
-﻿@model IEnumerable<RabbitFarmLocal.Models.FatteningModel>
+﻿@model List<RabbitFarmLocal.Models.FatteningModel>
 @using RabbitFarmLocal.Models
 @using RabbitFarmLocal.Controllers
 
@@ -6,7 +6,7 @@
 @{
     ViewData["Title"] = "FattStatusView";
 }
-<a data-toggle="modal" data-target="#ShowHiden" class="btn btn-info">Показать откорм по статусу</a>
+<button data-toggle="modal" data-target="#ShowHiden" class="btn btn-primary">Показать откорм по статусу</button>
 <div class="modal fade" id="ShowHiden">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -38,180 +38,321 @@
         </div>
     </div>
 </div>
+@if (ViewBag.Status == FatStatus.selectedForKill)
+{
+    <button data-toggle="modal" data-target="#ShowHidenKill" class="btn btn-warning">Подобрать вес всех кроликов</button>
+    <div class="modal fade container" id="ShowHidenKill">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Занесите вес забоя, цену и причину забоя всех кроликов</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="overflow-y:auto;">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th >
+                                    @Html.DisplayNameFor(model => Model[0].Weight)
+                                </th>
+                                <th >
+                                    @Html.DisplayNameFor(model => Model[0].Price)
+                                </th>
+                                <th >
+                                    @Html.DisplayNameFor(model => Model[0].Status)
+                                </th>
+                                <th class="w-25">
+                                    @Html.DisplayNameFor(model => Model[0].Comment)
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableKill">
+                            @for (int i = 0; i < Model.Count; i++)
+                            {
+                            <tr>
+                                <td>
+                                    @Html.TextBox("Weight","", new { style = "width:50px;" })
+                                    @Html.ValidationMessageFor(model => Model[i].Weight, "", new { @class = "text-danger"})
+                                </td>
+                                <td >
+                                    @Html.TextBox("Price","", new { style = "width:100px;" })
+                                    @Html.ValidationMessageFor(model => Model[i].Price, "", new { @class = "text-danger"})
+                                </td>
+                                <td >
+                                    @Html.DropDownList("Status", Html.GetEnumSelectList<FatStatusKilledView>(), "Причина", new { @class = "form-control", style = "width:170px;max-width:170px;" })
+                                </td>
+                                <td >
+                                    @Html.TextBox("Comment","", new { style = "width:200px;" })
+                                    @Html.ValidationMessageFor(model => Model[i].Comment, "", new { @class = "text-danger" })
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <a  class="btn btn-primary" onclick="fillOutKilled()" data-dismiss="modal">Заполнить</a>
+                </div>
+            </div>
+            <div class="modal-footer">
+
+            </div>
+        </div>
+    </div>
+}
+
 
 <h4>@ViewBag.Message</h4>
 
-
-<table class="table">
-    <thead>
-        <tr>
-            @if (@ViewBag.Status == FatStatus.alive || @ViewBag.Status == FatStatus.left4Bread)
+@using (Html.BeginForm("FattFillInKilled", "Mate", FormMethod.Post, new { @class = "form-horizontal" }))
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => Model[0].BornString)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => Model[0].MotherId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => Model[0].FatherId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => Model[0].Collor)
+                </th>
+                @if (@ViewBag.Status == FatStatus.alive || @ViewBag.Status == FatStatus.left4Bread || @ViewBag.Status == FatStatus.selectedForKill)
+                {
+                    <th>
+                        @Html.DisplayNameFor(model => Model[0].Age)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => Model[0].Cage)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => Model[0].RabbitGender)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => Model[0].ProjectedWeight)
+                    </th>
+                }
+                else if (@ViewBag.Status == FatStatus.used4Bread)
+                {
+                    <th>
+                        @Html.DisplayNameFor(model => Model[0].RabbitGender)
+                    </th>
+                }
+                else
+                {
+                    <th>
+                        @Html.DisplayNameFor(model => Model[0].KillDateString)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => Model[0].AgeKilled)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => Model[0].LastWeight)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => Model[0].Weight)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => Model[0].Price)
+                    </th>
+                }
+                <th>
+                    @Html.DisplayNameFor(model => Model[0].Comment)
+                </th>
+                @if (@ViewBag.Status == FatStatus.selectedForKill)
+                {
+                    <th>
+                        @Html.DisplayNameFor(model => Model[0].Weight)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => Model[0].Price)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => Model[0].Status)
+                    </th>
+                }
+            </tr>
+        </thead>
+        <tbody id="table">
+            @for (int i = 0; i < Model.Count; i++)
             {
-                <th>
-                    @Html.DisplayNameFor(model => model.BornString)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Age)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Cage)
-                </th>
-
-                <th>
-                    @Html.DisplayNameFor(model => model.Collor)
-                </th>
-
-                <th>
-                    @Html.DisplayNameFor(model => model.RabbitGender)
-                </th>
-            }
-            else
-            {
-                <th>
-                    @Html.DisplayNameFor(model => model.KillDateString)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.AgeKilled)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.LastWeight)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Weight)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Price)
-                </th>
-            }
-
-
-            <th>
-                @Html.DisplayNameFor(model => model.Comment)
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-        <tr data-toggle="modal" data-target="#myModal-@item.RabPartId-@item.PartId"
-            @*data-href="/Mate/FattEdit?PartId=@item.PartId&rabId=@item.RabPartId&CalledFrom=@Caller.fattPerStat" class="compItem"*@>
-
-            @if (@ViewBag.Status == FatStatus.alive || @ViewBag.Status == FatStatus.left4Bread)
-            {
-                <td>
-                    @Html.DisplayFor(modelItem => item.BornString)
+            <tr>
+                <td class="Modals" data-toggle="modal" data-target="#myModal-@Model[i].RabPartId-@Model[i].PartId" id="rab-@Model[i].RabPartId-@Model[i].PartId">
+                    @Html.DisplayFor(modelItem => Model[i].BornString)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Age)
+                    @Html.DisplayFor(model => Model[i].MotherId)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Cage)
+                    @Html.DisplayFor(model => Model[i].FatherId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => Model[i].Collor)
                 </td>
 
-                <td>
-                    @Html.DisplayFor(modelItem => item.Collor)
-                </td>
-
-                <td>
-                    @Html.DisplayFor(modelItem => item.RabbitGender)
-                </td>
-            }
-            else
-            {
-                <td>
-                    @Html.DisplayFor(modelItem => item.KillDateString)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.AgeKilled)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.LastWeight)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Weight)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Price)
-                </td>
-            }
-
-
+                @if (@ViewBag.Status == FatStatus.alive || @ViewBag.Status == FatStatus.left4Bread || @ViewBag.Status == FatStatus.selectedForKill)
+                {
+                    <td>
+                        @Html.DisplayFor(modelItem => Model[i].Age)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => Model[i].Cage)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => Model[i].RabbitGender)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => Model[i].ProjectedWeight)
+                    </td>
+                }
+                else if (@ViewBag.Status == FatStatus.used4Bread)
+                {
+                    <td>
+                        @Html.DisplayFor(modelItem => Model[i].RabbitGender)
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        @Html.DisplayFor(modelItem => Model[i].KillDateString)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => Model[i].AgeKilled)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => Model[i].LastWeight)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => Model[i].Weight)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => Model[i].Price)
+                    </td>
+                }
+                @if (@ViewBag.Status == FatStatus.selectedForKill)
+                { 
             <td>
-                @Html.DisplayFor(modelItem => item.Comment)
+              
+                @Html.TextAreaFor(model => Model[i].Comment,  (Model[i].Comment != null) ? 2 : 1, 15, null@*new { @class = "Comment", htmlAttributes = new { @class = "form-control",style="width:200px;" } }*@)
+                @Html.ValidationMessageFor(model => Model[i].Comment, "", new { @class = "text-danger" })
             </td>
-        </tr>
-            
-            <div class="modal" id="myModal-@item.RabPartId-@item.PartId">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title">Подробно о кролике</h4>
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        </div>
-                        <div class="modal-body">
+                }
+                    else
+                    {
+                    <td>
+                        @Html.DisplayFor(modelItem => Model[i].Comment)
+                    </td>
+                    }
+
+                    
+                    @if (@ViewBag.Status == FatStatus.selectedForKill)
+                    {
+                        <td @*class="d-none"*@ @*id="FillDataKilled"*@>
+                            @Html.EditorFor(model => Model[i].Weight, new { @class = "Weight", htmlAttributes = new { @class = "form-control", style = "width:50px;" } })
+                            @Html.ValidationMessageFor(model => Model[i].Weight, "", new { @class = "text-danger" })
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => Model[i].Price, new { @class = "Price", htmlAttributes = new { @class = "form-control", style = "width:100px;" } })
+                            @Html.ValidationMessageFor(model => Model[i].Price, "", new { @class = "text-danger" })
+                        </td>
+                        <td>
+                            @Html.DropDownListFor(model => Model[i].Status, Html.GetEnumSelectList<FatStatusKilledView>(), "Причина", new { @class = "form-control", style = "width:170px;max-width:170px;" })
+                            @Html.ValidationMessageFor(model => Model[i].Status, "", new { @class = "text-danger" })
+                        </td>
+
+                    }
+                    @Html.HiddenFor(model => Model[i].RabPartId)
+                    @Html.HiddenFor(model => Model[i].PartId)
+                    @Html.HiddenFor(model => Model[i].RabbitGender)
+                  
+                    @Html.HiddenFor(model => Model[i].Collor)
 
 
-                            <div>
-                                @Html.DisplayNameFor(modelItem => item.BornString)
-                                @Html.DisplayFor(modelItem => item.BornString)
+                </tr>
+
+                <div class="modal" id="myModal-@Model[i].RabPartId-@Model[i].PartId">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Подробно о кролике</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
                             </div>
+                            <div class="modal-body">
 
-                            <div>
-                                @Html.DisplayNameFor(model => model.Collor)
-                                @Html.DisplayFor(modelItem => item.Collor)
+
+                                <div>
+                                    @Html.DisplayNameFor(modelItem => Model[0].BornString)
+                                    @Html.DisplayFor(modelItem => Model[i].BornString)
+                                </div>
+
+                                <div>
+                                    @Html.DisplayNameFor(model => Model[0].Collor)
+                                    @Html.DisplayFor(modelItem => Model[i].Collor)
+                                </div>
+                                <div>
+                                    @Html.DisplayNameFor(model => Model[0].RabbitGender)
+                                    @Html.DisplayFor(modelItem => Model[i].RabbitGender)
+                                </div>
+                                @if (@ViewBag.Status == FatStatus.alive || @ViewBag.Status == FatStatus.left4Bread)
+                                {
+                                    <div>
+                                        @Html.DisplayNameFor(model => Model[0].Age)
+                                        @Html.DisplayFor(modelItem => Model[i].Age)
+                                    </div>
+
+                                    <div>
+                                        @Html.DisplayNameFor(model => Model[0].Cage)
+                                        @Html.DisplayFor(modelItem => Model[i].Cage)
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div>
+                                        @Html.DisplayNameFor(model => Model[0].KillDateString)
+                                        @Html.DisplayFor(modelItem => Model[i].KillDateString)
+                                    </div>
+
+                                    <div>
+                                        @Html.DisplayNameFor(model => Model[0].AgeKilled)
+                                        @Html.DisplayFor(modelItem => Model[i].AgeKilled)
+                                    </div>
+                                    <div>
+                                        @Html.DisplayNameFor(model => Model[0].Weight)
+                                        @Html.DisplayFor(modelItem => Model[i].Weight)
+                                    </div>
+                                    <div>
+                                        @Html.DisplayNameFor(model => Model[0].Price)
+                                        @Html.DisplayFor(modelItem => Model[i].Price)
+                                    </div>
+                                }
+                                <div>
+                                    @Html.DisplayNameFor(model => Model[0].Comment)
+                                    @Html.DisplayFor(modelItem => Model[i].Comment)
+                                </div>
                             </div>
-                            <div>
-                                @Html.DisplayNameFor(model => model.RabbitGender)
-                                @Html.DisplayFor(modelItem => item.RabbitGender)
+                            <div class="modal-footer">
+
+                                <a class="btn btn-info compItem" href="@Url.Action("FattEdit", "Mate", new { PartId = Model[i].PartId, rabId = Model[i].RabPartId, CalledFrom = Caller.fattPerStat })">Редактировать</a>
+                                <a class="btn btn-link" href="@Url.Action("FatteningView", "Mate", new { partId = Model[i].PartId  })">Окрол</a>
                             </div>
-                            @if (@ViewBag.Status == FatStatus.alive || @ViewBag.Status == FatStatus.left4Bread)
-                            {
-                                <div>
-                                    @Html.DisplayNameFor(model => model.Age)
-                                    @Html.DisplayFor(modelItem => item.Age)
-                                </div>
-
-                                <div>
-                                    @Html.DisplayNameFor(model => model.Cage)
-                                    @Html.DisplayFor(modelItem => item.Cage)
-                                </div>
-                            }
-                            else
-                            {
-                                <div>
-                                    @Html.DisplayNameFor(model => model.KillDateString)
-                                    @Html.DisplayFor(modelItem => item.KillDateString)
-                                </div>
-
-                                <div>
-                                    @Html.DisplayNameFor(model => model.AgeKilled)
-                                    @Html.DisplayFor(modelItem => item.AgeKilled)
-                                </div>
-                                <div>
-                                    @Html.DisplayNameFor(model => model.Weight)
-                                    @Html.DisplayFor(modelItem => item.Weight)
-                                </div>
-                                <div>
-                                    @Html.DisplayNameFor(model => model.Price)
-                                    @Html.DisplayFor(modelItem => item.Price)
-                                </div>
-                            }
-                            <div>
-                                @Html.DisplayNameFor(model => model.Comment)
-                                @Html.DisplayFor(modelItem => item.Comment)
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-
-                            <a class="btn btn-info compItem" href="@Url.Action("FattEdit", "Mate", new { PartId = item.PartId, rabId = item.RabPartId, CalledFrom = Caller.fattPerStat })">Редактировать</a>
-                            <a class="btn btn-link" href="@Url.Action("FatteningView", "Mate", new { partId = item.PartId  })">Окрол</a>
                         </div>
                     </div>
                 </div>
-            </div>
-     }
-    </tbody>
-</table>
+            }
+        </tbody>
+    </table>
+    <div class="form-group" id="SaveButton">
+        <div class="col-md-offset-2 col-md-10">
+
+            <input type="submit" value="Сохранить вес" class="btn btn-warning" />
+        </div>
+    </div>
+}
+
 <div id="modDialog" class="modal fade">
     <div id="dialogContent" class="modal-dialog"></div>
 </div>
@@ -231,7 +372,62 @@
                 });
             });
         });
-
+        function fillOutKilled() {
+            //read values from modal
+            var modalValues = []; 
+            var C = {
+                weight:0,
+                price: '',
+                purpose: '',
+                commment:''
+            };
+            var tableObj = document.getElementById("tableKill");
+            var allTRs = tableObj.getElementsByTagName("tr");
+            for (var trCounter = 0; trCounter < allTRs.length; trCounter++) {
+                var allTDsInTR = allTRs[trCounter].getElementsByTagName("td");
+                for (var tdCounter = 0; tdCounter < allTDsInTR.length; tdCounter++) {
+                    switch (tdCounter) {
+                        case 0: C.weight = parseFloat(allTDsInTR[tdCounter].querySelector('input').value); break;
+                        case 1: C.price = allTDsInTR[tdCounter].querySelector('input').value; break;
+                        case 2: C.purpose = allTDsInTR[tdCounter].querySelector('select').value; break;
+                        case 3: C.commment = allTDsInTR[tdCounter].querySelector('input').value; break;
+                    }
+                }
+                modalValues.push(Object.assign({},C));
+            }
+            modalValues.sort((a, b) => {
+                return a.weight - b.weight;
+            });
+            //read values from main table
+            var tableValues = [];
+            var mainTableTRs = document.getElementById('table').getElementsByTagName('tr');
+            for (var trC = 0; trC < mainTableTRs.length; trC++) {
+                var TDs = mainTableTRs[trC].getElementsByTagName('td');
+                tableValues.push([ trC, parseFloat(TDs[7].innerHTML)]);
+            }
+            tableValues.sort((a, b) => {
+                return a[1] - b[1];
+            });
+            console.log(modalValues);
+            console.log(tableValues);
+            //fill in values in the main table
+            for (var trC = 0; trC < mainTableTRs.length; trC++) {
+                var entry = tableValues[trC][0];
+                var TDs = mainTableTRs[entry].getElementsByTagName('td');
+                TDs[9].querySelector('input').value = modalValues[trC].weight;
+                TDs[10].querySelector('input').value = modalValues[trC].price;
+                TDs[11].querySelector('select').value = modalValues[trC].purpose;
+                var comment = TDs[8].querySelector('textarea').value;
+                if (modalValues[trC].commment !== '') {
+                    if (comment !== '') TDs[8].querySelector('textarea').value =comment + " " + modalValues[trC].commment;
+                    else {
+                        TDs[8].querySelector('textarea').value = modalValues[trC].commment;
+                    }
+                }
+                
+            }
+            
+        }
 
     </script>
 }

@@ -6,9 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Data\**" />
     <Compile Remove="Views\Mate\NewFolder\**" />
+    <Content Remove="Data\**" />
     <Content Remove="Views\Mate\NewFolder\**" />
+    <EmbeddedResource Remove="Data\**" />
     <EmbeddedResource Remove="Views\Mate\NewFolder\**" />
+    <None Remove="Data\**" />
     <None Remove="Views\Mate\NewFolder\**" />
   </ItemGroup>
 
@@ -23,11 +27,7 @@
     <PackageReference Include="Blazor.Extensions.Canvas" Version="1.1.1" />
     <PackageReference Include="Dapper" Version="2.0.78" />
     <PackageReference Include="Microsoft.AspNet.WebPages" Version="3.2.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.8" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.8" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.8" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.8" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.8" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
     <PackageReference Include="MySql.Data" Version="8.0.22" />
     <PackageReference Include="ncrontab" Version="3.3.1" />

@@ -98,7 +98,8 @@ namespace RabbitFarmLocal.Models
     {
         public int Nr { get; set; }
         public int Id { get; set; }
-
+        public occupancy Oc { get; set; }//occupied
+        public int Rbs { get; set; }//rabbits lives there
     }
     
     public enum CageType
@@ -110,5 +111,27 @@ namespace RabbitFarmLocal.Models
         woodenRackAndPinoinFlatFloor,
         [Display(Name = "металлическая с полом из сетки")]
         metalWithMeshFloor
+    }
+    public class ListOfCages
+    {
+        public int Id { get; set; }
+        public occupancy Occupancy { get; set; }
+        public string OccupancyString { get {
+                DisplayAttribute Oc = GetDisplayAttributesFrom(Occupancy, typeof(occupancy));
+                return Id + " " + Oc.Name; } }
+        public int Livers { get; set; }
+    }
+    public enum occupancy
+    {
+        [Display(Name ="Свободна")]
+        empty,
+        [Display(Name = "Занята самкой")]
+        occupiedFemail,
+        [Display(Name = "Занята самцом")]
+        occupiedMale,
+        [Display(Name = "Занята откормом самками")]
+        occupiedFatFemale,
+        [Display(Name = "Занята откормом самцами")]
+        occupiedFatMale
     }
 }

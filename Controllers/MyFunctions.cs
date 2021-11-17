@@ -142,10 +142,16 @@ namespace RabbitFarmLocal.Controllers
                            .GetCustomAttribute<DisplayAttribute>();
         }
     }
-    public class _Caller
+    public class _Caller:I_Caller
     {
         public int Caller { get; set; }
         public Caller ECaller { get; set; }
+
+    }
+    public interface I_Caller
+    {
+        int Caller { get; set; }
+        Caller ECaller { get; set; }
 
     }
     public enum Caller

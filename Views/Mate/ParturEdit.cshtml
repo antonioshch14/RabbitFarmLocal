@@ -45,7 +45,7 @@
                 <label asp-for="SeparatedView" class="control-label"> Рассажены @ViewBag.SeparationDate </label>
                 @*<input asp-for="Separated" class="form-control" value="@ViewBag.SeparationDate" data-date-format="yyyy-MM-dd" type="text" placeholder="yyyy-MM-dd"/>*@
                 @*<div> @Html.DropDownListFor(model => model.SeparatedView, new SelectList(Enum.GetValues(typeof(YesNo))))</div>*@
-                <select asp-for="SeparatedView" asp-items="Html.GetEnumSelectList<YesNo>()"  value="@Model.Separated" ></select>
+                <select asp-for="SeparatedView" asp-items="Html.GetEnumSelectList<YesNo>()"  ></select>
 
                 <span asp-validation-for="SeparatedView" class="text-danger"></span>
             </div>
@@ -53,7 +53,7 @@
             <div class="form-group">
                 <label asp-for="NestRemovedView" class="control-label"> гнездо убрано @ViewBag.DateNestRemoval</label>
                 @*<input asp-for="DateNestRemoval" class="form-control" value="@ViewBag.DateNestRemoval" data-date-format="yyyy-MM-dd" type="text" placeholder="yyyy-MM-dd" />*@
-                <select asp-for="NestRemovedView" asp-items="Html.GetEnumSelectList<YesNo>()" value="@Model.NestRemoved"></select>
+                <select asp-for="NestRemovedView" asp-items="Html.GetEnumSelectList<YesNo>()"></select>
                 <span asp-validation-for="NestRemovedView" class="text-danger"></span>
             </div>
 
@@ -69,6 +69,8 @@
             @Html.TextBoxFor(model => model.DateNestRemoval, "{0:dd-MM-yyyy}", htmlAttributes: new { @type = "hidden" })*@
             @Html.HiddenFor(model=>Model.MotherId)
             @Html.HiddenFor(model=>Model.ECaller)
+            @Html.HiddenFor(model=>Model.SeparationDate)
+            @Html.HiddenFor(model=>Model.DateNestRemoval)
             <div class="form-group">
                 <input type="submit" value="Сохранить" class="btn btn-primary" />
             </div>

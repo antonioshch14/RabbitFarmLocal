@@ -50,14 +50,16 @@ namespace RabbitFarmLocal.Start
             }
             public static float GetRiseFactor(int StartDay,int TargDay)//returns an argument which has to be multiplied on weight in start day to get predicted weight on TardDay 
             {
-                
-                if ( StartDay < TargDay)
-            {
-                if(TargDay < _instance.bound)  return _instance.MeanWeight[TargDay] / _instance.MeanWeight[StartDay];
-                else return _instance.MeanWeight[_instance.bound-1] / _instance.MeanWeight[StartDay];
-            }
-                    
-                else return 1F;
+            //if (StartDay >= 0 && StartDay < _instance.bound && TargDay >= 0 && TargDay < _instance.bound)
+            //{
+                if (StartDay < TargDay && StartDay< _instance.bound - 1)
+                {
+                    if (TargDay < _instance.bound-1) return _instance.MeanWeight[TargDay] / _instance.MeanWeight[StartDay];
+                    else return _instance.MeanWeight[_instance.bound - 1] / _instance.MeanWeight[StartDay];
+                }
+            //}
+
+             return 1F;
             }
     }
 }

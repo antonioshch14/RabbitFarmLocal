@@ -29,7 +29,13 @@
 
 <div class="d-none" id="jsonString" value="">@ViewBag.caJson</div>
 <div class="d-none" id="CageHighlight">@Model.Id</div>
-<script src="/js/cageImage.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        initiate();
+        drawCages();
+    });
+    
+</script>
  
 <script type="text/javascript">
         function Toggle() {

@@ -261,7 +261,7 @@ namespace RabbitFarmWeb.Controllers
             ViewBag.MateDate = DateToString(prt.Date);
             ViewBag.SeparationDate = DateToStringRU(prt.SeparationDate);
             ViewBag.DateNestRemoval =DateToStringRU(prt.DateNestRemoval);
-            prt.NestRemovedView = prt.NestRemovedView;
+            prt.NestRemovedView = prt.NestRemoved;
             prt.SeparatedView = prt.Separated;
             prt.ECaller = caller;
 
@@ -277,9 +277,9 @@ namespace RabbitFarmWeb.Controllers
             //else if (model.SeparatedView == YesNo.No) model.SeparationDate = null;
             //if (model.NestRemovedView == YesNo.Yes && model.DateNestRemoval == null) model.DateNestRemoval = DateTime.Now;
             //else if (model.NestRemovedView == YesNo.No) model.DateNestRemoval = null;
-            if (model.SeparatedView == YesNo.Yes) model.SeparationDate = DateTime.Now;
+            if (model.SeparatedView == YesNo.Yes && model.Separated==YesNo.No) model.SeparationDate = DateTime.Now;
             else if (model.SeparatedView == YesNo.No) model.SeparationDate = null;
-            if (model.NestRemovedView == YesNo.Yes ) model.DateNestRemoval = DateTime.Now;
+            if (model.NestRemovedView == YesNo.Yes && model.NestRemoved==YesNo.No) model.DateNestRemoval = DateTime.Now;
             else if (model.NestRemovedView == YesNo.No) model.DateNestRemoval = null;
 
             if (ModelState.IsValid)
@@ -406,7 +406,16 @@ namespace RabbitFarmWeb.Controllers
         {
             if (ModelState.IsValid)
             {
+                
                 int recordCreated = CreateFatting(fatt);
+                ConstantsSingelton.UpdateCages();
+                List<FatteningModel> fattToUpdate = LoadFattenigPerPart(fatt[0].PartId);
+                foreach (var F in fattToUpdate)
+                {
+                    F.CreateBreedDictionary();
+                    F.SetBreedString();
+                    EditFattenigBreed(F);
+                }
                 if (fatt[0].ECaller == Caller.report) return RedirectToAction("Report", "Home");
                 else if (fatt[0].ECaller == Caller.allPartur) return RedirectToAction("AllParturView", "Mate");
             else return RedirectToAction("FatteningView", "Mate", new { partId = fatt[0].PartId });
@@ -420,16 +429,18 @@ namespace RabbitFarmWeb.Controllers
             List<FatteningModel> fatt = LoadFattenigPerPart(partId);
             ParturationModel part = LoadParturation(partId);
             Age partAge = new Age(part.Date);
-            ViewBag.Message1 = String.Format("Кролики на откорм крольчихи {0}, рожденны {1}, возрастом месяцев {2}, дней {3}", part.MotherId, part.DateString, partAge.months, partAge.days);
+            ViewBag.Message1 = String.Format("Кролики на откорм крольчихи {0} (отец {4}), рожденны {1}, возрастом месяцев {2}, дней {3}", part.MotherId, part.DateString, partAge.months, partAge.days,part.FatherId);
             return View(fatt);
         }
-        public ActionResult FattKilled (int PartId, int rabId, int CalledFrom)
+        public ActionResult FattKilled(int PartId, int rabId, int CalledFrom)
         {
             List<FatteningModel> fatt = LoadFattenigPerPart(PartId);
             FatteningModel rab = fatt.Find(f => f.RabPartId == rabId);
             rab.Caller = CalledFrom;
             rab.KillDate = DateTime.Now;
             ViewBag.Date = DateToString(rab.KillDate);
+
+            //if (message != "") ViewBag.Message = message;
             //rab.Weight = ; 
 
             return PartialView(rab);
@@ -438,14 +449,18 @@ namespace RabbitFarmWeb.Controllers
         [HttpPost]
         public ActionResult FattKilled(FatteningModel fatt)
         {
-            
+            if (!ModelState.IsValid)
+            {
+                return PartialView(fatt);
+            }
+
             List<FatteningModel> fattList = new List<FatteningModel>
             {
                 fatt
             };
 
             EditFattenigPerPart(fattList);
-
+            ConstantsSingelton.UpdateCages();
             if (fatt.ECaller == Caller.fattening) return RedirectToAction("FatteningView", "Mate", new { partId = fatt.PartId });
             else return RedirectToAction("AllFatteningView", "Mate");
         }
@@ -456,6 +471,7 @@ namespace RabbitFarmWeb.Controllers
             rab.ECaller = CalledFrom;
             ViewBag.Date = (rab.KillDate!=null)?DateToString(rab.KillDate):null;
             //rab.Weight = ; 
+
             return PartialView(rab);
          }
         [HttpPost]
@@ -472,6 +488,7 @@ namespace RabbitFarmWeb.Controllers
                 else if (fattList[0].Status == FatStatus.eatenByUs && fattList[0].KillDate == null) fattList[0].KillDate = DateTime.Now;
             } 
             EditFattenigPerPart(fattList);
+            ConstantsSingelton.UpdateCages();
             if (fatt.ECaller ==Caller.fattening) return RedirectToAction("FatteningView", "Mate", new { partId = fatt.PartId });
             else if (fatt.ECaller==Caller.fattPerStat) return RedirectToAction("FattStatusView", "Mate", new { Dates = 360, Status=fatt.Status  });
             else return RedirectToAction("AllFatteningView", "Mate");
@@ -488,6 +505,7 @@ namespace RabbitFarmWeb.Controllers
                 rab
             };
             EditFattenigPerPart(fattList);
+            ConstantsSingelton.UpdateCages();
             rab.ECaller = CalledFrom;
             if (CalledFrom == Caller.fattening) return RedirectToAction("FatteningView", "Mate", new { partId = PartId });
             else return RedirectToAction("AllFatteningView", "Mate");
@@ -496,12 +514,24 @@ namespace RabbitFarmWeb.Controllers
         public ActionResult FattDelete(int PartId, int rabId, Caller CalledFrom)
         {
             DeleteFattRab(PartId, rabId);
+            ConstantsSingelton.UpdateCages();
             if (CalledFrom == Caller.fattening) return RedirectToAction("FatteningView", "Mate", new { partId = PartId });
             else return RedirectToAction("AllFatteningView", "Mate");
+        }
+        public ActionResult SelectForKill(int PartId, int rabId)
+        {
+            EditFattenigStatus(new FatteningModel() { PartId = PartId, RabPartId = rabId, Status = FatStatus.selectedForKill });
+            // ConstantsSingelton.UpdateCages();
+            // if (CalledFrom == Caller.fattening) return RedirectToAction("FatteningView", "Mate", new { partId = PartId });
+            return RedirectToAction("AllFatteningView", "Mate");
         }
         public ActionResult AllFatteningView()
         {
             List<FatteningModel> fatt = LoadFattenigAllAlive();
+            foreach(var ft in fatt)
+            {
+                ft.SetBreedStringToDisplay();
+            }
 
             
             //Age partAge = new Age(part.Date);
@@ -530,6 +560,7 @@ namespace RabbitFarmWeb.Controllers
                     }
                     else { int recordCreated = FattWeight.Create(wgt); }
                 }
+               
             }
             
             return RedirectToAction("AllFatteningView");
@@ -551,12 +582,29 @@ namespace RabbitFarmWeb.Controllers
             string until = DateToString(DateTime.Now);
             FatStatus statusEn = (FatStatus)Status;
             DisplayAttribute St = GetDisplayAttributesFrom(statusEn, typeof(FatStatus));
-            ViewBag.Message = "Показаны все кролики статус которых <" + St.Name + "> за период " + Dates;
+           
             ViewBag.Status = statusEn;
-            List < FatteningModel > fatt= LoadFattenigPerStatus(from, until, (int)Status);
+            List < FatteningModel > fatt= LoadFattenigPerStatus(from, until, (int)Status).OrderByDescending(x=>x.KillDate).ToList();
+            if(fatt.Count>0) ViewBag.Message = "Показаны все кролики статус которых <" + St.Name + "> за период " + Dates;
+            else ViewBag.Message = "В списке НЕТ кроликов статус которых <" + St.Name + "> за период " + Dates;
             return View(fatt);
         }
-        //"PutNest", "Mate", new { mateId=item.Id, calledFrom=0 
+        [HttpPost]
+        public ActionResult FattFillInKilled(List<FatteningModel> fatt)
+        {
+            if (ModelState.IsValid)
+            {
+                foreach(var f in fatt)
+                {
+                    f.KillDate = DateTime.Now;
+                    EditFattenigPerPart(fatt);
+                }
+
+                //cage=@Cage, collor=@Collor, status=@Status, rabbitGender=@RabbitGender, killDate=@KillDate," +
+                //"weight=@Weight, price=@Price, comment=@Comment
+            }
+            return RedirectToAction("AllFatteningView");
+        }
         public ActionResult PutNest(int mateId,int rabId, Caller caller)
         {
             MatingModel mat = new MatingModel() {
