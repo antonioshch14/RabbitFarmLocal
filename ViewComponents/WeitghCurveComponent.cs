@@ -64,7 +64,7 @@ namespace RabbitFarmLocal.ViewComponents
            
             chart.data.datasets[0].borderColor.Add("rgba(255, 0, 0, 1)");
             chart.data.datasets[0].backgroundColor.Add("rgba(0, 0, 0, 0)");
-
+            chart.data.labels = new List<string>();
             //int ii = 0;
             for (int i = values.Length - 1; i >= 0; i--)
             {
@@ -109,8 +109,8 @@ namespace RabbitFarmLocal.ViewComponents
         public IViewComponentResult Invoke()
         {
             //bool viewWeightCurve = name == "curve";
-            List<RabWeightCurve> RabCurves;
-            var curve = RabbitFarmLocal.BusinessLogic.WeightLogic.CreateGrowCurve(out RabCurves);
+            //List<RabWeightCurve> RabCurves;
+            var curve = RabbitFarmLocal.BusinessLogic.WeightLogic.CreateGrowCurve(out List<RabWeightCurve> RabCurves);
             WeightChartCurveViewModel chart = new WeightChartCurveViewModel();
             float[] weight=new float[curve.Length];
             float[] factor=new float[curve.Length];
@@ -127,8 +127,8 @@ namespace RabbitFarmLocal.ViewComponents
             }
             chart.ChartJsonW = GetCharJSON(weight, "Средниий вес кроликов на откорме", outSortedValues, "Filtered out values");
             chart.ChartJsonF = GetCharJSON(factor, "Средниий коэффициент роста кроликов на откорме");
-            chart.ChartJsonWWOG = GetCharJSON(weightWOGaps, "Средниий средний вес без промиежутков");
-            chart.ChartJsonWST = GetCharJSON(weightSteam, "Средниий вес спрямленный");
+            chart.ChartJsonWWOG = GetCharJSON(weightWOGaps, "Средниий средний вес без промежутков");
+            chart.ChartJsonWST = GetCharJSON(weightSteam, "Средниий вес сглаженный");
             chart.ChartJsonAllLines = GetCharJSONLines(RabCurves, weightSteam);
 
             return View(chart);
@@ -170,17 +170,17 @@ namespace RabbitFarmLocal.ViewComponents
             chart.data.datasets[ind].spanGaps = false;
             chart.data.datasets[ind].fill = false;
             chart.data.datasets[ind].label = "Streamlined";
-           chart.data.datasets[ind].borderColor.Add("rgba(0, 0, 0, 1)");
+            chart.data.datasets[ind].borderColor.Add("rgba(0, 0, 0, 1)");
             chart.data.datasets[ind].backgroundColor.Add("rgba(0, 0, 0, 0)");
+            chart.data.labels = new List<string>();
             for (int i = 0; i < streamedVAlues.Length; i++)
             {
-               
-                    chart.data.datasets[ind].data.Add(new CharData()
-                    {
-                        y = streamedVAlues[i],
-                        x = i
-                    });
-                    chart.data.labels.Add(new string(i.ToString()));
+                chart.data.datasets[ind].data.Add(new CharData()
+                {
+                    y = streamedVAlues[i],
+                    x = i
+                });
+                chart.data.labels.Add(new string(i.ToString()));
             }
             chart.options.scales.yAxes.Add(new yAxes());
             chart.options.scales.xAxes.Add(new xAxes());
@@ -204,7 +204,7 @@ namespace RabbitFarmLocal.ViewComponents
             JsonSerializerOptions options = new()
             {
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                WriteIndented = true// change to false in production
+                WriteIndented = false// change to false in production
             };
             string jsonObj = JsonSerializer.Serialize(chart, options);
             System.Diagnostics.Debug.WriteLine(jsonObj);

@@ -5,10 +5,9 @@
 }
 
 <h1>Породы</h1>
-<@*a class="btn btn-success" href="@Url.Action("PopulateBreeds", "Breeds")">Создать таблицу Породы</a>
-<a class="btn btn-success" href="@Url.Action("AssignBreedId", "Breeds")">Назначить номера пород</a>*@
-<a class="btn btn-success" href="@Url.Action("FillBreeds", "Breeds")">Определить породы основных кроликов</a>
-<a class="btn btn-success" href="@Url.Action("FillBreedForFattening", "Breeds")">Определить породы откорма</a>
+@*<a class="btn btn-success" href="@Url.Action("PopulateBreeds", "Breeds")">Создать таблицу Породы</a>
+    <a class="btn btn-success" href="@Url.Action("AssignBreedId", "Breeds")">Назначить номера пород</a>*@
+
 <p>
     <a asp-action="Create">Добавить породу</a>
 </p>
@@ -36,4 +35,29 @@
             </tr>
         }
     </tbody>
+
 </table>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Порода</th>
+            <th>
+                Кроликов такой породы
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var breeds in ViewBag.breeds)
+        {
+            <tr>
+                <td>
+                    @breeds.BreedOfRab.BreedString
+                </td>
+                <td>
+                    @breeds.NumberRabbitsOfThisBreed
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<vc:weightperbreed breeds="@ViewBag.breedsList"></vc:weightperbreed>

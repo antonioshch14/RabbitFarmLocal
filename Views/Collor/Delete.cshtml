@@ -1,0 +1,58 @@
+﻿@model RabbitFarmLocal.Models.CollorModel
+
+@{
+    ViewData["Title"] = "DeleteCollor";
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Delete</title>
+</head>
+<body>
+    @if (ViewBag.NotallowedR == true)
+    {
+        <h3>Вы не можете удалить этот окрас, сначала поменяйте окрас этих кроликов: </h3>
+        <a>@ViewBag.Rabbits</a>
+
+    }
+    @if (ViewBag.NotallowedF)
+    {
+<h3>Вы не можете удалить этот окрас, сначала поменяйте окрас этих кроликов откорма: </h3>
+        @foreach (var f in ViewBag.Fattenings)
+        {
+            <a>Номер @f.RabPartId Клетка @f.Cage Рожден @f.Born</a>
+        }
+    }
+    @if (!ViewBag.NotallowedF && !ViewBag.NotallowedR)
+    {
+        <h3>Вы уверены, что хотите удалить данный окрас?</h3>
+        <div>
+           
+            <hr />
+            <dl class="row">
+
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Name)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.Name)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.ImageName)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.ImageName)
+                </dd>
+            </dl>
+
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="Id" />
+                <input type="submit" value="Удалить" class="btn btn-danger" />
+
+            </form>
+        </div>
+    }
+</body>
+</html>

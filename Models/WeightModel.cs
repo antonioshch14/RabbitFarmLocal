@@ -27,7 +27,10 @@ namespace RabbitFarmLocal.Models
     }
     public class FattWeightModel: WeightModel//, IComparable
     {
-      
+      public FattWeightModel ShallowCopy()
+        {
+            return (FattWeightModel) this.MemberwiseClone();
+        }
         public int PartId { get; set; }
         public DateTime Born { get; set; }
         [DisplayName("Возраст мес-дн")]

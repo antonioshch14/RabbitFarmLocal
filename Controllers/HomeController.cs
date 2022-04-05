@@ -18,9 +18,12 @@ using RabbitFarmLocal.messaging;
 using RabbitFarmLocal.BusinessLogic;
 using System.Web.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace RabbitFarmLocal.Controllers
 {
+    [System.Runtime.InteropServices.Guid("015CD6A6-FBDC-46F7-BF44-96CFA8CE1779")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -32,6 +35,7 @@ namespace RabbitFarmLocal.Controllers
 
         public IActionResult Index()
         {
+            //ViewBag.Overdues = RabbitFarmLocal.Start.ConstantsSingelton.GetNumberOfOverDues();
             return View();
         }
 
@@ -45,16 +49,17 @@ namespace RabbitFarmLocal.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
         //[Authorize(Roles = "admin,owner")]
         public ActionResult ViewRabbits()
         {
             ViewBag.Message = "Список кроликов";
-          
             List<DLRabbitModel> rabbits = Rabbit.LoadList();
             foreach(var rab in rabbits)
             {
                // rab.GetBreedDictionary();
                 rab.SetBreedStringToDisplay();
+                rab.SetCollorString();
             }
             return View(rabbits);
         }
@@ -62,6 +67,8 @@ namespace RabbitFarmLocal.Controllers
         public ActionResult FUllRabbitView(int id)
         {
             DLRabbitModel item = Rabbit.LoadOne(id);
+            item.SetBreedStringToDisplay();
+            item.SetCollorString();
             ViewBag.Message = "Кролик " + item.RabbitId + "  " +item.StoredRabStatus;
             FullRabbitModel rabbit = new FullRabbitModel
             {
@@ -69,7 +76,7 @@ namespace RabbitFarmLocal.Controllers
                 Gender = item.Gender,
                 Cage = item.Cage,
                 Collor = item.Collor,
-                Breed = item.Breed,
+                Breed = item.BreedString,
 
             };
             if (item.IsAlive) rabbit.IsAlive = "живой";
@@ -84,6 +91,15 @@ namespace RabbitFarmLocal.Controllers
             var desc = LoadDescent(item.RabbitId);
             rabbit.DescentData = desc;
             rabbit.Weights = RabWeight.Load(item.RabbitId);
+            
+
+            //JsonSerializerOptions options = new()
+            //{
+            //    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            //    WriteIndented = true// change to false in production
+            //};
+             
+            //ViewBag.DecsentTest = JsonSerializer.Serialize(DescentLogic.GerRabDecent(item.RabbitId), options);
             return View(rabbit);
         }
 
@@ -92,6 +108,7 @@ namespace RabbitFarmLocal.Controllers
         public ActionResult Delete(RabbitFarmLocal.Models.DLRabbitModel rabbit)
         {
             deteRabbitFromBD(rabbit.Id);
+            ConstantsSingelton.UpdateCages();
             return RedirectToAction("ViewRabbits");
         }
 
@@ -101,23 +118,26 @@ namespace RabbitFarmLocal.Controllers
         {
             if (ErrorMesssage != null) ViewBag.Error = ErrorMesssage;
             InpRAbbitModel rab = new InpRAbbitModel();
-            if (fatt!=null)
+            if (fatt.RabPartId!=0 && fatt.PartId!=0)
             {
                 rab.Mother = fatt.MotherId;
                 rab.Father = fatt.FatherId;
                 rab.Born = fatt.Born;
-                rab.Collor = fatt.Collor;
+                rab.CollorId = fatt.CollorId;
                 rab.RabbitGender = fatt.RabbitGender;
                 rab.PartId = fatt.PartId;
                 rab.PartRabId = fatt.RabPartId;
                 ViewBag.Date = DateToString(rab.Born);
                 ViewBag.BreedChoseShow = false;
-
+                rab.BreedString = fatt.BreedString;
+                rab.Breed = fatt.Breed;
             }
             else
             {
                 ViewBag.BreedChoseShow = true;
-            }
+                ViewBag.BreedList = new SelectList(ConstantsSingelton.GetListOfBreeds(), "Id", "Name", rab.BreedId);
+                rab.CollorId = 1;  //set collor as  'not set'
+             }
             List<DLRabbitModel> rabbits = Rabbit.LoadList();
             List<int> ids = (from r in rabbits select r.RabbitId).ToList();
             ids.Sort();
@@ -138,6 +158,7 @@ namespace RabbitFarmLocal.Controllers
             //rab.CageListTest = RabbitFarmLocal.Start.ConstantsSingelton.GetCageNumbers();
             rab.CageList = RabbitFarmLocal.Start.ConstantsSingelton.GetCageLists();
             ViewBag.caJson = CageJSON(0, false);
+            ViewBag.CollorList = new SelectList(RabbitFarmLocal.Start.ConstantsSingelton.GetCollors(),"Id","Name",rab.CollorId);
             return PartialView(rab);
         }
         [HttpPost]
@@ -154,8 +175,12 @@ namespace RabbitFarmLocal.Controllers
             ViewBag.Message = "Add rabbit" + model.RabbitId;
             if (ModelState.IsValid)
             {
-                int recordCreated = CreateRabbit(model.RabbitId, model.Cage, model.Breed, model.Collor, model.Born,
-                    model.Mother, model.Father, model.IsAlive, model.RabbitGender, model.PartId, model.PartRabId) ;
+                if (model.Breed == null)
+                {
+                    model.Breed = model.BreedId+", 100";
+                }
+                int recordCreated = CreateRabbit(model.RabbitId, model.Cage, model.Breed, model.CollorId, model.Born,
+                    model.Mother, model.Father, model.IsAlive, model.RabbitGender, model.PartId, model.PartRabId, model.BreedId) ;
                 if (recordCreated > 0 && model.PartRabId != null) 
                     EditFattenigStatus(new FatteningModel() { PartId = (int)model.PartId, RabPartId = (int)model.PartRabId, Status = FatStatus.used4Bread });
                 UpdateRabbitsStatus();
@@ -182,9 +207,12 @@ namespace RabbitFarmLocal.Controllers
             DescentModel desc = LoadDescent(rab.RabbitId);
             ViewBag.FirstInDescent = (desc.Parents[0].BeginnerOfLine == true && desc.Parents.Count() == 1) ?true:false;
             ViewBag.BreedList = new SelectList(ConstantsSingelton.GetListOfBreeds(), "Id", "Name",rab.BreedId);
-
+            ViewBag.CollorList = new SelectList(RabbitFarmLocal.Start.ConstantsSingelton.GetCollors(), "Id", "Name", rab.CollorId);
             ViewBag.Born = DateToString(rab.Born);
-
+            rab.SetCollorString();
+            rab.CageList = RabbitFarmLocal.Start.ConstantsSingelton.GetCageLists();
+            ViewBag.caJson = CageJSON(0, false);
+            
             return View(rab);
 
             // return View(new InpRAbbitModel()); ;
@@ -201,6 +229,7 @@ namespace RabbitFarmLocal.Controllers
                 else rab.IsMale=false;
                 int recordCreated = Rabbit.EditGeneral(rab);
                 if (!rab.IsAlive) Rabbit.EditKill(rab);
+                ParturationUpdate.UpdateOne(rab);
                 UpdateRabbitsStatus();
                 ConstantsSingelton.UpdateCages();
                 return RedirectToAction("ViewRabbits");
@@ -308,7 +337,7 @@ namespace RabbitFarmLocal.Controllers
         {
             DLRabbitModel rab = Rabbit.LoadOne(id);
             //int rabbitDead = PutRabToArchive(id);
-            ConstantsSingelton.UpdateCages();
+           // ConstantsSingelton.UpdateCages();
             return View(rab);
         }
         [HttpPost]
@@ -318,6 +347,7 @@ namespace RabbitFarmLocal.Controllers
             {
                 rab.IsAlive = false;
                 int recordCreated = Rabbit.EditKill(rab);
+                ParturationUpdate.UpdateOne(rab);
                 ConstantsSingelton.UpdateCages();
             }
             return RedirectToAction("ViewRabbits", "Home");
@@ -350,6 +380,7 @@ namespace RabbitFarmLocal.Controllers
         {
             UpdateRabbitsStatus();
             ReportModel rep = FillReport();
+            RabbitFarmLocal.Start.ConstantsSingelton.SetNumberOfOverDues();
             return View(rep);
         }
         public ActionResult UpdateRabbitsStatusView()

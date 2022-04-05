@@ -74,9 +74,16 @@ namespace RabbitFarmLocal.Models
         public DateTime Date {get;set;}
         public bool Alert { get
             {
-                if (Date <= DateTime.Now) return true;
+                if (Date <= DateTime.Now)
+                {
+                    TimeSpan ts = DateTime.Now - Date;
+                    DaysOverdue = ts.Days;
+                    return true;
+                }
                 else return false;
             } }
+        [DisplayName("просрочено дней: ")]
+        public int DaysOverdue { get; set; }
         [DisplayName("Дата")]
         public string DateString
         {

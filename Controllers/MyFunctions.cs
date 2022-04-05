@@ -8,8 +8,16 @@ using System.Web;
 
 namespace RabbitFarmLocal.Controllers
 {
+    public static class MyExtensions
+    {
+        public static IEnumerable<(T item, int index)> WithIndex<T>(this IEnumerable<T> source)
+        {
+            return source.Select((item, index) => (item, index));
+        }
+    }
     public class MyFunctions
     {
+       
         public static DateTime StringToDate(string date)
         {
             int year = Convert.ToInt32(date.Substring(0, 4));
@@ -140,6 +148,11 @@ namespace RabbitFarmLocal.Controllers
             return enumType.GetMember(enumValue.ToString())
                            .First()
                            .GetCustomAttribute<DisplayAttribute>();
+        }
+        public static string GetPropertyDisplayName(PropertyInfo pi)
+        {
+            var dp = pi.GetCustomAttributes(typeof(DisplayNameAttribute), true).Cast<DisplayNameAttribute>().SingleOrDefault();
+            return dp != null ? dp.DisplayName : pi.Name;
         }
     }
     public class _Caller:I_Caller

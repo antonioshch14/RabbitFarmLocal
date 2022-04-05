@@ -60,21 +60,19 @@ namespace RabbitFarmLocal.Models
         public DateTime DateUntil { get; set; }
         [DisplayName("отчет до")]
         public string DateUntilString { get { return DateToStringRU(DateUntil); } }
-        
         public string DateUntilStringForEdit { get { return DateToString(DateUntil); } }
-       
-            [DisplayName("За месяц")]
-        public string Month { get {
+        [DisplayName("За месяц")]
+        public string Month { get 
+            {
                 var enumMonth = (Months)DateUntil.Month;
                 string month = enumMonth.ToString();
-                return month; } }
-       
+                return month;
+            }
+        }
     }
    
     public class FinRepModel: FinRepSelectDates //Id,Date,Price, Weight, Type, Comment
     {
-        
-       
         [DisplayName("Денег получено, руб")]
         public double EarnedTotal { get { return Math.Ceiling(SoldAsMeat + SoldForBread + SoldCanned); } }
         [DisplayName("Было бы получено, если бы продали, то что съели сами ")]
@@ -105,7 +103,16 @@ namespace RabbitFarmLocal.Models
         public double BenefitTotal { get { return Math.Ceiling(EarnedTotal - SpentTotal); } }
         [DisplayName("Было бы заработано, если бы сами не съели")]
         public double BenefitWithOurConsum { get { return Math.Ceiling(EarnedTotalWIthOurConsum - SpentTotal); } }
-
     }
-   
+    public class FinRepHistory
+    {
+        [DisplayName("Затраты всего")]
+        public double SpentTotal { get; set; }
+        [DisplayName("Год")]
+        public double Year { get; set; }
+        [DisplayName("Заработано всего, руб")]
+        public double BenefitTotal { get; set; }
+        [DisplayName("Было бы заработано, если бы сами не съели")]
+        public double BenefitWithOurConsum { get; set; }
+    }
 }

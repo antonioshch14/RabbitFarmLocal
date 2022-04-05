@@ -1,0 +1,14 @@
+﻿
+<div>
+    <a class="btn btn-success d-block" href="@Url.Action("CallBot", "Home")">Send overdue report to the bot</a>
+    <a class="btn btn-success d-block" href="@Url.Action("CallBotFin", "Home")">Send fin report to the bot</a>
+    <a class="btn btn-success d-block" href="@Url.Action("FillBreeds", "Breeds")">Определить породы основных кроликов</a>
+    <a class="btn btn-success d-block" href="@Url.Action("FillBreedForFattening", "Breeds")">Определить породы откорма</a>
+    <a class="btn btn-success d-block" href="@Url.Action("DrawWeightCurve", "Weight")">Draw Curves of Fattening grow</a>
+    <a class="btn btn-success d-block" href="@Url.Action("CalculateWeightPredictionDeviation", "Development")">Calculate Weight Prediction Deviation</a>
+    <a class="btn btn-success d-block" href="@Url.Action("FillParturationStatus", "Development")">
+        FillParturationStatus and Cages
+    </a>
+    <a class="btn btn-success d-block" href="@Url.Action("ParturationUpdateAll", "Development")">Update all parturations status</a>
+    <h4> @ViewBag.Message</h4>
+</div>

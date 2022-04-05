@@ -7,7 +7,7 @@
 
 <table class="table">
     <tr>
-        
+
         <th>
             @Html.DisplayNameFor(model => model.DateString)
         </th>
@@ -23,19 +23,24 @@
         <th>
             @Html.DisplayNameFor(model => model.NestRemoved)
         </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Status)
+        </th>
 
         <th>
             @Html.DisplayNameFor(model => model.Comment)
         </th>
-      
+
         <th></th>
     </tr>
 
     @foreach (var item in Model)
     {
-<tr data-toggle="modal" data-target="#myModal-@item.Id" 
-    @if (item.SeparationDate == null) {<text>class="modal-body table-success"</text> }>
-   
+<tr data-toggle="modal" data-target="#myModal-@item.Id"
+    @if (item.Status == parturStatus.feeded  || item.Status==parturStatus.inDifferentCages) { <text> class="modal-body table-success" </text> }
+    else if (item.Status == parturStatus.nestRemovalAwaited || item.Status==parturStatus.separationAwaited) { <text> class="modal-body table-warning" </text> }
+    >
+
     <td>
         @Html.DisplayFor(modelItem => item.DateString)
     </td>
@@ -45,12 +50,15 @@
     <td>
         @Html.DisplayFor(modelItem => item.Children)
     </td>
-    
+
     <td>
         @Html.DisplayFor(modelItem => item.Cage)
     </td>
     <td>
         @Html.DisplayFor(modelItem => item.NestRemoved)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Status)
     </td>
 
     <td>
@@ -66,6 +74,10 @@
                 </div>
                 <div class="modal-body">
                     @*<table class="table">*@
+                    <div>
+                        @Html.DisplayNameFor(model => model.Status)
+                        @Html.DisplayFor(modelItem => item.Status)
+                    </div>
 
                     <div>
                         @Html.DisplayNameFor(model => model.MateDateString)
@@ -117,16 +129,16 @@
 
                 </div>
                 <div class="modal-footer">
-                   
+
                     <a class="btn btn-info" href="@Url.Action("ParturEdit", "Mate", new {id = item.Id, caller=@Caller.allPartur})">Редактировать</a>
                     <a class="btn btn-danger" data-toggle="modal" data-target="#delete-@item.Id">Удалить</a>
-                    @if (item.SeparationDate == null)
+                    @if (item.Status ==parturStatus.feeded)
                     {
                         <a class="btn btn-info compItem" href="@Url.Action("PreFattenigCreate","Mate", new { partId = item.Id, caller = @Caller.allPartur })">Рассадить</a>
                     }
                     else
                     {
-                        <div >
+                        <div>
                             @Html.ActionLink("Откорм", "FatteningView", new { partId = item.Id })
                         </div>
                     }
@@ -154,7 +166,7 @@
             </div>
         </div>
     </div>
-    
+
 </tr>
     }
 

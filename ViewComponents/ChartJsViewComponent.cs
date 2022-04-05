@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using static RabbitFarmLocal.BusinessLogic.FinReport;
+using System;
+using RabbitFarmLocal.Start;
 
 namespace RabbitFarmLocal.ViewComponents
 {
@@ -55,12 +57,14 @@ namespace RabbitFarmLocal.ViewComponents
                     }
                 }
             }";
-           
-
-            List<FinRepModel> FinList = ReportForYear(2021);
+            int year;
+            DateTime thresholdDate = new DateTime(DateTime.Now.Year, 2, Settings.FinRepDate());
+            if (DateTime.Now > thresholdDate) year = DateTime.Now.Year;
+            else year = DateTime.Now.AddYears(-1).Year;
+            List<FinRepModel> FinList = ReportForYear(year);
             ChartJs chart = new ChartJs(FinList.Count,false);
             chart.type = "bar";
-            chart.responsive = true;
+            //chart.responsive = true;
             chart.options.scales.yAxes.Add(new yAxes());
             chart.options.scales.yAxes[0].ticks.beginAtZero=true;
             chart.data.datasets.Add(new Dataset());
@@ -70,7 +74,7 @@ namespace RabbitFarmLocal.ViewComponents
             chart.data.datasets.Add(new Dataset());
             chart.data.datasets[1].data = new List<string>();
             chart.options.responsive = true;
-          
+            chart.data.labels = new List<string>();
             for (int i = 0; i < FinList.Count; i++)
             {
                 chart.data.datasets[0].data.Add(new string(""));
@@ -81,6 +85,7 @@ namespace RabbitFarmLocal.ViewComponents
                 chart.data.datasets[1].data[i] = FinList[i].SpentTotal.ToString();
                 chart.data.datasets[1].label = "Затраты";
                 chart.data.datasets[1].backgroundColor.Add("rgba(255, 159, 64, 0.2)");
+                
                 chart.data.labels.Add(FinList[i].Month);
                 
             }

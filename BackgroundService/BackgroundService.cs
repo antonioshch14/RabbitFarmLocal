@@ -9,8 +9,7 @@ namespace RabbitFarmLocal.BackgroundService
     public abstract class BackgroundService : IHostedService
     {
         private Task _executingTask;
-        private readonly CancellationTokenSource _stoppingCts =
-                                                       new CancellationTokenSource();
+        private readonly CancellationTokenSource _stoppingCts = new CancellationTokenSource();
 
         public virtual Task StartAsync(CancellationToken cancellationToken)
         {
@@ -51,13 +50,9 @@ namespace RabbitFarmLocal.BackgroundService
 
         protected virtual async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            //stoppingToken.Register(() =>
-            //        _logger.LogDebug($" GracePeriod background task is stopping."));
-
             do
             {
                 await Process();
-
                 await Task.Delay(5000, stoppingToken); //5 seconds delay
             }
             while (!stoppingToken.IsCancellationRequested);

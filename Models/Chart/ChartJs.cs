@@ -24,21 +24,19 @@ namespace RabbitFarmLocal.Models.Chart
         public string type { get; set; }
         public static int duration { get; set; }
         public string easing { get; set; }
-        public bool responsive { get; set; }
-        public Title title { get; set; } = new Title();
-        public bool lazy { get; set; }
+       
         public Data data { get; set; } = new Data();
         public Options options { get; set; } = new Options();
     }
     public class Data
     {
-        public List<string> labels { get; set; } = new List<string>();
+        public List<string> labels { get; set; } 
         public List<Dataset> datasets { get; set; } = new List<Dataset>();
     }
     public class Dataset
     {
         public string label { get; set; }
-        // public List<CharData> data { get; set; }
+       
         public dynamic data { get; set; }
         public List<string> backgroundColor { get; set; } = new List<string>();
         public List<string> borderColor { get; set; } = new List<string>();
@@ -92,7 +90,10 @@ namespace RabbitFarmLocal.Models.Chart
         public Scales scales { get; set; } = new Scales();
         public bool responsive { get; set; }
         public Display legend { get; set; }
+        public Title title { get; set; }
+
     }
+   
     public class Display
     {
         public bool display { get; set; }
@@ -107,5 +108,8 @@ namespace RabbitFarmLocal.Models.Chart
     {
         public bool display { get; set; }
         public string text { get; set; }
+       
+        public string position { get; set; } = "bottom";
     }
+   
 }

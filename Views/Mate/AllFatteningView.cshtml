@@ -6,7 +6,6 @@
     ViewData["Title"] = "AllFatteningView";
 }
 
-<a class="btn btn-success" href="@Url.Action("DrawWeightCurve", "Weight")">CreateCurve</a>
 
 <button data-toggle="modal" data-target="#ShowHiden" class="btn btn-primary">Показать откорм по статусу</button>
 <div class="modal fade" id="ShowHiden">
@@ -42,7 +41,10 @@
 </div>
 <button class="btn btn-success" id="WeightButton" onclick="FillWeightOn()">Запонить вес для всех</button>
 
-
+@if (!Model.All(x => x.Status != FatStatus.selectedForKill))
+{
+    <a class="d-block btn btn-warning" href="@Url.Action("FattStatusView", "Mate", new {Dates = 360, Status = FatStatus.selectedForKill })">Перейти в кроликов на забой</a>
+}
 
 
 <h4>@ViewBag.Message1</h4>
@@ -89,189 +91,261 @@
                 @for (int i = 0; i < Model.Count; i++)
                 {
 
-                <tr id="row-@i" @if (Model[i].Status== FatStatus.selectedForKill) {<text>class="table-warning"</text> }
-                    >
+                    <tr id="row-@i" @if (Model[i].Status == FatStatus.selectedForKill) { <text> class="table-warning" </text> }>
 
-                    <td class="col-2 Modals partView" data-toggle="modal" data-target="#modal-@Model[i].PartId-@Model[i].RabPartId">
-                        @Html.DisplayFor(modelItem => Model[i].Age)
-                    </td>
-                    <td class="col-1 d-none d-sm-table-cell">
-                        @Html.DisplayFor(modelItem => Model[i].RabPartId)
-                    </td>
-                    <td class="col-1 col-sm-2 partView" onclick="replaceContentsOfDiv(@Model[i].Cage)">
-                        @Html.DisplayFor(modelItem => Model[i].Cage)
-                    </td>
-                    <td class="col-1 col-sm-4 ">
-                        @if (Model[i].Collor == null || Model[i].Collor == "")
-                        {<a>...</a>}
-                        else
-                        {@Html.DisplayFor(modelItem => Model[i].Collor)}
-                    </td>
-                    <td class="col-3 d-none d-sm-table-cell weight">
-                        @Html.DisplayFor(modelItem => Model[i].BreedString)
-                    </td>
-                    <td class="col-1 d-none d-sm-table-cell weight">
-                        @Html.DisplayFor(modelItem => Model[i].ProjectedWeight)
-                    </td>
-                    <td class="col-2 col-sm-4 showWithWeight">
-                        @Html.DisplayFor(modelItem => Model[i].StatusForAllFattView)
-                    </td>
-                    <td class="col-2 d-none d-sm-table-cell">
-                        @Html.DisplayFor(modelItem => Model[i].Comment)
-                    </td>
-                    <td class="col-2 d-none weight" id="WeightFiled">
-                        @*@Html.DisplayFor(modelItem => Model[i].NewWeight)*@
-                        @*<input asp-for="Model[i].NewWeight" class="form-control" asp-format="{0:yyyy-MM-dd}" />
-            <span asp-validation-for="item.NewWeight" class="text-danger"></span>*@
-                        @Html.EditorFor(model => Model[i].NewWeight, new { @class = "NewWeight", htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => Model[i].NewWeight, "", new { @class = "text-danger" })
-                    </td>
-                    @Html.HiddenFor(model => Model[i].RabPartId)
-                    @Html.HiddenFor(model => Model[i].PartId)
-                    @Html.HiddenFor(model => Model[i].WeightDate)
-                    <div class="modal fade" id="modal-@Model[i].PartId-@Model[i].RabPartId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Кролик @Model[i].RabPartId</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <div>
-                                        @Html.DisplayNameFor(model => Model[0].BornString)
-                                        @Html.DisplayFor(modelItem => Model[i].BornString)
-                                    </div>
-                                    <div>
-                                        @Html.DisplayNameFor(model => Model[0].Age)
-                                        @Html.DisplayFor(modelItem => Model[i].Age)
-                                    </div>
-                                    <div>
-                                        @Html.DisplayNameFor(model => Model[0].Cage)
-                                        @Html.DisplayFor(modelItem => Model[i].Cage)
-                                    </div>
+                        <td class="col-2 Modals partView" data-toggle="modal" data-target="#modal-@Model[i].PartId-@Model[i].RabPartId" onclick="Pedigree(@Model[i].PartId,@Model[i].RabPartId)">
+                            @Html.DisplayFor(modelItem => Model[i].Age)
+                        </td>
+                        <td class="col-1 d-none d-sm-table-cell">
+                            @Html.DisplayFor(modelItem => Model[i].RabPartId)
+                        </td>
+                        <td class="col-1 col-sm-2 partView" onclick="replaceContentsOfDiv(@Model[i].Cage)">
+                            @Html.DisplayFor(modelItem => Model[i].Cage)
+                        </td>
+                        <td class="col-1 col-sm-4 ">
+                            @if (Model[i].Collor == null || Model[i].Collor == "")
+                            {<a>...</a>}
+                            else
+                            {@Html.DisplayFor(modelItem => Model[i].Collor)}
+                        </td>
+                        <td class="col-3 d-none d-sm-table-cell weight">
+                            @Html.DisplayFor(modelItem => Model[i].BreedString)
+                        </td>
+                        <td class="col-1 d-none d-sm-table-cell weight">
+                            @Html.DisplayFor(modelItem => Model[i].ProjectedWeight)
+                            @if (Model[i].AverageWeight != null)
+                            {
+                                <sup class="alert alert-primary" style="padding:2px;" data-toggle="modal"
+                                     data-target="#weight_modal-@Model[i].PartId-@Model[i].RabPartId">@Model[i].AverageWeight кг @Model[i].DaysSinceWeightMesurment д</sup>
+                                    <div class="modal fade" id="weight_modal-@Model[i].PartId-@Model[i].RabPartId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
 
-                                    <div>
-                                        @Html.DisplayNameFor(model => Model[0].RabPartId)
-                                        @Html.DisplayFor(modelItem => Model[i].RabPartId)
-                                    </div>
-                                    <div>
-                                        @Html.DisplayNameFor(model => Model[0].MotherId)
-                                        @Html.DisplayFor(model => Model[i].MotherId)
-                                    </div>
-                                    <div>
-                                        @Html.DisplayNameFor(model => Model[0].FatherId)
-                                        @Html.DisplayFor(model => Model[i].FatherId)
-                                    </div>
-                                    <div>
-                                        @Html.DisplayNameFor(model => Model[0].BreedString)
-                                        @Html.DisplayFor(model => Model[i].BreedString)
-                                    </div>
-                                    <div>
-                                        @Html.DisplayNameFor(model => Model[0].Collor)
-                                        @Html.DisplayFor(modelItem => Model[i].Collor)
-                                    </div>
-                                    <div>
-                                        @Html.DisplayNameFor(model => Model[0].LastWeight)
-                                        @Html.DisplayFor(modelItem => Model[i].LastWeight)
-                                    </div>
-                                    <div>
-                                        @Html.DisplayNameFor(model => Model[0].WeightDateString)
-                                        @Html.DisplayFor(modelItem => Model[i].WeightDateString)
-                                    </div>
-                                    <div>
-                                        @Html.DisplayNameFor(model => Model[0].ProjectedWeight)
-                                        @Html.DisplayFor(modelItem => Model[i].ProjectedWeight)
-                                    </div>
-                                    <div>
-                                        @Html.DisplayNameFor(model => Model[0].StatusForAllFattView)
-                                        @Html.DisplayFor(modelItem => Model[i].StatusForAllFattView)
-                                    </div>
-                                    <div>
-                                        @Html.DisplayNameFor(model => Model[0].Comment)
-                                        @Html.DisplayFor(modelItem => Model[i].Comment)
-                                    </div>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
 
-                                </div>
-                                <div class="modal-footer d-block">
-                                    @if ((int)Model[i].Status < 2)
-                                    {
-                                        <a class="d-block btn btn-link compItem" href="@Url.Action("FattKilled", "Mate", new { PartId = Model[i].PartId, rabId = Model[i].RabPartId, CalledFrom = Caller.allfatt})">Забит на мясо</a>
-                                        <a class="d-block btn btn-link compItem" href="@Url.Action("AddRabbit", "Home", new FatteningModel(){ MotherId = Model[i].MotherId,
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div>
+                                                        @Html.DisplayNameFor(model => Model[0].AverageWeight)
+                                                        @Html.DisplayFor(modelItem => Model[i].AverageWeight)
+                                                    </div>
+                                                    <div>
+                                                        @Html.DisplayNameFor(model => Model[0].DaysSinceWeightMesurment)
+                                                        @Html.DisplayFor(modelItem => Model[i].DaysSinceWeightMesurment)
+                                                    </div>
+                                                    <p>
+                                                        Чем больше дней от предыдущего взвешивания, тем больше погрешность в определении веса.
+                                                        Вес расчитывается на основании предыдущего взвешивания и среднего прироста, который был у
+                                                        данной породы при наличии значительного колличества взвешиваний, иначе используется средний
+                                                        прирост всех кроликов.
+                                                    </p>
+                                                </div>
+                                                <div class="modal-footer d-block">
+
+                                                    <a class="d-block btn btn-link compItem" href="@Url.Action("FatWeightCreate", "Weight", new {partId = Model[i].PartId, rabId = Model[i].RabPartId, CalledFrom = Caller.allfatt})">Новое взвешивание</a>
+                                                    <a class="d-block btn btn-link" href="@Url.Action("FatWeightView", "Weight", new {rabId = Model[i].RabPartId, partId = Model[i].PartId })">Все взвешивания</a>
+
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <sup class="alert alert-light" style="padding:2px;" data-toggle="modal" data-target="#average_weight_explanetion">Взят ср вес</sup>
+                                }
+                        </td>
+                        <td class="col-2 col-sm-4 showWithWeight">
+                            @Html.DisplayFor(modelItem => Model[i].StatusForAllFattView)
+                        </td>
+                        <td class="col-2 d-none d-sm-table-cell">
+                            @Html.DisplayFor(modelItem => Model[i].Comment)
+                        </td>
+                        <td class="col-2 d-none weight" >
+                            @*@Html.DisplayFor(modelItem => Model[i].NewWeight)*@
+                            @*<input asp-for="Model[i].NewWeight" class="form-control" asp-format="{0:yyyy-MM-dd}" />
+                                <span asp-validation-for="item.NewWeight" class="text-danger"></span>*@
+                            @Html.EditorFor(model => Model[i].NewWeight, new { @class = "NewWeight", htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => Model[i].NewWeight, "", new { @class = "text-danger" })
+                        </td>
+                        @Html.HiddenFor(model => Model[i].RabPartId)
+                        @Html.HiddenFor(model => Model[i].PartId)
+                        @Html.HiddenFor(model => Model[i].WeightDate)
+                        <dim style="display:none" id="pedigree_data-@Model[i].PartId-@Model[i].RabPartId">@Model[i].pedigreeString</dim>
+                        <div class="modal fade" id="modal-@Model[i].PartId-@Model[i].RabPartId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Кролик @Model[i].RabPartId</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div>
+                                            @Html.DisplayNameFor(model => Model[0].BornString)
+                                            @Html.DisplayFor(modelItem => Model[i].BornString)
+                                        </div>
+                                        <div>
+                                            @Html.DisplayNameFor(model => Model[0].Age)
+                                            @Html.DisplayFor(modelItem => Model[i].Age)
+                                        </div>
+                                        <div>
+                                            @Html.DisplayNameFor(model => Model[0].Cage)
+                                            @Html.DisplayFor(modelItem => Model[i].Cage)
+                                        </div>
+
+                                        <div>
+                                            @Html.DisplayNameFor(model => Model[0].RabPartId)
+                                            @Html.DisplayFor(modelItem => Model[i].RabPartId)
+                                        </div>
+                                        <div>
+                                            @Html.DisplayNameFor(model => Model[0].MotherId)
+                                            @Html.DisplayFor(model => Model[i].MotherId)
+                                        </div>
+                                        <div>
+                                            @Html.DisplayNameFor(model => Model[0].FatherId)
+                                            @Html.DisplayFor(model => Model[i].FatherId)
+                                        </div>
+                                        <div>
+                                            @Html.DisplayNameFor(model => Model[0].BreedString)
+                                            @Html.DisplayFor(model => Model[i].BreedString)
+                                        </div>
+                                        <div>
+                                            @Html.DisplayNameFor(model => Model[0].Collor)
+                                            @Html.DisplayFor(modelItem => Model[i].Collor)
+                                        </div>
+                                        <div>
+                                            @Html.DisplayNameFor(model => Model[0].LastWeight)
+                                            @Html.DisplayFor(modelItem => Model[i].LastWeight)
+                                        </div>
+                                        <div>
+                                            @Html.DisplayNameFor(model => Model[0].WeightDateString)
+                                            @Html.DisplayFor(modelItem => Model[i].WeightDateString)
+                                        </div>
+                                        <div>
+                                            @Html.DisplayNameFor(model => Model[0].ProjectedWeight)
+                                            @Html.DisplayFor(modelItem => Model[i].ProjectedWeight)
+                                        </div>
+                                        <div>
+                                            @Html.DisplayNameFor(model => Model[0].StatusForAllFattView)
+                                            @Html.DisplayFor(modelItem => Model[i].StatusForAllFattView)
+                                        </div>
+                                        <div>
+                                            @Html.DisplayNameFor(model => Model[0].Comment)
+                                            @Html.DisplayFor(modelItem => Model[i].Comment)
+                                        </div>
+                                        <canvas id="pedigree_drawing-@Model[i].PartId-@Model[i].RabPartId"></canvas>
+
+
+                                    </div>
+                                    <div class="modal-footer d-block">
+                                        @if ((int)Model[i].Status < 2)
+                                        {
+                                            <a class="d-block btn btn-link compItem" href="@Url.Action("FattKilled", "Mate", new { PartId = Model[i].PartId, rabId = Model[i].RabPartId, CalledFrom = Caller.allfatt})">Забит на мясо</a>
+                                            <a class="d-block btn btn-link compItem" href="@Url.Action("AddRabbit", "Home", new FatteningModel(){ MotherId = Model[i].MotherId,
                                                                                         FatherId=Model[i].FatherId,Born=Model[i].Born,RabPartId=Model[i].RabPartId,PartId=Model[i].PartId,
-                                                                                        RabbitGender=Model[i].RabbitGender,Collor=Model[i].Collor})">Перенести в кролики</a>
+                                                                                        RabbitGender=Model[i].RabbitGender,Collor=Model[i].Collor, BreedString=Model[i].BreedString,Breed=Model[i].Breed})">Перенести в кролики</a>
 
-                                    }
-                                    <a class="d-block btn btn-link compItem" href="@Url.Action("FattEdit", "Mate", new {PartId = Model[i].PartId, rabId = Model[i].RabPartId, CalledFrom = Caller.allfatt})">Редактировать</a>
+                                        }
+                                        <a class="d-block btn btn-link compItem" href="@Url.Action("FattEdit", "Mate", new {PartId = Model[i].PartId, rabId = Model[i].RabPartId, CalledFrom = Caller.allfatt})">Редактировать</a>
 
-                                    <a class="d-block btn btn-link compItem" href="@Url.Action("FatWeightCreate", "Weight", new {partId = Model[i].PartId, rabId = Model[i].RabPartId, CalledFrom = Caller.allfatt})">Новое взвешивание</a>
-                                    <a class="d-block btn btn-link" href="@Url.Action("FatWeightView", "Weight", new {rabId = Model[i].RabPartId, partId = Model[i].PartId })">Взвешивания</a>
-                                    <a class="d-block btn btn-link" href="@Url.Action("FatteningView", "Mate", new {partId = Model[i].PartId})">Окрол</a>
+                                        <a class="d-block btn btn-link compItem" href="@Url.Action("FatWeightCreate", "Weight", new {partId = Model[i].PartId, rabId = Model[i].RabPartId, CalledFrom = Caller.allfatt})">Новое взвешивание</a>
+                                        <a class="d-block btn btn-link" href="@Url.Action("FatWeightView", "Weight", new {rabId = Model[i].RabPartId, partId = Model[i].PartId })">Взвешивания</a>
+                                        <a class="d-block btn btn-link" href="@Url.Action("FatteningView", "Mate", new {partId = Model[i].PartId})">Окрол</a>
 
-                                    @if ((int)Model[i].Status < 2)
-                                    {
-                                        <a class="btn btn-danger" data-toggle="modal" data-target="#dieditself-@Model[i].PartId-@Model[i].RabPartId">Сам умер</a>
-                                        <a class="btn btn-warning" data-toggle="modal" data-target="#selectForKill-@Model[i].PartId-@Model[i].RabPartId">На забой</a>
-                                    }
-                                    <a class="btn btn-danger" data-toggle="modal" data-target="#delete-@Model[i].PartId-@Model[i].RabPartId">Удалить</a>
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                                        @if ((int)Model[i].Status < 2)
+                                        {
+                                            <a class="btn btn-danger" data-toggle="modal" data-target="#dieditself-@Model[i].PartId-@Model[i].RabPartId">Сам умер</a>
+                                            <a class="btn btn-warning" data-toggle="modal" data-target="#selectForKill-@Model[i].PartId-@Model[i].RabPartId">На забой</a>
+                                        }
+                                        <a class="btn btn-danger" data-toggle="modal" data-target="#delete-@Model[i].PartId-@Model[i].RabPartId">Удалить</a>
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal" id="selectForKill-@Model[i].PartId-@Model[i].RabPartId">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Вы уврены, что хотите отметить этого кролика в забой?</h4>
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <a class="btn btn-warning" href="@Url.Action("SelectForKill","Mate",new { PartId = Model[i].PartId, rabId = Model[i].RabPartId})">На забой</a>
+                                    </div> <button type="button" class="btn btn-info" data-dismiss="modal">Не забивать</button>
 
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="modal" id="selectForKill-@Model[i].PartId-@Model[i].RabPartId">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h4 class="modal-title">Вы уврены, что хотите отметить этого кролика в забой?</h4>
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <div class="modal" id="delete-@Model[i].PartId-@Model[i].RabPartId">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Вы уврены, что хотите удалить кролика @Model[i].PartId?</h4>
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <a class="btn btn-danger" href="@Url.Action("FattDelete","Mate",new { PartId = Model[i].PartId, rabId = Model[i].RabPartId, CalledFrom = Caller.allfatt })">Удалить</a>
+                                    </div> <button type="button" class="btn btn-info" data-dismiss="modal">Не удалять</button>
+
                                 </div>
-
-                                <div class="modal-footer">
-                                    <a class="btn btn-warning" href="@Url.Action("SelectForKill","Mate",new { PartId = Model[i].PartId, rabId = Model[i].RabPartId})">На забой</a>
-                                </div> <button type="button" class="btn btn-info" data-dismiss="modal">Не забивать</button>
-
                             </div>
                         </div>
-                    </div>
-                    <div class="modal" id="delete-@Model[i].PartId-@Model[i].RabPartId">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h4 class="modal-title">Вы уврены, что хотите удалить кролика @Model[i].PartId?</h4>
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <div class="modal" id="dieditself-@Model[i].PartId-@Model[i].RabPartId">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Подтвердите что кролик @Model[i].RabPartId умер сам</h4>
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <a class="btn btn-danger" href="@Url.Action("FattDelete","Mate",new { PartId = Model[i].PartId, rabId = Model[i].RabPartId, CalledFrom = Caller.allfatt })">Отметить как умер сам</a>
+                                    </div> <button type="button" class="btn btn-info" data-dismiss="modal">Отменить</button>
+
                                 </div>
-
-                                <div class="modal-footer">
-                                    <a class="btn btn-danger" href="@Url.Action("FattDelete","Mate",new { PartId = Model[i].PartId, rabId = Model[i].RabPartId, CalledFrom = Caller.allfatt })">Удалить</a>
-                                </div> <button type="button" class="btn btn-info" data-dismiss="modal">Не удалять</button>
-
                             </div>
                         </div>
-                    </div>
-                    <div class="modal" id="dieditself-@Model[i].PartId-@Model[i].RabPartId">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h4 class="modal-title">Подтвердите что кролик @Model[i].RabPartId умер сам</h4>
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                </div>
-
-                                <div class="modal-footer">
-                                    <a class="btn btn-danger" href="@Url.Action("FattDelete","Mate",new { PartId = Model[i].PartId, rabId = Model[i].RabPartId, CalledFrom = Caller.allfatt })">Отметить как умер сам</a>
-                                </div> <button type="button" class="btn btn-info" data-dismiss="modal">Отменить</button>
-
-                            </div>
-                        </div>
-                    </div>
-                </tr>
+                    </tr>
 
 
                 }
             </tbody>
         </table>
+        <div class="modal fade" id="average_weight_explanetion" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+
+                    </div>
+                    <div class="modal-body">
+
+                        <p>
+                            Поскольку этот кролик еще не взвешивался, вес определен на основании среднего веса кроликов в данном возрасте. Если имеется значительное колличество взвешиваний данной породы, то используется средний вес для даной породы, иначе
+                            используется средний вес всех кроликов.
+                        </p>
+                    </div>
+                    <div class="modal-footer d-block">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="form-group d-none" id="SaveButton">
             <div class="col-md-offset-2 col-md-10">
 
@@ -288,20 +362,16 @@
 <div id="CageImage" class="modal fade">
     <div id="dialogCageImage" class="modal-dialog"></div>
 </div>
-@*@{
-    var myChart = new Chart(width: 600, height: 400)
-        .AddTitle("Chart Title")
-        .AddSeries(
-            name: "Employee",
-            xValue: new[] { "Peter", "Andrew", "Julie", "Mary", "Dave" },
-            yValues: new[] { "2", "6", "4", "5", "3" })
-        .Write();*@
-}
+
 <script src="/js/cageImage.js"></script>
+<script src="~/js/pedigreeForFatt.js"></script>
 @section scripts
 {
     <script type="text/javascript">
 
+        function Pedigree(partId,rabId) {
+            drawPedigree(partId, rabId);
+        }
         $('form input').keydown(function (e) {
             if (e.keyCode == 13) {
                 e.preventDefault();
@@ -322,23 +392,23 @@
         function FillWeightOn() {
             if ($('#WeightButton').hasClass('btn-success')) {
                 if ($(window).width() < 560) {
-                    
+
                     $('.showWithWeight').addClass('d-none');
                 }
                 $('.weight').removeClass('d-none');
                // $('.Modals').removeAttr('data-toggle');
                 $('#WeightButton').removeClass('btn-success').addClass('btn-danger')
-                
+
             } else {
                 if ($(window).width() < 560) {
-                    
+
                     $('.showWithWeight').removeClass('d-none');
                 }
                 $('.weight').addClass('d-none');
                 //$('.Modals').attr('data-toggle', 'modal');
                 $('#WeightButton').removeClass('btn-danger').addClass('btn-success')
-                
-                
+
+
             }
         }
         $("input").change(function () {

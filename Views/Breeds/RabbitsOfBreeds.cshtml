@@ -1,0 +1,29 @@
+﻿@model IEnumerable<RabbitFarmLocal.Models.BreedMixModel>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.BreedOfRab.BreedString)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NumberRabbitsOfThisBreed)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <th>
+                @Html.DisplayFor(modelItem => item.BreedOfRab.BreedString)
+            </th>
+            <td>
+                @Html.DisplayFor(modelItem => item.NumberRabbitsOfThisBreed)
+            </td>
+
+        </tr>
+}
+    </tbody>
+</table>

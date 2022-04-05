@@ -1,5 +1,5 @@
 ﻿@model List<RabbitFarmLocal.Models.FatteningModel>
-
+@using RabbitFarmLocal.Start;
 @{
     ViewData["Title"] = "Откорм";
 }
@@ -26,6 +26,9 @@
                         @Html.DisplayNameFor(model => Model[0].Collor)
                     </th>
                     <th>
+                        @Html.DisplayNameFor(model => Model[0].LastWeight)
+                    </th>
+                    <th>
                         @Html.DisplayNameFor(model => Model[0].RabbitGender)
                     </th>
 
@@ -38,38 +41,82 @@
                     <tr>
 
                         <td>
-                            @Html.DisplayFor(modelItem => Model[i].RabPartId)
+                            @Html.DisplayFor(modelItem => Model[i].RabPartId, new { style = "width:10px;" })
                             @*@Html.EditorFor(model => Model[i].RabPartId, new { htmlAttributes = new { disabled = "disabled" } })*@
                         </td>
                         <td>
-                            @Html.EditorFor(model => Model[i].Cage, new { @class = "Cage", htmlAttributes = new { @class = "form-control" } })
+                            @*@Html.EditorFor(model => Model[i].Cage, new { @class = "Cage", htmlAttributes = new { @class = "form-control" }, style= "width:30px;" })*@
+                            @Html.DropDownListFor(model => Model[i].Cage, new SelectList(ViewBag.CageList, "Id", "OccupancyString"), new { style = "width:100px;" })
                             @Html.ValidationMessageFor(model => Model[i].Cage, "", new { @class = "text-danger" })
                         </td>
                         <td>
 
-                            @Html.EditorFor(model => Model[i].Collor, new { @class = "Collor", htmlAttributes = new { @class = "form-control" } })
-                            @Html.ValidationMessageFor(model => Model[i].Collor, "", new { @class = "text-danger" })
+                            @Html.DropDownListFor(model => Model[i].CollorId, ViewBag.CollorList as SelectList, new { @class = "CollorId", onchange = "checkIfNewCollor(this)", htmlAttributes = new { @class = "form-control", style = "width:100px;" } })
+                            @Html.ValidationMessageFor(model => Model[i].CollorId, "", new { @class = "text-danger" })
                         </td>
                         <td>
 
-                            @Html.DropDownListFor(model => Model[i].RabbitGender, new SelectList(Enum.GetValues(typeof(Gender))))
+                            @Html.EditorFor(model => Model[i].LastWeight, new { @class = "LastWeight", htmlAttributes = new { @class = "form-control", style = "width:50px;" } })
+                            @Html.ValidationMessageFor(model => Model[i].LastWeight, "", new { @class = "text-danger" })
+                        </td>
+                        <td>
+
+                            @*@Html.DropDownListFor(model => Model[i].RabbitGender, new SelectList(Enum.GetValues(typeof(Gender))))*@
+                            @Html.DropDownListFor(model => Model[i].RabbitGender, Html.GetEnumSelectList<Gender>(), new { @class = "form-control", style = "width:100px;max-width:100px;" })
                         </td>
                         @Html.HiddenFor(model => Model[i].PartId)
                         @Html.HiddenFor(model => Model[i].RabPartId)
+
                     </tr>
                 }
             </tbody>
         </table>
         @Html.HiddenFor(model => Model[0].ECaller)
+        <div class="btn btn-outline-info" data-toggle="collapse" data-target="#Cage" aria-expanded="false" aria-controls="Cage">Показать клетки</div>
+        <br />
+        <div class="collapse" id="Cage">
+            <canvas id="cageImage" width="300" height="300"></canvas>
+            <div id="CageHighlight" class="d-none">0</div>
+            <script src="/js/cageImage.js"></script>
+            <div id="jsonString" class="d-none">@ViewBag.caJson</div>
+
+            <script type="text/javascript">
+                initiate();
+                drawCages();
+            </script>
+        </div>
+        <br />
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
 
-                <input type="submit" value="Сохранить" class="btn btn-default" />
+                <input type="submit" value="Сохранить" class="btn btn-primary" />
             </div>
         </div>
 
     }
 </div>
+<div class="modal" id="DataLossWarning">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Предупреждение, данные будут потеряны!</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-footer">
+                <a class="btn btn-info" href="@Url.Action("Create", "Collor")">Создать новый окрас</a>
+            </div> 
+
+        </div>
+    </div>
+</div>
+<script>
+
+                        function checkIfNewCollor(val) {
+                            if (val.options[val.selectedIndex].text == "Новый цвет") $('#DataLossWarning').modal('show');  @*window.location.href ="@Url.Action("Create", "Collor")";*@
+
+                        }
+</script>
 
 
 

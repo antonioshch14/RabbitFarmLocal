@@ -65,30 +65,27 @@ namespace RabbitFarmLocal.BusinessLogic
                             break;
                         case Status.feedFEmale:
                             rep.FeedFemales++;
-                            if (partur.DateNestRemoval == null)
-                            {
-                                RemoveNest rem = new RemoveNest();
-                                rem.Date = partur.Date.AddDays(Settings.NestRemoalDays());
-                                rem.RabbitId = rab.RabbitId;
-                                rem.Id = partur.Id;
-                                rem.Cage = rab.Cage;
-                                rep.RemoveNest.Add(rem);
-                            }
-                            if (DateTime.Now >= partur.Date.AddDays(Settings.NestRemoalDays()))
-                            {
-                                Separate sep = new Separate();
-                                sep.Date = partur.Date.AddDays(Settings.FeedDays());
-                                sep.RabbitId = rab.RabbitId;
-                                sep.Id = partur.Id;
-                                sep.Cage = rab.Cage;
-                                rep.Separate.Add(sep);
-                            }
+                            //if (partur.DateNestRemoval == null)
+                            //{
+                            //    RemoveNest rem = new RemoveNest();
+                            //    rem.Date = partur.Date.AddDays(Settings.NestRemoalDays());
+                            //    rem.RabbitId = rab.RabbitId;
+                            //    rem.Id = partur.Id;
+                            //    rem.Cage = rab.Cage;
+                            //    rep.RemoveNest.Add(rem);
+                            //}
+                            //if (DateTime.Now >= partur.Date.AddDays(Settings.NestRemoalDays()))
+                            //{
+                            //    Separate sep = new Separate();
+                            //    sep.Date = partur.Date.AddDays(Settings.FeedDays());
+                            //    sep.RabbitId = rab.RabbitId;
+                            //    sep.Id = partur.Id;
+                            //    sep.Cage = rab.Cage;
+                            //    rep.Separate.Add(sep);
+                            //}
                             break;
                         case Status.restFemale:
                             rep.RestFemales++;
-                            //mate.Date = DateTime.Now.AddDays(-1);
-                            //mate.RabbitId = rab.RabbitId;
-                            //rep.Mate.Add(mate);
                             break;
                         case Status.readyFemale:
                             rep.ReadyFemales++;
@@ -116,6 +113,31 @@ namespace RabbitFarmLocal.BusinessLogic
                 else { rep.Males++;
                     if (rab.StoredRabStatus == Status.growMale) rep.GrowMales++; 
                    
+                }
+            }
+            foreach(var P in parturs)
+            {
+                if (P.Status == parturStatus.feeded || P.Status == parturStatus.nestRemovalAwaited || P.Status == parturStatus.separationAwaited
+                     || P.Status == parturStatus.inDifferentCages)
+                {
+                    if (P.DateNestRemoval == null)
+                    {
+                        RemoveNest rem = new RemoveNest();
+                        rem.Date = P.Date.AddDays(Settings.NestRemoalDays());
+                        rem.RabbitId = P.MotherId;
+                        rem.Id = P.Id;
+                        rem.Cage = P.Cage;
+                        rep.RemoveNest.Add(rem);
+                    }
+                    if (DateTime.Now >= P.Date.AddDays(Settings.NestRemoalDays()))
+                    {
+                        Separate sep = new Separate();
+                        sep.Date = P.Date.AddDays(Settings.FeedDays());
+                        sep.RabbitId = P.MotherId;
+                        sep.Id = P.Id;
+                        sep.Cage = P.Cage;
+                        rep.Separate.Add(sep);
+                    }
                 }
             }
             

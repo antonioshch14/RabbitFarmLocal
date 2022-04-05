@@ -46,11 +46,14 @@ namespace RabbitFarmLocal
             services.AddSingleton<IHostedService, UpdateRabbitStatus>();
             services.AddSingleton<IHostedService, SendMessage>();
             services.AddSingleton<IHostedService, FinReportForMonth>();
-          
+
             //services.AddServerSideBlazor();
             //services.AddSingleton<Settings>();
+            RabbitFarmLocal.BusinessLogic.ParturationUpdate.UpdateAll();
+            RabbitFarmLocal.BusinessLogic.DataUpdates.UpdateRabbitsStatus();
             Settings.GetSettings();
             WeighGrow.GetWeightGrow();
+
             ConstantsSingelton.GetConstantSingelton();
             //RabWeightCurve.GetRabWeightCurve();
             MyTelegram.GetTelegram();
@@ -73,6 +76,23 @@ namespace RabbitFarmLocal
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
+            var defaultDateCulture = "ru-RU";
+            var ci = new CultureInfo(defaultDateCulture);
+            ci.NumberFormat.NumberDecimalSeparator = ".";
+            ci.NumberFormat.CurrencyDecimalSeparator = ".";
+            // Configure the Localization middleware
+            app.UseRequestLocalization(new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new RequestCulture(ci),
+                SupportedCultures = new List<CultureInfo>
+    {
+        ci,
+    },
+                SupportedUICultures = new List<CultureInfo>
+    {
+        ci,
+    }
+            });
             // DateTime
             //var supportedCultures = new[]
             //    {

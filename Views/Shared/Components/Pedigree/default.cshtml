@@ -1,0 +1,12 @@
+﻿@model string
+    
+<canvas id="pedigree_drawing" width="500" height="500"></canvas>
+    
+<div id="pedigree_data" style="display:none"> @Model</div>
+
+<script src="~/js/pedigree.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        drawPedigree();
+    });
+</script> 

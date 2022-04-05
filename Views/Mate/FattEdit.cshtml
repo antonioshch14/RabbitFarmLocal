@@ -16,12 +16,33 @@
                 <input asp-for="Cage" class="form-control" />
                 <span asp-validation-for="Cage" class="text-danger"></span>
             </div>
-
             <div class="form-group">
                 <label asp-for="Collor" class="control-label"></label>
-                <input asp-for="Collor" class="form-control" />
+                @Html.DropDownListFor(x => x.CollorId, ViewBag.CollorList as SelectList, new { onchange = "checkIfNewCollor(this)" })
                 <span asp-validation-for="Collor" class="text-danger"></span>
             </div>
+            <div class="modal" id="DataLossWarning">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Предупреждение, данные будут потеряны!</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+
+                        <div class="modal-footer">
+                            <a class="btn btn-info" href="@Url.Action("Create", "Collor")">Создать новый окрас</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <script>
+
+                        function checkIfNewCollor(val) {
+                            if (val.options[val.selectedIndex].text == "Новый цвет") $('#DataLossWarning').modal('show');  @*window.location.href ="@Url.Action("Create", "Collor")";*@
+
+                        }
+            </script>
             <div class="form-group">
                 <label asp-for="Status" class="control-label"></label>
                 @*<div> @Html.DropDownListFor(model => model.Status, new SelectList(Enum.GetValues(typeof(FatStatus))))</div>*@

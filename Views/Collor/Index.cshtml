@@ -1,0 +1,48 @@
+﻿@model IEnumerable<RabbitFarmLocal.Models.CollorModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+<a asp-action="Create">Добавить окрас</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ImageName)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ImageName)
+                </td>
+                <td>
+                    @Html.ActionLink("Редактировать", "Edit", new { id = item.Id }) |
+                    @Html.ActionLink("Оъединить с этим цветом", "JoinCollors", new { id = item.Id }) |
+                    @Html.ActionLink("Удалить", "Delete", new { id = item.Id })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a class="btn btn-success" href="@Url.Action("populateCollors", "Collor")">Fill collor table</a>
+<br />
+<br />
+<a class="btn btn-success" href="@Url.Action("assignCollorIds", "Collor")">Assign Ids</a>
+<p>

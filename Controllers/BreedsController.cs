@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using RabbitFarmLocal.BusinessLogic;
 using RabbitFarmLocal.Models;
 using RabbitFarmLocal.Start;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using static RabbitFarmLocal.BusinessLogic.RabbitProcessor;
@@ -16,6 +18,17 @@ namespace RabbitFarmLocal.Controllers
         public ActionResult Index()
         {
             List<BreedsModel> Brs = Breed.LoadAll();
+            List<BreedMixModel> breedList= BreedLogic.GetBreedMixForAllRabbits();
+            ViewBag.breeds = breedList;
+            string breedsString = "";
+            foreach (var BL in breedList)
+            {
+                breedsString += BL.BreedOfRab.Breed+"|";
+            }
+            breedsString.Remove(breedsString.Length - 1, 1);
+            ViewBag.breedsList = breedsString;
+
+
             return View(Brs);
         }
 
@@ -86,6 +99,13 @@ namespace RabbitFarmLocal.Controllers
         public ActionResult Delete(int id)
         {
             BreedsModel Br = Breed.LoadAll().Find(x => x.Id == id);
+            int[] rabbits = BreedLogic.GetRabbitsOfBreed(Br);
+            if (rabbits.Length > 0)
+            {
+                ViewBag.Rabbits = string.Join(", ", rabbits);
+                ViewBag.Notallowed = true;
+            }
+            else ViewBag.Notallowed = false;
             return View(Br);
         }
 
@@ -108,7 +128,7 @@ namespace RabbitFarmLocal.Controllers
                 return View();
             }
         }
-     
+        
         //public void PopulateBreeds()
         //{
         //    List<DLRabbitModel> rabs = LoadRabbits();
@@ -145,7 +165,8 @@ namespace RabbitFarmLocal.Controllers
             {
                 BusinessLogic.BreedLogic.SetBreedOfRabbit(rab, rabs, Breeds);
                 EditRabbit(rab);
-            }        
+            }
+            RedirectToAction(nameof(Index));
         }
         
         public void FillBreedForFattening()
@@ -157,6 +178,8 @@ namespace RabbitFarmLocal.Controllers
                 F.SetBreedString();
                 EditFattenigBreed(F);
             }
+            RabbitFarmLocal.Start.WeighGrow.UpdateWeitghCurve();
+            RedirectToAction(nameof(Index));
         }
        
     }

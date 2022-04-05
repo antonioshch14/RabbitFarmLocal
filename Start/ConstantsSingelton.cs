@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RabbitFarmLocal.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,6 +13,8 @@ namespace RabbitFarmLocal.Start
         private int[] cageNumbers;
         private List<Models.ListOfCages> CageList;
         private List<Models.BreedsModel> BreedList;
+        private List<CollorModel> CollorList;
+        private int tasksOverdue;
         private ConstantsSingelton()
         {
             CageList = new List<Models.ListOfCages>();
@@ -19,6 +22,22 @@ namespace RabbitFarmLocal.Start
             cageNumbers = new int[CageList.Count];
             cageNumbers = (from c in CageList select c.Id).ToArray();
             BreedList = Breed.LoadAll();
+            ReportModel rep = RabbitFarmLocal.BusinessLogic.CreateReport.FillReport();
+            tasksOverdue = rep.Mate.FindAll(x => x.Alert == true).Count + rep.PutNest.FindAll(x => x.Alert == true).Count + rep.RemoveNest.FindAll(x => x.Alert == true).Count + rep.Separate.FindAll(x => x.Alert == true).Count + rep.CheckPart.FindAll(x => x.Alert == true).Count;
+            List<DLRabbitModel> rabs = LoadRabbits();
+            CollorList = new List<CollorModel>();
+            CollorList=Collor.LoadAll();
+            CollorList.Add(new CollorModel() { Name = "Новый цвет" });
+        }
+        public static void UpdateCollors()
+        {
+            _instance.CollorList.Clear();
+            _instance.CollorList=Collor.LoadAll();
+            _instance.CollorList.Add(new CollorModel() { Name = "Новый цвет" });
+        }
+        public static List<CollorModel> GetCollors()
+        {
+           return _instance.CollorList;
         }
         public static void UpdateCages()
         {
@@ -29,6 +48,7 @@ namespace RabbitFarmLocal.Start
         }
         public static void UpdateBreeds()
         {
+            _instance.BreedList.Clear();
             _instance.BreedList = Breed.LoadAll();
         }
         public static ConstantsSingelton GetConstantSingelton()
@@ -92,6 +112,15 @@ namespace RabbitFarmLocal.Start
                 }
             }
             cages.OrderBy(i => i.Id);
+        }
+        public static void SetNumberOfOverDues()
+        {
+            ReportModel rep = RabbitFarmLocal.BusinessLogic.CreateReport.FillReport();
+            _instance.tasksOverdue = rep.Mate.FindAll(x => x.Alert == true).Count + rep.PutNest.FindAll(x => x.Alert == true).Count + rep.RemoveNest.FindAll(x => x.Alert == true).Count + rep.Separate.FindAll(x => x.Alert == true).Count + rep.CheckPart.FindAll(x => x.Alert == true).Count;
+        }
+        public static int GetNumberOfOverDues()
+        {
+            return _instance.tasksOverdue;
         }
     }
     

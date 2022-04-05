@@ -17,8 +17,10 @@ namespace RabbitFarmLocal.Scheduler
 
         public override Task ProcessInScope(IServiceProvider serviceProvider)
         {
-            Console.WriteLine("Processing starts here");
-            UpdateRabbitsStatus();
+            // Console.WriteLine("Processing starts here");
+            RabbitFarmLocal.BusinessLogic.ParturationUpdate.UpdateAll();
+             UpdateRabbitsStatus();
+            RabbitFarmLocal.Start.ConstantsSingelton.SetNumberOfOverDues();
             return Task.CompletedTask;
         }
     }

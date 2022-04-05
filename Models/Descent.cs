@@ -19,14 +19,21 @@ namespace RabbitFarmLocal.Models
         public  Dictionary<int,int> GetBreedDictionary(string Br)
         {
             Dictionary<int, int> output = new Dictionary<int, int>();
-            if (Br != null && Br!="")
-            {
-                output = Br.Split(';')
-                  .Select(s => s.Split(','))
-                  .ToDictionary(
-                  p => Convert.ToInt32(p[0].Trim())
-                  , p => Convert.ToInt32(p[1].Trim())
-                  );
+              if (Br != null && Br != "")
+                {
+                try
+                {
+                    output = Br.Split(';')
+                      .Select(s => s.Split(','))
+                      .ToDictionary(
+                      p => Convert.ToInt32(p[0].Trim())
+                      , p => Convert.ToInt32(p[1].Trim())
+                      );
+                }
+                catch (System.FormatException)
+                {
+                    output.Add(-2,0);//failure  in the breed
+                }
             }
             return output;
         }
@@ -47,17 +54,22 @@ namespace RabbitFarmLocal.Models
             string output="";
             if (BrD != null)
             {
-
-                List<BreedsModel> breeds = ConstantsSingelton.GetListOfBreeds();
-                Dictionary<string, int> dicRabBreeds = new Dictionary<string, int>();
-                foreach (KeyValuePair<int, int> kvpBD in BrD)
+                if (BrD.ContainsKey(-2))
                 {
-                    dicRabBreeds.Add(breeds.Find(x => x.Id == kvpBD.Key).Name, kvpBD.Value);
-
+                    output = "ошибка породы";
                 }
-                output = string.Join(", ", dicRabBreeds.Select(
-                   p => string.Format("{0}:{1}", p.Key, p.Value)
-                   ));
+                else
+                {
+                    List<BreedsModel> breeds = ConstantsSingelton.GetListOfBreeds();
+                    Dictionary<string, int> dicRabBreeds = new Dictionary<string, int>();
+                    foreach (KeyValuePair<int, int> kvpBD in BrD)
+                    {
+                      dicRabBreeds.Add(breeds.Find(x => x.Id == kvpBD.Key).Name, kvpBD.Value);
+                    }
+                    output = string.Join(", ", dicRabBreeds.Select(
+                       p => string.Format("{0}:{1}", p.Key, p.Value)
+                       ));
+                } 
             }
             return output;
         }

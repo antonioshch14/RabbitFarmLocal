@@ -63,9 +63,13 @@ namespace RabbitFarmLocal.Controllers
 
         public ActionResult SelectPeriodForFinRep()
         {
+            DateTime _DateFrom = new DateTime(DateTime.Today.Year, DateTime.Today.Month, Settings.FinRepDate());
+            if (_DateFrom.Day <= Settings.FinRepDate()) _DateFrom = _DateFrom.AddMonths(-1);
+
             FinRepSelectDates fin = new FinRepSelectDates()
             {
-                DateFrom = new DateTime(DateTime.Today.Year, DateTime.Today.Month, Settings.FinRepDate()),
+                
+                DateFrom = _DateFrom,
                 DateUntil = DateTime.Now
              };
 
@@ -91,17 +95,54 @@ namespace RabbitFarmLocal.Controllers
             
             return View(fin);
         }
-        public ActionResult FinanceRepYearly()
+        public ActionResult FinanceRepYearly(DateTime? from=null,DateTime? until=null)
         {
-            int year = 2021;
-            ViewBag.finDates = Settings.FinRepDate();
-            ViewBag.year = year;
-            List<FinRepModel> FinList = ReportForYear(year);
+            //if(DateTime.Now.Year > initialYear)
+            //{
+            //   // List<FinRepHistory> history=new List<FinRepHistory>();
+            //    int yearsForReport= DateTime.Now.Year - initialYear;
+
+            //    for (int i = 0; i < yearsForReport; i++)
+            //    {
+            //        List<FinRepModel> finRepHist = ReportForYear(initialYear + i);
+            //        FinRepHistory finRepHistYear = new FinRepHistory();
+            //        finRepHistYear.Year = initialYear + i;
+            //        foreach (FinRepModel finRep in finRepHist)
+            //        {
+            //            finRepHistYear.BenefitWithOurConsum += finRep.BenefitWithOurConsum;
+            //            finRepHistYear.BenefitTotal += finRep.BenefitTotal;
+            //            finRepHistYear.SpentTotal += finRep.SpentTotal;
+            //        }
+            //        //history.Add(finRepHistYear);
+            //    }
+            //   //ViewBag.FinRepHistory = history;
+            //}
+            List<FinRepModel> FinList;
+            if (from!=null && until != null)
+            {
+                FinList = ReportForYear((DateTime)from, (DateTime)until);
+                ViewBag.StDat = DateToString(from);
+                ViewBag.FinDat = DateToString(until);
+            } else
+            {
+                int year;
+                DateTime thresholdDate = new DateTime(DateTime.Now.Year, 2, Settings.FinRepDate());
+                if (DateTime.Now > thresholdDate) year = DateTime.Now.Year;
+                else year = DateTime.Now.AddYears(-1).Year;
+                ViewBag.finDates = Settings.FinRepDate();
+                ViewBag.year = year;
+                FinList = ReportForYear(year);
+            }
+           
+          
             return View(FinList);
         }
+
         [HttpPost]
         public ActionResult FinanceReport (FinRepSelectDates dts)
         {
+            TimeSpan ts = dts.DateUntil- dts.DateFrom;
+            if (ts.TotalDays > 30) return RedirectToAction("FinanceRepYearly", new {from= (DateTime?)dts.DateFrom, until= (DateTime?)dts.DateUntil } );
             FinRepModel rep = Report(dts.DateFromStringForEdit, dts.DateUntilStringForEdit);
             ViewBag.StDat = dts.DateFromStringForEdit;
             ViewBag.FinDat = dts.DateUntilStringForEdit;

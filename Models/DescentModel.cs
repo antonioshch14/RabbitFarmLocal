@@ -19,6 +19,7 @@ namespace RabbitFarmLocal.Models
         [Display(Name = "Предки")]
         public List<Parents> Parents { get; set; }
     }
+
     public class Parents
     {
         public Parents() { }

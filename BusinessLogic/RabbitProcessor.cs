@@ -11,8 +11,8 @@ namespace RabbitFarmLocal.BusinessLogic
 {
     public static class RabbitProcessor
     {
-        public static int CreateRabbit(int rabbitId, int cage, string breed, string collor,
-            DateTime born, int mother, int father, bool isAlive, Gender gender, int? partId,int? rabPartId)
+        public static int CreateRabbit(int rabbitId, int cage, string breed, int collorId,
+            DateTime born, int mother, int father, bool isAlive, Gender gender, int? partId,int? rabPartId, int breedId)
         {
             DLRabbitModel data = new DLRabbitModel
             {
@@ -23,9 +23,10 @@ namespace RabbitFarmLocal.BusinessLogic
                 Cage = cage,
                 Born = born,
                 Breed = breed,
-                Collor = collor,
+                CollorId = collorId,
                 PartId=partId,
-                PartRabId=rabPartId
+                PartRabId=rabPartId,
+                BreedId=breedId
 
             };
             if (gender == Gender.самка) data.IsMale = false;
@@ -34,21 +35,21 @@ namespace RabbitFarmLocal.BusinessLogic
             /*[Id],[rabId],[cage],[breed],[collor],[born],[mother],[father],[isMale],[isAlive] FROM [dbo].[rabbits2]*/
             /* Id, RabbitId, Cage, IsMale, Breed, Collor, Born, Mother, Father, IsAlive, */
 
-            string sql = @"insert into rabbits (rabId,cage,breed,collor,born,mother,father,isMale,isAlive,part_id,part_rab_id) 
-                            values(@RabbitId,@Cage,@Breed,@Collor,@Born,@Mother,@Father,@IsMale,@IsAlive,@PartId,@PartRabId)";
+            string sql = @"insert into rabbits (rabId,cage,breed,CollorId,born,mother,father,isMale,isAlive,part_id,part_rab_id,breed_id) 
+                            values(@RabbitId,@Cage,@Breed,@CollorId,@Born,@Mother,@Father,@IsMale,@IsAlive,@PartId,@PartRabId,@BreedId)";
             return DataAccess.SaveDataRabbit(sql, data);
         }
         public static int EditRabbit(DLRabbitModel rab)
         {
            
 
-            string sql = @"UPDATE rabbits SET cage=@Cage,breed=@Breed,collor=@Collor,born=@Born,mother=@Mother,father=@Father,
+            string sql = @"UPDATE rabbits SET cage=@Cage,breed=@Breed,CollorId=@CollorId,born=@Born,mother=@Mother,father=@Father,
                         isMale=@IsMale,isAlive=@IsAlive,breed_id=@BreedId  WHERE rabId=@RabbitId;";
             return DataAccess.SaveDataRabbit(sql, rab);
         }
         public static List<DLRabbitModel> LoadRabbits()
         {
-            string sql = @"select Id as Id, rabId as RabbitId, cage as Cage, breed as Breed, collor as Collor,
+            string sql = @"select Id as Id, rabId as RabbitId, cage as Cage, breed as Breed, CollorId as CollorId, collor as Collor,
                          mother as Mother, father as Father, isMale as IsMale, isAlive as IsAlive, born as Born, 
                         status as StoredRabStatus, part_id as PartId, part_rab_id as PartRabId, breed_id as BreedId from rabbits ORDER BY isAlive DESC, 
                         rabId ASC;";
@@ -56,7 +57,7 @@ namespace RabbitFarmLocal.BusinessLogic
         }
         public static List<DLRabbitModel> LoadRabbitsAlive()
         {
-            string sql = @"select Id as Id, rabId as RabbitId, cage as Cage, breed as Breed, collor as Collor,
+            string sql = @"select Id as Id, rabId as RabbitId, cage as Cage, breed as Breed, CollorId as CollorId,
                          mother as Mother, father as Father, isMale as IsMale, isAlive as IsAlive, born as Born, 
                         status as StoredRabStatus, part_id as PartId, part_rab_id as PartRabId from rabbits WHERE isAlive=1 ORDER BY rabId ASC;";
             return DataAccess.LoadDataRabbit<DLRabbitModel>(sql);
@@ -64,9 +65,9 @@ namespace RabbitFarmLocal.BusinessLogic
         public static class Rabbit
         {
             static readonly string tbl = "rabbits";
-            static readonly string[] t = new string[] { "Id","rabId", "cage", "breed", "collor", "born", "mother", "father", "isMale", "isAlive", "status","breed_id"};//0-11
+            static readonly string[] t = new string[] { "Id","rabId", "cage", "breed", "CollorId", "born", "mother", "father", "isMale", "isAlive", "status","breed_id"};//0-11
             static readonly string[] t2 = new string[] { "termDate", "price", "killWeight" };
-            static readonly string[] m = new string[] { "Id", "RabbitId", "Cage",  "Breed", "Collor",  "Born", "Mother", "Father", "IsMale", "IsAlive", "StoredRabStatus", "BreedId" };//0-11
+            static readonly string[] m = new string[] { "Id", "RabbitId", "Cage",  "Breed", "CollorId",  "Born", "Mother", "Father", "IsMale", "IsAlive", "StoredRabStatus", "BreedId" };//0-11
             static readonly string[] m2 = new string[] { "TermDate", "Price", "Weight" };
             //public static int Create(DLRabbitModel wgt)
             //{
@@ -108,6 +109,13 @@ namespace RabbitFarmLocal.BusinessLogic
             {
                 string sql = string.Format(@"select {1} as {2}, {3} as {4}, {5} as {6}, {7} as {8}, {9} as {10}, {11} as {12}, {13} as {14}, {15} as {16}, {17} as {18}, {19} as {20}, {21} as {22}, {23} as {24}, {25} as {26}, {27} as {28}, {29} as {30}, {32} as {33}" +
                                    " FROM {0} WHERE {1} ={31};", tbl, t[0], m[0], t[1], m[1], t[2], m[2], t[3], m[3], t[4], m[4], t[5], m[5], t[6], m[6], t[7], m[7], t[8], m[8], t[9], m[9], t[10], m[10], t2[0], m2[0], t2[1], m2[1], t2[2], m2[2],t[0],m[0],id, t[11], m[11]);//33
+                return DataAccess.LoadDataOneLine<DLRabbitModel>(sql);
+            }
+            
+            public static DLRabbitModel LoadOneRabbId(int rabId)//load on rabbid based on rabbId
+            {
+                string sql = string.Format(@"select {1} as {2}, {3} as {4}, {5} as {6}, {7} as {8}, {9} as {10}, {11} as {12}, {13} as {14}, {15} as {16}, {17} as {18}, {19} as {20}, {21} as {22}, {23} as {24}, {25} as {26}, {27} as {28}, {29} as {30}, {32} as {33}" +
+                                   " FROM {0} WHERE {3} ={31};", tbl, t[0], m[0], t[1], m[1], t[2], m[2], t[3], m[3], t[4], m[4], t[5], m[5], t[6], m[6], t[7], m[7], t[8], m[8], t[9], m[9], t[10], m[10], t2[0], m2[0], t2[1], m2[1], t2[2], m2[2], t[0], m[0], rabId, t[11], m[11]);//33
                 return DataAccess.LoadDataOneLine<DLRabbitModel>(sql);
             }
             public static List<DLRabbitModel> LoadList()
@@ -264,33 +272,34 @@ namespace RabbitFarmLocal.BusinessLogic
         public static List<ParturationModel> LoadParturations(int rabbitId)
         {
             string sql = "select p.Id as Id, p.birth_date as Date,  p.mather as MotherId,p.children as Children,p.male as Males,p.female as Females,p.died_children as DiedChild," +
-                "p.separation_date as SeparationDate,r.cage as Cage,p.comment,p.nest_removal as DateNestRemoval,p.mateId as MateId, m.father_id as FatherId, m.dateOfMate as MateDate" +
+                "p.separation_date as SeparationDate,r.cage as Cage,p.comment,p.nest_removal as DateNestRemoval,p.mateId as MateId, p.status as Status, m.father_id as FatherId, m.dateOfMate as MateDate" +
                 " from parturation p LEFT JOIN mating m ON p.mateId=m.id LEFT JOIN rabbits r ON p.mather=r.rabId WHERE p.mather=" + rabbitId + " OR m.father_id=" + rabbitId + " ORDER BY p.birth_date DESC;";
             return DataAccess.LoadDataRabbit<ParturationModel>(sql);
         }
-        public static int SaveParturation(DateTime date, int motherId, int children, int males, int females, int diedChild, DateTime? separationDate, string comment, DateTime? dateNestRemoval, int mateId)
+        public static int SaveParturation(ParturationModel data )//(DateTime date, int motherId, int children, int males, int females, int diedChild, DateTime? separationDate, string comment, DateTime? dateNestRemoval, int mateId, parturStatus status)
         {
-            ParturationModel data = new ParturationModel
-            {
-                Date = date,
-                MotherId = motherId,
-                Children = children,
-                Males = males,
-                Females = females,
-                DiedChild = diedChild,
-                SeparationDate = separationDate,
+            //ParturationModel data = new ParturationModel
+            //{
+            //    Date = date,
+            //    MotherId = motherId,
+            //    Children = children,
+            //    Males = males,
+            //    Females = females,
+            //    DiedChild = diedChild,
+            //    SeparationDate = separationDate,
                 
-                Comment = comment,
-                DateNestRemoval = dateNestRemoval,
-                MateId = mateId
+            //    Comment = comment,
+            //    DateNestRemoval = dateNestRemoval,
+            //    MateId = mateId,
+            //    Status=status
 
-            };
+            //};
 
             //string sql = @"insert into parturation (birth_date,mather,children,male,female,died_children,separation_date,cage,comment,nest_removal,mateId) 
             //                values(@Date, @MotherId,  @Children,  @Males,  @Females, @DiedChild,  @SeparationDate,  @Cage, @Comment, @DateNestRemoval,  @MateId)";
 
             string sql = @"CALL storeNewParturation (@Date, @MotherId,  @Children,  @Males,  @Females, @DiedChild,  
-                @SeparationDate,  @Cage, @Comment, @DateNestRemoval,  @MateId)";
+                @SeparationDate,  @Cage, @Comment, @DateNestRemoval,  @MateId, @Status)";
 
 
             return DataAccess.SaveDataRabbit(sql, data);
@@ -301,30 +310,31 @@ namespace RabbitFarmLocal.BusinessLogic
             string sql = @"UPDATE parturation SET nest_removal=@DateNestRemoval  WHERE Id=" + prt.Id + ";";
             return DataAccess.SaveDataRabbit(sql, prt);
         }
-        public static int EditParturation(int id, DateTime date, int children, int males, int females, int diedChild, DateTime? separationDate, int cage, string comment, DateTime? dateNestRemoval)
+        public static int EditParturation(ParturationModel data)//(int id, DateTime date, int children, int males, int females, int diedChild, DateTime? separationDate, parturStatus status, string comment, DateTime? dateNestRemoval, int cage)
         {
-            ParturationModel data = new ParturationModel
-            {
-                Id = id,
-                Date = date,
+            //ParturationModel data = new ParturationModel
+            //{
+            //    Id = id,
+            //    Date = date,
                
-                Children = children,
-                Males = males,
-                Females = females,
-                DiedChild = diedChild,
-                SeparationDate = separationDate,
-                Cage = cage,
-                Comment = comment,
-                DateNestRemoval = dateNestRemoval
-            };
+            //    Children = children,
+            //    Males = males,
+            //    Females = females,
+            //    DiedChild = diedChild,
+            //    SeparationDate = separationDate,
+            //    Status = status,
+            //    Comment = comment,
+            //    DateNestRemoval = dateNestRemoval,
+            //    Cage=cage
+            //};
 
             string sql = @"UPDATE parturation SET birth_date= @Date,children=@Children,male=@Males,female=@Females,died_children=@DiedChild,separation_date=@SeparationDate,
-            cage=@Cage,comment=@Comment,nest_removal=@DateNestRemoval WHERE Id=@Id;";
+            cage=@Cage,comment=@Comment,nest_removal=@DateNestRemoval, status=@Status WHERE Id=@Id;";
             return DataAccess.SaveDataRabbit(sql, data);
         }
         public static int EditParturationChild (ParturationModel prt)
         {
-            string sql = @"UPDATE parturation SET children=@Children,male=@Males,female=@Females,died_children=@DiedChild WHERE Id=@Id;";
+            string sql = @"UPDATE parturation SET children=@Children,male=@Males,female=@Females,died_children=@DiedChild,cage=@Cage,status=@Status WHERE Id=@Id;";
             return DataAccess.SaveDataRabbit(sql, prt);
         }
         public static List<MatingModel> LoadMating(DateTime from)
@@ -336,7 +346,7 @@ namespace RabbitFarmLocal.BusinessLogic
         public static List<ParturationModel> LoadParturation(DateTime from)
         {
             string sql = "select p.Id as Id, p.birth_date as Date,  p.mather as MotherId,p.children as Children,p.male as Males,p.female as Females,p.died_children as DiedChild," +
-                "p.separation_date as SeparationDate,r.cage as Cage,p.comment,p.nest_removal as DateNestRemoval,p.mateId as MateId, m.father_id as FatherId, m.dateOfMate as MateDate" +
+                "p.separation_date as SeparationDate,p.cage as Cage, p.status as Status,p.comment,p.nest_removal as DateNestRemoval,p.mateId as MateId, m.father_id as FatherId, m.dateOfMate as MateDate" +
                 " from parturation p LEFT JOIN mating m ON p.mateId=m.id LEFT JOIN rabbits r ON p.mather=r.rabId WHERE p.birth_date >'" + DateToString(from) + "' ORDER BY p.birth_date DESC;";
             return DataAccess.LoadDataRabbit<ParturationModel>(sql);
         }
@@ -349,7 +359,7 @@ namespace RabbitFarmLocal.BusinessLogic
         public static List<ParturationModel> LoadLatestParturation(DateTime from)
         {
             string sql = "select p.Id as Id, max(p.birth_date) as Date,  p.mather as MotherId,p.children as Children,p.male as Males,p.female as Females,p.died_children as DiedChild," +
-                "p.separation_date as SeparationDate,p.cage as Cage,p.comment,p.nest_removal as DateNestRemoval,p.mateId as MateId, m.father_id as FatherId, m.dateOfMate as MateDate" +
+                "p.separation_date as SeparationDate,p.cage as Cage,p.comment,p.nest_removal as DateNestRemoval, p.status as Status, p.mateId as MateId, m.father_id as FatherId, m.dateOfMate as MateDate" +
                 " from parturation p LEFT JOIN mating m ON p.mateId=m.id WHERE p.birth_date >'" + DateToString(from) + "' GROUP BY p.birth_date;";
             return DataAccess.LoadDataRabbit<ParturationModel>(sql);
         }
@@ -388,39 +398,94 @@ namespace RabbitFarmLocal.BusinessLogic
             void findParent(int _id, int _step, Parents parents)
             {
                 int step = _step + 1;
-                int foundMother = rabbits.Find(x => x.Id == _id).MotherId;
-                int foundFather = rabbits.Find(x => x.Id == _id).FatherId;
-                if (foundMother != 0)
+                Parents parent = rabbits.Find(x => x.Id == _id);
+                if (rabbits.Any(x => x.Id == parent.MotherId))
                 {
-                    par.Add(new Parents
+
+                    int foundMother = rabbits.Find(x => x.Id == _id).MotherId;
+
+                    if (foundMother != 0)
                     {
-                        MotherId = rabbits.Find(x => x.Id == foundMother).MotherId,
-                        FatherId = rabbits.Find(x => x.Id == foundMother).FatherId,
-                        Step = step,
-                        Id = foundMother
-                    });
-                    findParent(foundMother, step,par[par.Count()-1]);
-                }
-                else
-                {
-                    parents.BeginnerOfLine = true;
-                }
-                if (foundFather != 0)
-                {
-                    par.Add(new Parents
+                        par.Add(new Parents
+                        {
+                            MotherId = rabbits.Find(x => x.Id == foundMother).MotherId,
+                            FatherId = rabbits.Find(x => x.Id == foundMother).FatherId,
+                            Step = step,
+                            Id = foundMother
+                        });
+                        findParent(foundMother, step, par[par.Count() - 1]);
+                    }
+                    else
                     {
-                        MotherId = rabbits.Find(x => x.Id == foundFather).MotherId,
-                        FatherId = rabbits.Find(x => x.Id == foundFather).FatherId,
-                        Step = step,
-                        Id = foundFather
-                    });
-                    findParent(foundFather, step, par[par.Count() - 1]);
+                        parents.BeginnerOfLine = true;
+                    }
                 }
-                else
+                if (rabbits.Any(x => x.Id == parent.FatherId))
                 {
-                    parents.BeginnerOfLine = true;
+                    int foundFather = rabbits.Find(x => x.Id == _id).FatherId;
+                    if (foundFather != 0)
+                    {
+                        par.Add(new Parents
+                        {
+                            MotherId = rabbits.Find(x => x.Id == foundFather).MotherId,
+                            FatherId = rabbits.Find(x => x.Id == foundFather).FatherId,
+                            Step = step,
+                            Id = foundFather
+                        });
+                        findParent(foundFather, step, par[par.Count() - 1]);
+                    }
+                    else
+                    {
+                        parents.BeginnerOfLine = true;
+                    }
                 }
             };
+            //void findParent(int _id, int _step, Parents parents)
+            //{
+            //    int step = _step + 1;
+            //    Parents parent = rabbits.Find(x => x.Id == _id);
+            //    //int foundMother = rabbits.Find(x => x.Id == _id).MotherId;
+            //    //int foundFather = rabbits.Find(x => x.Id == _id).FatherId;
+            //    if (parent !=null)
+            //    {
+            //        Parents motherObj = rabbits.Find(x => x.Id == parent.MotherId);
+            //        if (motherObj != null)
+            //        {
+            //            par.Add(new Parents
+            //            {
+            //                MotherId = motherObj.MotherId,
+            //                FatherId = motherObj.FatherId,
+            //                Step = step,
+            //                Id = parent.MotherId
+            //            });
+            //        }
+
+            //        findParent(parent.MotherId, step,par[par.Count()-1]);
+            //    }
+            //    else
+            //    {
+            //        parents.BeginnerOfLine = true;
+            //    }
+            //    if (foundFather != 0)
+            //    {
+            //        Parents fatherObj = rabbits.Find(x => x.Id == foundFather);
+            //        if (fatherObj != null)
+            //        {
+            //            par.Add(new Parents
+            //            {
+            //                MotherId = fatherObj.MotherId,
+            //                FatherId = fatherObj.FatherId,
+            //                Step = step,
+            //                Id = foundFather
+            //            });
+            //        }
+            //        findParent(foundFather, step, par[par.Count() - 1]);
+            //    }
+            //    else
+            //    {
+            //        parents.BeginnerOfLine = true;
+            //    }
+            //};
             par.Add(new Parents());//add one element for defining as a begginer of a line if no parents are found
             findParent(id, 0, par[par.Count() - 1]);
             if (par.Count() > 1) par.RemoveAt(0);//remove empty parrent element if it is not a begginer of a line
@@ -436,7 +501,7 @@ namespace RabbitFarmLocal.BusinessLogic
         public static ParturationModel LoadParturation(int partId)
         {
             string sql = "select p.Id as Id, p.birth_date as Date,  p.mather as MotherId,p.children as Children,p.male as Males,p.female as Females,p.died_children as DiedChild," +
-                "p.separation_date as SeparationDate,p.cage as Cage,p.comment,p.nest_removal as DateNestRemoval,p.mateId as MateId, m.father_id as FatherId, m.dateOfMate as MateDate" +
+                "p.separation_date as SeparationDate,p.cage as Cage,p.comment,p.nest_removal as DateNestRemoval,p.mateId as MateId, p.status as Status, m.father_id as FatherId, m.dateOfMate as MateDate" +
                 " from parturation p LEFT JOIN mating m ON p.mateId=m.id WHERE p.Id=" + partId + ";";
             return DataAccess.LoadDataOneLine<ParturationModel>(sql);
         }
@@ -445,13 +510,13 @@ namespace RabbitFarmLocal.BusinessLogic
         {
             string sqlPart = String.Format("UPDATE parturation SET separation_date='{0}' WHERE Id={1}", DateToString(DateTime.Now), fatt[0].PartId);
             DataAccess.SaveData(sqlPart);
-            string sql= @"insert into fattening (partId, rabPartId, cage, collor, rabbitGender, status, breed) 
-                            values(@PartId, @RabPartId, @Cage, @Collor, @RabbitGender, @Status, @Breed)";
+            string sql= @"insert into fattening (partId, rabPartId, cage, CollorId, rabbitGender, status, breed) 
+                            values(@PartId, @RabPartId, @Cage, @CollorId, @RabbitGender, @Status, @Breed)";
             return DataAccess.SaveDataRabbit<FatteningModel>(sql, fatt);
         }
         public static List<FatteningModel> LoadFattenigPerPart(int part_Id)
         {
-            string sql = @"SELECT f.partId as PartId, f.rabPartId as RabPartId, f.cage as Cage, f.collor as Collor, f.status as Status, f.rabbitGender as RabbitGender, " +
+            string sql = @"SELECT f.partId as PartId, f.rabPartId as RabPartId, f.cage as Cage, f.CollorId as CollorId, f.status as Status, f.rabbitGender as RabbitGender, " +
                 "f.weight as Weight, f.comment as Comment, f.breed as Breed,  p.birth_date as Born, m.mother_id as MotherId, m.Father_id as FatherId, " +
                 "f.killDate as KillDate, f.price as Price" +
                 " FROM fattening f LEFT JOIN parturation p ON f.partId=p.Id LEFT JOIN mating m ON p.mateId=m.id WHERE f.partId = " + part_Id + ";";
@@ -470,7 +535,7 @@ namespace RabbitFarmLocal.BusinessLogic
                 stSQL.Append(stat[i]);
             }
             //string dateFrom = DateToString(until.AddDays(-period));
-            string sql = @"SELECT f.partId as PartId, f.rabPartId as RabPartId, f.cage as Cage, f.collor as Collor, f.status as Status, f.rabbitGender as RabbitGender, " +
+            string sql = @"SELECT f.partId as PartId, f.rabPartId as RabPartId, f.cage as Cage, f.CollorId as CollorId, f.status as Status, f.rabbitGender as RabbitGender, " +
                 "f.weight as Weight, f.price as Price, f.comment as Comment, f.breed as Breed, p.birth_date as Born, f.killDate as KillDate, b.weight as LastWeight, m.mother_id as MotherId, m.Father_id as FatherId  " +
                 "FROM fattening f LEFT JOIN parturation p ON f.partId=p.Id " +
                 "LEFT JOIN (SELECT b1.*  FROM fat_weight b1 JOIN (SELECT rabId, partId, MAX(date) As maxDate FROM fat_weight GROUP BY rabId, partId ) b2 " +
@@ -489,13 +554,13 @@ namespace RabbitFarmLocal.BusinessLogic
 
             }
             //string dateFrom = DateToString(until.AddDays(-period));
-            string sql = @"SELECT f.partId as PartId, f.rabPartId as RabPartId, f.cage as Cage, f.collor as Collor, f.status as Status, f.rabbitGender as RabbitGender, " +
+            string sql = @"SELECT f.partId as PartId, f.rabPartId as RabPartId, f.cage as Cage, f.CollorId as CollorId, f.status as Status, f.rabbitGender as RabbitGender, " +
                 "f.weight as Weight, f.price as Price, f.comment as Comment, p.birth_date as Born, f.killDate as KillDate, f.breed as Breed FROM fattening f LEFT JOIN parturation p ON f.partId=p.Id WHERE f.status in (" + stSQL + ") AND f.killDate >= '" + from + "' AND f.killDate <= '" + until + "';";
             return DataAccess.LoadDataRabbit<FatteningModel>(sql);
         }
         public static int EditFattenigPerPart (List<FatteningModel> fatt)
         {
-            string sql = @"UPDATE fattening SET cage=@Cage, collor=@Collor, status=@Status, rabbitGender=@RabbitGender, killDate=@KillDate," +
+            string sql = @"UPDATE fattening SET cage=@Cage, CollorId=@CollorId, status=@Status, rabbitGender=@RabbitGender, killDate=@KillDate," +
                 "weight=@Weight, price=@Price, comment=@Comment WHERE partId = @PartId AND rabPartId=@RabPartId;"; 
             return DataAccess.SaveDataRabbit<FatteningModel>(sql,fatt);
         }
@@ -511,14 +576,14 @@ namespace RabbitFarmLocal.BusinessLogic
         }
         public static List<FatteningModel> LoadAllFattening()
         {
-            string sql = @"SELECT f.partId as PartId, f.rabPartId as RabPartId, f.cage as Cage, f.collor as Collor, f.status as Status, f.rabbitGender as RabbitGender, " +
-                "f.weight as Weight, f.comment as Comment, f.breed as Breed,  p.birth_date as Born, m.mother_id as MotherId, m.Father_id as FatherId " +
+            string sql = @"SELECT f.partId as PartId, f.rabPartId as RabPartId, f.cage as Cage, f.CollorId as CollorId, f.collor as Collor, f.status as Status, f.rabbitGender as RabbitGender, " +
+                " f.killDate as KillDate, f.weight as Weight, f.price as Price, f.comment as Comment, f.breed as Breed,  p.birth_date as Born, m.mother_id as MotherId, m.Father_id as FatherId " +
                 " FROM fattening f LEFT JOIN parturation p ON f.partId=p.Id LEFT JOIN mating m ON p.mateId=m.id";
             return DataAccess.LoadDataRabbit<FatteningModel>(sql);
         }
         public static List<FatteningModel> LoadFattenigAllAlive()
         {
-            string sql = @"SELECT f.partId as PartId, f.rabPartId as RabPartId, f.cage as Cage, f.collor as Collor, f.status as Status, f.rabbitGender as RabbitGender, " +
+            string sql = @"SELECT f.partId as PartId, f.rabPartId as RabPartId, f.cage as Cage, f.CollorId as CollorId, f.status as Status, f.rabbitGender as RabbitGender, " +
                 "f.weight as Weight, f.comment as Comment, f.breed as Breed,  p.birth_date as Born, b.weight as LastWeight, b.date as WeightDate, m.mother_id as MotherId, m.Father_id as FatherId " +
                 " FROM fattening f LEFT JOIN parturation p ON f.partId=p.Id " +
                 "LEFT JOIN (SELECT b1.*  FROM fat_weight b1 JOIN (SELECT rabId, partId, MAX(date) As maxDate FROM fat_weight GROUP BY rabId, partId ) b2 "+
@@ -529,8 +594,9 @@ namespace RabbitFarmLocal.BusinessLogic
         }
         public static int DeleteFattRab(int PartId, int rabId)
         {
-            
+            FattWeight.DeleteAll(rabId, PartId);
             string sql = String.Format("DELETE FROM fattening WHERE partId={0} AND rabPartId={1};", PartId, rabId);
+            
             return DataAccess.SaveData(sql);
         }
         //Date Weight RabId PartId
@@ -580,8 +646,12 @@ namespace RabbitFarmLocal.BusinessLogic
             }
             public static int Delete(int wgtId)
             {
-
                 string sql = String.Format("DELETE FROM {0} WHERE {1}={2};", tbl, t[4], wgtId);
+                return DataAccess.SaveData(sql);
+            }
+            public static int DeleteAll(int rabId,int partId)
+            {
+                string sql = String.Format($"DELETE FROM {tbl} WHERE {t[3]}={partId} AND {t[2]}={rabId};");
                 return DataAccess.SaveData(sql);
             }
             public static List<FattWeightModel> Load(int rabId, int partId)
@@ -751,13 +821,37 @@ namespace RabbitFarmLocal.BusinessLogic
                     tbl, t[0], t[1], m[0], m[1]);
                 return DataAccess.LoadDataRabbit<BreedsModel>(sql);
             }
-            //public static CageModel LoadOne(int Id)
-            //{
-            //    string sql = string.Format(@"SELECT {1} as {8}, {2} as {9}, {3} as {10}, {4} as {11}, {5} as {12}, {6} as {13}, {7} as {14} FROM {0} WHERE {1}={15};",
-            //        tbl, t[0], t[1], t[2], t[3], t[4], t[5], t[6], m[0], m[1], m[2], m[3], m[4], m[5], m[6], Id);
-            //    return DataAccess.LoadDataOneLine<CageModel>(sql);
-            //}
+
         }
+        public static class Collor
+        {
+            static readonly string tbl = "collors";
+            static readonly string[] t = new string[] { "Id", "Name", "ImageName" };
+            
+            public static int Create(CollorModel col)
+            {
+                string sql = string.Format(@"insert into {0} ({1},{2}) values(@{3},@{4});", tbl, t[1], t[2], t[1], t[2]);
+                return DataAccess.SaveDataRabbit<CollorModel>(sql, col);
+            }
+            public static int Edit(CollorModel col)
+            {
+                string sql = string.Format(@$"UPDATE {tbl} SET {t[1]}=@{t[1]}, {t[2]}=@{t[2]} WHERE {t[0]} = @{t[0]};");
+                return DataAccess.SaveDataRabbit<CollorModel>(sql, col);
+            }
+            public static int Delete(int col)
+            {
+
+                string sql = String.Format($"DELETE FROM {tbl} WHERE {t[0]}={col};");
+                return DataAccess.SaveData(sql);
+            }
+            public static List<CollorModel> LoadAll()
+            {
+                string sql = string.Format($@"SELECT {t[0]} as {t[0]}, {t[1]} as {t[1]}, {t[2]} as {t[2]} FROM {tbl};");
+                return DataAccess.LoadDataRabbit<CollorModel>(sql);
+            }
+        }
+
+
     }
 
 }

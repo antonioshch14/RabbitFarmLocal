@@ -1,0 +1,86 @@
+﻿@model List<RabbitFarmLocal.Models.CollorModel>
+
+@{
+    ViewData["Title"] = "Объединение цветов";
+}
+<a>Выберите цвета, которые хотите объединить с <b>@ViewBag.CollorToJointInto.Name</b></a>
+
+<div>
+
+    @Html.DropDownListFor(model => Model[0].Id, ViewBag.CollorList as SelectList, new { @class = "CollorId", onchange = "AddCollor(this)", htmlAttributes = new { @class = "form-control"} })
+    
+</div>
+<script>
+    function AddCollor(_this)
+    {
+        var index = document.getElementById('collor_table').getElementsByTagName('tr').length;
+
+        var idOfCollor = _this.options[_this.selectedIndex].value;
+        var idOfElem = 'collors-' + idOfCollor;
+        jQuery(jQuery("#"+idOfElem).detach()).appendTo("#collor_table");
+        var elem = document.getElementById(idOfElem);
+        elem.classList.remove("d-none");
+        var inputName = elem.getElementsByTagName('input')[0]; //.querySelector(`input[name="[${index}].Name"]`);
+        inputName.type = "text";
+        inputName.readOnly = true;
+        inputName.setAttribute('name', `[${index}].Name`);
+        inputName.setAttribute('id', `z${index}__Name`);
+        var idName = elem.getElementsByTagName('input')[1];
+        idName.setAttribute('name', `[${index}].Id`);
+        idName.setAttribute('id', `z${index}__Id`);
+        var selectedList = document.getElementById('z0__Id');
+        
+        var selectedItems = selectedList.getElementsByTagName('option');
+        
+        var selectedItem;
+        for (var item = 0; item < selectedItems.length;item++) {
+            if (selectedItems[item].value == idOfCollor) {
+                selectedItem = selectedItems[item];
+                break;
+            }
+        }
+        //var selectedItem =selectedItems.find(x => x.value == idOfCollor);
+        
+        selectedItem.remove();
+
+    };
+</script>
+<div class="modal-content">
+    
+
+    @using (Html.BeginForm("JoinCollors", "Collor", FormMethod.Post, new { @class = "form-horizontal" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <table class="table">
+            
+            <tbody id="collor_table">
+            </tbody>
+        </table>
+        <input type="checkbox" name="deleteAfterJoin" />
+        <label for="deleteAfterJoin">Удалить окрасы после объединения</label>
+        <br />
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="hidden" name="idToJoinInto" value="@ViewBag.CollorToJointInto.Id" class="form-control">
+                <input type="submit" value="Применить" class="btn btn-primary" />
+            </div>
+        </div>
+
+    }
+</div>
+<table class="table">
+    @for (var i=0;i<Model.Count;i++)
+    {
+        <tr id="collors-@Model[i].Id" class="d-none">
+
+            <td>
+                @Html.HiddenFor(modelItem => Model[i].Name, new { value= Model[i].Name })
+            </td>
+            <td>
+                @Html.HiddenFor(modelItem => Model[i].Id, new { value= Model[i].Id })
+            </td>
+
+        </tr>
+    }
+</table>

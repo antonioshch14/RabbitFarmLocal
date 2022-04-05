@@ -45,27 +45,46 @@ namespace RabbitFarmLocal.BusinessLogic
                             }
                             else  if (mating.Date > DateTime.Now.AddDays(-Settings.PregnantDays() - Settings.CheckPart()) && mating.ParturationId == null)
                             {
-                                rab.StoredRabStatus = Status.checkPart; //preg
+                                rab.StoredRabStatus = Status.checkPart; //check if has delivered
                                 sql += $"UPDATE rabbits SET status={ (int)rab.StoredRabStatus} WHERE Id={ rab.Id};";
                                 continue;
                             }
                             else if (partur != null)
                             {
-                                if (partur.Date > DateTime.Now.AddDays(-Settings.FeedDays()) || partur.SeparationDate == null)
+                                if (partur.Status == parturStatus.feeded || partur.Status==parturStatus.nestRemovalAwaited || partur.Status==parturStatus.separationAwaited)
+                                // if (partur.Date > DateTime.Now.AddDays(-Settings.FeedDays()) || partur.Status == parturStatus.feeded)
                                 {
-                                    if (partur.Children > partur.DiedChild || partur.Children == 0)
+                                    //if (partur.Children > partur.DiedChild || partur.Children == 0)
+                                    //{
+                                    //if (partur.SeparationDate == null)
+                                    //{
+                  
+                                     if(partur.Date.AddDays(Settings.FeedDays()+Settings.RestDays()) < DateTime.Now)
                                     {
-                                        if (partur.SeparationDate == null)
-                                        {
-                                            rab.StoredRabStatus = Status.feedFEmale; //feed
-                                            sql += $"UPDATE rabbits SET status={ (int)rab.StoredRabStatus} WHERE Id={ rab.Id};";
-                                            continue;
-                                        }
+                                        rab.StoredRabStatus = Status.readyFemale; //feed
+                                        sql += $"UPDATE rabbits SET status={ (int)rab.StoredRabStatus} WHERE Id={ rab.Id};";
+                                        continue;
                                     }
+                                    else if (partur.Date.AddDays(Settings.FeedDays()) < DateTime.Now)
+                                    {
+                                        rab.StoredRabStatus = Status.restFemale; //feed
+                                        sql += $"UPDATE rabbits SET status={ (int)rab.StoredRabStatus} WHERE Id={ rab.Id};";
+                                        continue;
+                                    }
+                                    else 
+                                    {
+                                        rab.StoredRabStatus = Status.feedFEmale; //feed
+                                        sql += $"UPDATE rabbits SET status={ (int)rab.StoredRabStatus} WHERE Id={ rab.Id};";
+                                        continue;
+                                    }
+
+                                    //}
+                                    //}
                                 }
-                                if (partur.SeparationDate != null)
+                                else
                                 {
-                                    if (partur.SeparationDate > DateTime.Now.AddDays(-Settings.RestDays()))
+                                    if (partur.SeparationDate > DateTime.Now.AddDays(-Settings.RestDays()) &&
+                                        partur.Date.AddDays(Settings.FeedDays() + Settings.RestDays()) > DateTime.Now)
                                     {
                                         rab.StoredRabStatus = Status.restFemale; //rest
                                         sql += $"UPDATE rabbits SET status={ (int)rab.StoredRabStatus} WHERE Id={ rab.Id};";

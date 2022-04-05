@@ -38,8 +38,11 @@ namespace RabbitFarmLocal.Models
         public YesNo Separated { get { return  (SeparationDate!=null) ?  YesNo.Yes :  YesNo.No; } }
         [DisplayName("Крольчата рассажины")]
         public YesNo SeparatedView { get; set; }
-        [DisplayName("Клетка")]
+        [DisplayName("Клетка окрола")]
         public int Cage { get; set; }
+        
+        [DisplayName("Cтатус окрола")]
+        public parturStatus Status { get; set; }
         [DisplayName("Дата уборки гнезда г-м-д")]
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}", ApplyFormatInEditMode = true)]
@@ -61,7 +64,23 @@ namespace RabbitFarmLocal.Models
         public DateTime MateDate { get; set; }
         [DisplayName("Покрытие")]
         public string MateDateString { get { return DateToStringRU(MateDate); } }
-       
-
     }
+    public enum parturStatus
+    {
+        [Display(Name ="Кормит мать")]
+        feeded,
+        [Display(Name = "Рассажены")]
+        separated,
+        [Display(Name = "Все умерли")]
+        allDead,
+        [Display(Name = "Мать умерла")]
+        leftAlone,
+        [Display(Name = "Ожидается уборка гнезда")] 
+        nestRemovalAwaited, //4
+        [Display(Name = "Ожидается рассадка")]
+        separationAwaited, //5
+        [Display(Name = "Мать и окрол в разных клетках")]
+        inDifferentCages, //6
+    }
+
 }

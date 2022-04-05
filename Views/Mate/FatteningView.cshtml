@@ -5,14 +5,7 @@
     ViewData["Title"] = "Откорм";
 }
 
-@*<a data-toggle="modal" data-target="#ShowHiden" @Html.ActionLink("Показать скрытый откорм", "FattStatusView", new { @class = "compItem" })>Показать скрытых кроликов</a>*@
-
-
 <h4>@ViewBag.Message1</h4>
-@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>*@
-@{         if (ViewBag.Message != "") { <h4>
-    ViewBag.Message
-</h4>}}
 
 <table class="table">
     <thead>
@@ -86,7 +79,7 @@
                     |
                     @Html.ActionLink("Редактировать", "FattEdit", new { PartId = item.PartId, rabId = item.RabPartId, CalledFrom = Caller.fattening }, new { @class = "compItem" })
                     |
-                    @Html.ActionLink("Удалить", "FattDelete", new { PartId = item.PartId, rabId = item.RabPartId, CalledFrom = Caller.fattening }, new { onclick = "return confirm('Подтвердите, что вы хотите удалить кролика " + item.RabPartId + "?');" })
+                    @Html.ActionLink("Удалить", "FattDelete", new { PartId = item.PartId, rabId = item.RabPartId, CalledFrom = Caller.fattening }, new { onclick = "return confirm('Подтвердите, что вы хотите удалить кролика " + item.RabPartId + "? Колличество крольчат в окроле необходимо будет исправить самостоятельно!');" })
                 </td>
             </tr>
         }

@@ -102,7 +102,7 @@
             @Html.DisplayFor(model => model.IsAlive)
         </dd>
         <h4>Родословная</h4>
-        <table class="table">
+        @*<table class="table">
 
             <tr>
                 <th>
@@ -142,7 +142,8 @@
                 </tr>
             }
 
-        </table>
+        </table>*@
+        <vc:pedigree rabid="@Model.RabbitId"></vc:pedigree>
         <h4>Покрытия</h4>
         <table class="table">
 

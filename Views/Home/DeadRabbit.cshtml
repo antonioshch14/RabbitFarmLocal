@@ -32,6 +32,7 @@
                     <span asp-validation-for="Price" class="text-danger"></span>
                 </div>
             @Html.HiddenFor(model => Model.Id)
+            @Html.HiddenFor(model=> Model.RabbitId)
             <div class="form-group">
                 <input type="submit" value="Занести в историю" class="btn btn-primary" />
             </div>

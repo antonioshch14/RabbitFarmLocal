@@ -58,6 +58,7 @@ namespace RabbitFarmLocal.Controllers
         public ActionResult RabWeightEdit(WeightModel wgt)
         {
             RabWeight.Edit(wgt);
+            RabbitFarmLocal.Start.WeighGrow.UpdateWeitghCurve();
             return RedirectToAction("RabWeightView", "Weight",new {rabId=wgt.RabId });
         }
         public ActionResult RabWeightDelete(int rabId, int weightId)

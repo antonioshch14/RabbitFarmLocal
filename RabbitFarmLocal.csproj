@@ -1,8 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <UserSecretsId>aspnet-RabbitFarmLocal-A5B7B46B-E687-4F95-8885-59DC078D481F</UserSecretsId>
+   
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,6 +18,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\Images\graph-8x.png" />
+    <None Include="wwwroot\Images\heart-8x.png" />
+    <None Include="wwwroot\Images\home-8x.png" />
+    <None Include="wwwroot\Images\rabbit1.png" />
+    <None Include="wwwroot\Images\rabbit2.png" />
     <None Include="wwwroot\lib\chartjs\Chart.bundle.js" />
     <None Include="wwwroot\lib\chartjs\Chart.bundle.min.js" />
     <None Include="wwwroot\lib\chartjs\Chart.js" />
@@ -25,19 +31,13 @@
 
   <ItemGroup>
     <PackageReference Include="Blazor.Extensions.Canvas" Version="1.1.1" />
-    <PackageReference Include="Dapper" Version="2.0.78" />
+    <PackageReference Include="Dapper" Version="2.0.123" />
     <PackageReference Include="Microsoft.AspNet.WebPages" Version="3.2.7" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.8" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
     <PackageReference Include="MySql.Data" Version="8.0.22" />
     <PackageReference Include="ncrontab" Version="3.3.1" />
-    <PackageReference Include="Telegram.Bot" Version="15.7.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="RazorComponentLibrary">
-      <HintPath>..\RazorComponentLibrary\bin\Debug\netstandard2.0\RazorComponentLibrary.dll</HintPath>
-    </Reference>
+    <PackageReference Include="Telegram.Bot" Version="18.0.0-alpha.1" />
   </ItemGroup>
 
 </Project>

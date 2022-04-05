@@ -22,29 +22,56 @@
                     @*<partial name="_LoginPartial" />*@
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="ViewRabbits">Кролики</a>
+
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="ViewRabbits">
+                                <img class="img-fluid" src="~/Images/rabbit.png" style="width:50px;height:40px;" />
+                                Кролики
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Mate" asp-action="AllMateView">Покрытия</a>
+
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Mate" asp-action="AllMateView">
+                                <img class=" img-fluid" src="~/Images/rabbit-sex.png" style="width:50px;height:40px;" />
+                                Покрытия
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Mate" asp-action="AllParturView">Окролы</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Mate" asp-action="AllParturView">
+                                <img class=" img-fluid" src="~/Images/babay-rabbit.png" style="width:50px;height:40px;" />
+                                Окролы
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Mate" asp-action="AllFatteningView">Откорм</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Mate" asp-action="AllFatteningView">
+                                <img class=" img-fluid" src="~/Images/fatt.png" style="width:50px;height:40px;" />
+                                Откорм
+                            </a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Report">Отчет</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Report">
+                                <img class=" img-fluid" src="~/Images/list-6x.png" style="width:50px;height:40px;" />
+                                Отчет
+                                <vc:overdues></vc:overdues>
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Finance" asp-action="FinSpntView">Затраты</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Finance" asp-action="FinSpntView">
+                                <img class=" img-fluid" src="~/Images/cart-6x.png" style="width:50px;height:40px;" />
+                                Затраты
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Finance" asp-action="FinanceRepYearly">Прибыль</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Finance" asp-action="FinanceRepYearly">
+                                <img class=" img-fluid" src="~/Images/ruble.png" style="width:50px;height:40px;" />
+                                Прибыль
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Cage" asp-action="CagesView">Клетки</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Cage" asp-action="CagesView">
+                                <img class=" img-fluid" src="~/Images/home-6x.png" style="width:50px;height:40px;" />
+                                Клетки
+                            </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="NotesView">Заметки</a>
@@ -53,7 +80,16 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Breeds" asp-action="Index">Породы</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="SettingsEdit">Настройки</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="SettingsEdit">
+                                <img class=" img-fluid" src="~/Images/cog-6x.png" style="width:50px;height:40px;" />
+                                Настройки
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Collor" asp-action="Index">Окрасы</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Development" asp-action="Index">Dev</a>
                         </li>
 
 

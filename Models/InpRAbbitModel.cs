@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
 
 namespace RabbitFarmLocal.Models
 {
@@ -24,11 +25,12 @@ namespace RabbitFarmLocal.Models
 
             [Display(Name = "Порода")]
             public string Breed { get; set; }
-       
-        
-
+            [DisplayName("Порода")]
+            public string BreedString { get; set; }
+            public int BreedId { get; set; }
             [Display(Name = "Окрас")]
             public string Collor { get; set; }
+        public int CollorId { get; set; }
 
             [Display(Name = "Дата рождения")]
            [Required(ErrorMessage = "Введите дату рождения")]

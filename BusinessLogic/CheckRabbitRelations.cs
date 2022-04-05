@@ -10,6 +10,7 @@ namespace RabbitFarmLocal.BusinessLogic
 {
     public static class CheckRabbitRelations
     {
+        
         public static List<LevelOfRelations> CheckRelations(int id)
         {
             List<ParentsFull> rabbits = LoadParents();

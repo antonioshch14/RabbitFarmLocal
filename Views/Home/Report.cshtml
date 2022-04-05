@@ -125,6 +125,8 @@
             @{ if (item.Alert) { <text> class="compItem table-warning" </text>  } else { <text> class="compItem" </text>  } }>
             <td>
                 @Html.DisplayFor(modelItem => item.RabbitId)
+                @if (item.Alert)
+                {<sup class="alert alert-primary" style="padding:2px;">просрочено на @item.DaysOverdue д</sup>}
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Cage)
@@ -147,10 +149,10 @@
     <table class="table">
         <tr>
             <th>
-                @Html.DisplayNameFor(model => Model.RemoveNest[0].RabbitId)
+                @Html.DisplayNameFor(model => Model.RemoveNest[0].RabbitId) (Мать)
             </th>
             <th>
-                @Html.DisplayNameFor(model => Model.RemoveNest[0].Cage)
+                @Html.DisplayNameFor(model => Model.RemoveNest[0].Cage) (Окрол)
             </th>
             <th>
                 @Html.DisplayNameFor(model => Model.RemoveNest[0].DateString)
@@ -164,6 +166,8 @@
             @{ if (item.Alert) { <text> class="compItem table-warning" </text>  } else { <text> class="compItem" </text>  } }>
             <td>
                 @Html.DisplayFor(modelItem => item.RabbitId)
+                @if (item.Alert)
+                {<sup class="alert alert-primary" style="padding:2px;">просрочено на @item.DaysOverdue д</sup>}
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Cage)
@@ -202,6 +206,8 @@
                 @{ if (item.Alert) { <text> class="table-warning" </text>  } else { <text> class="" </text>  } }>
                 <td>
                     @Html.DisplayFor(modelItem => item.RabbitId)
+                    @if (item.Alert)
+                    {<sup class="alert alert-primary" style="padding:2px;">просрочено на @item.DaysOverdue д</sup>}
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Cage)
@@ -268,10 +274,10 @@
     <table class="table">
         <tr>
             <th>
-                @Html.DisplayNameFor(model => Model.Separate[0].RabbitId)
+                @Html.DisplayNameFor(model => Model.Separate[0].RabbitId) (Мать)
             </th>
             <th>
-                @Html.DisplayNameFor(model => Model.Separate[0].Cage)
+                @Html.DisplayNameFor(model => Model.Separate[0].Cage) (Окрол)
             </th>
             <th>
                 @Html.DisplayNameFor(model => Model.Separate[0].DateString)
@@ -285,6 +291,8 @@
             @{ if (item.Alert) { <text> class="compItem table-warning" </text>  } else { <text> class="compItem" </text>  } }>
             <td>
                 @Html.DisplayFor(modelItem => item.RabbitId)
+                @if (item.Alert)
+                {<sup class="alert alert-primary" style="padding:2px;">просрочено на @item.DaysOverdue д</sup>}
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Cage)
@@ -323,6 +331,8 @@
             @{ if (item.Alert) { <text> class="compItem table-warning" </text>  } else { <text> class="compItem" </text>  } }>
             <td>
                 @Html.DisplayFor(modelItem => item.RabbitId)
+                @if (item.Alert)
+                {<sup class="alert alert-primary" style="padding:2px;">просрочено на @item.DaysOverdue д</sup>}
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Cage)

@@ -12,6 +12,7 @@ namespace RabbitFarmLocal.Models
 {
     public class DLRabbitModel :  IDescent
     {
+
         private Descent DescentInstance = new Descent();
         public string Breed { get; set; }
         [DisplayName("Порода")]
@@ -41,12 +42,17 @@ namespace RabbitFarmLocal.Models
         public int RabbitId { get; set; }
         [DisplayName("Клетка")]
         public int Cage { get; set; }
-
+        public List<ListOfCages> CageList { get; set; }
         public bool IsMale { get; set; }
         [DisplayName("Пол")]
         public string Gender { get; set; }
         [DisplayName("Окрас")]
         public string Collor { get; set; }
+        public int CollorId { get; set; }
+        public void SetCollorString()
+        {
+            Collor = Start.ConstantsSingelton.GetCollors().Find(x => x.Id == CollorId).Name;
+        }
 
         [DisplayName("Д.р.")]
         public string BornString
@@ -109,6 +115,7 @@ namespace RabbitFarmLocal.Models
         public float Weight { get; set; }
         [DisplayName("Цена")]
         public int Price { get; set; }
+        
     }
     //public class RabbitKillModel //  termDate price killWeight
     //{

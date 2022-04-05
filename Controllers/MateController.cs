@@ -15,6 +15,10 @@ using RabbitFarmLocal.Start;
 using System.Dynamic;
 using RabbitFarmLocal.Controllers;
 using System.ComponentModel.DataAnnotations;
+using RabbitFarmLocal.BusinessLogic;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace RabbitFarmWeb.Controllers
 {
@@ -195,7 +199,7 @@ namespace RabbitFarmWeb.Controllers
                     Females = row.Females,
                     DiedChild = row.DiedChild,
                     SeparationDate = row.SeparationDate,
-                    Cage = row.Cage,
+                    Status = row.Status,
                     Comment = row.Comment,
                     DateNestRemoval = row.DateNestRemoval,
                     FatherId=row.FatherId,
@@ -215,7 +219,7 @@ namespace RabbitFarmWeb.Controllers
             ParturationModel com = new ParturationModel();
             com.MateId = mateId;
             com.MotherId = motherId;
-            ViewBag.BornDate = DateToString(mateDate.AddDays(30));
+            ViewBag.BornDate = DateToString(mateDate.AddDays(Settings.PregnantDays()));
             UpdateRabbitsStatus();
             com.ECaller = caller;
             if (caller == Caller.allmate) return PartialView(com);
@@ -229,7 +233,9 @@ namespace RabbitFarmWeb.Controllers
 
             if (ModelState.IsValid) //SaveComment(int Id, string comment, DateTime date)
             {
-                int recordCreated = SaveParturation(com.Date, com.MotherId, com.Children, com.Males, com.Females, com.DiedChild, com.SeparationDate,  com.Comment, com.DateNestRemoval, com.MateId);
+                com.Cage = Rabbit.LoadOneRabbId(com.MotherId).Cage;
+                com.Status = parturStatus.feeded;
+                int recordCreated = SaveParturation(com);//(com.Date, com.MotherId, com.Children, com.Males, com.Females, com.DiedChild, com.SeparationDate,  com.Comment, com.DateNestRemoval, com.MateId, com.Status);
                 if (com.ECaller == Caller.allmate) return RedirectToAction("AllMateView");
                 else if (com.ECaller == Caller.report) return RedirectToAction("Report", "Home");
                 return RedirectToAction("ParturView", "Mate", new { id = com.MotherId });
@@ -251,11 +257,14 @@ namespace RabbitFarmWeb.Controllers
 
 
         //[Authorize(Roles = "admin,owner")]
-        public ActionResult ParturEdit(int id, Caller caller)
+        public ActionResult ParturEdit(int id, Caller caller, string? errorMessage = null)
         {
             ParturationModel prt = LoadParturation(id);
-            ViewBag.Message = "Окрол крольчихи " + prt.MotherId + ", рождены " + prt.DateString;
-           
+            DLRabbitModel mother = Rabbit.LoadOneRabbId(prt.MotherId);
+            if(mother.IsAlive) ViewBag.Message = "Окрол крольчихи " + prt.MotherId + ", рождены " + prt.DateString;
+            else ViewBag.Message = $"Окрол крольчихи {prt.MotherId} (история), рождены {prt.DateString}";
+            if (errorMessage != null) ViewBag.Error = errorMessage;
+
             //ViewBag.LinkableId = id;
 
             ViewBag.MateDate = DateToString(prt.Date);
@@ -264,7 +273,8 @@ namespace RabbitFarmWeb.Controllers
             prt.NestRemovedView = prt.NestRemoved;
             prt.SeparatedView = prt.Separated;
             prt.ECaller = caller;
-
+            ViewBag.CageList=  RabbitFarmLocal.Start.ConstantsSingelton.GetCageLists();
+            ViewBag.Status = ((int)prt.Status);
             return View("ParturEdit", prt);
         }
        
@@ -277,14 +287,79 @@ namespace RabbitFarmWeb.Controllers
             //else if (model.SeparatedView == YesNo.No) model.SeparationDate = null;
             //if (model.NestRemovedView == YesNo.Yes && model.DateNestRemoval == null) model.DateNestRemoval = DateTime.Now;
             //else if (model.NestRemovedView == YesNo.No) model.DateNestRemoval = null;
-            if (model.SeparatedView == YesNo.Yes && model.Separated==YesNo.No) model.SeparationDate = DateTime.Now;
-            else if (model.SeparatedView == YesNo.No) model.SeparationDate = null;
-            if (model.NestRemovedView == YesNo.Yes && model.NestRemoved==YesNo.No) model.DateNestRemoval = DateTime.Now;
-            else if (model.NestRemovedView == YesNo.No) model.DateNestRemoval = null;
-
             if (ModelState.IsValid)
             {
-                int recordCreated = EditParturation(model.Id, model.Date, model.Children, model.Males, model.Females, model.DiedChild, model.SeparationDate, model.Cage, model.Comment, model.DateNestRemoval);
+                ParturationModel oldPart = LoadParturation(model.Id);
+                DLRabbitModel mother = Rabbit.LoadOneRabbId(oldPart.MotherId);
+                if (model.NestRemovedView == YesNo.Yes && model.NestRemoved == YesNo.No) model.DateNestRemoval = DateTime.Now;
+                else if (model.NestRemovedView == YesNo.No) model.DateNestRemoval = null;
+                //if (model.Cage != oldPart.Cage)
+                //{
+                    
+                //    if (mother != null)
+                //    {
+                //        mother.Cage = model.Cage;
+                //        Rabbit.EditGeneral(mother);
+                //        ConstantsSingelton.UpdateCages();
+                //    }
+                //}
+                if (model.Status == parturStatus.feeded && oldPart.Status == parturStatus.leftAlone)
+                {
+                    List<FatteningModel> fatts = LoadFattenigPerPart(model.Id);
+                    foreach (var f in fatts)
+                    {
+                        DeleteFattRab(f.PartId, f.RabPartId);
+                    }
+                    
+                    if (mother != null)
+                    {
+                        mother.IsAlive = true;
+                        Rabbit.EditKill(mother);
+                        UpdateRabbitsStatus();
+                        ConstantsSingelton.UpdateCages();
+                    }
+
+                }
+                else  if (model.Status == parturStatus.feeded && oldPart.Status != parturStatus.feeded)
+                {
+                    List<FatteningModel> fatts = LoadFattenigPerPart(model.Id);
+                    foreach (var f in fatts)
+                    {
+                        DeleteFattRab(f.PartId, f.RabPartId);
+                    }
+                    model.SeparationDate = null;
+                }
+
+                else if (model.Status == parturStatus.allDead) model.DiedChild = (model.Children==0) ? 1:model.Children;
+                else if(model.Status==parturStatus.leftAlone)
+                {
+                   
+                    if (mother != null)
+                    {
+                        mother.IsAlive = false;
+                        Rabbit.EditKill(mother);
+                        UpdateRabbitsStatus();
+                        ConstantsSingelton.UpdateCages();
+                    }
+                }
+                else if(model.Status==parturStatus.separated && oldPart.Status != parturStatus.separated)
+                {
+                    List<FatteningModel> fatt= LoadFattenigPerPart(model.Id);
+                    if ( fatt.Count== 0)
+                    {
+                        return RedirectToAction("PreFattenigCreate", new { partId = model.Id, caller = @Caller.fattening });
+                    }
+                    else
+                    {
+                        string error = $"Этот окрол уже рассажен!!! Крольчат: {fatt.Count},клетки: {string.Join(", ", fatt.Select(x => x.Cage).Distinct())}";
+                        return RedirectToAction("ParturEdit", new { errorMessage = error,id=model.Id, caller=model.ECaller });
+
+                    }
+
+                }
+
+                int recordCreated = EditParturation(model);//(model.Id, model.Date, model.Children, model.Males, model.Females, model.DiedChild, model.SeparationDate, model.Status, model.Comment, model.DateNestRemoval);
+                ParturationUpdate.UpdateOne(mother);
                 UpdateRabbitsStatus();
                 if (model.ECaller == Caller.allPartur) return RedirectToAction("AllParturView");
                 return RedirectToAction("ParturView", "Mate", new { id = model.MotherId });
@@ -354,6 +429,7 @@ namespace RabbitFarmWeb.Controllers
         {
             ParturationModel fatt = LoadParturation(partId);
             fatt.ECaller = caller;
+            if (caller == Caller.fattening) return View(fatt);
             return PartialView(fatt);
         }
         [HttpPost]
@@ -369,7 +445,8 @@ namespace RabbitFarmWeb.Controllers
                 {
                     PartId = parturation.Id,
                     RabbitGender=Gender.самец,
-                    RabPartId=i
+                    RabPartId=i,
+                    CollorId = 1 //set collor as  'not set'
                 });
             }
             for (int i = parturation.Males+1; i <= parturation.Females+ parturation.Males; i++)
@@ -378,10 +455,10 @@ namespace RabbitFarmWeb.Controllers
                 {
                     PartId = parturation.Id,
                     RabbitGender = Gender.самка,
-                    RabPartId = i
+                    RabPartId = i,
+                    CollorId=1 //set collor as  'not set'
                 });
             }
-
             Age partAge = new Age(parturation.Date);
             ViewBag.Message1 =String.Format( "Рассадить крольчат крольчихи {0}, рожденных {1}, возрастом месяцев {2}, дней {3}", parturation.MotherId, parturation.DateString, partAge.months, partAge.days);
             ViewBag.Message2 = String.Format("Крольчат в помете {0}, из них мальчиков {1}, девочек {2}", parturation.Children,parturation.Males,parturation.Females);
@@ -392,11 +469,14 @@ namespace RabbitFarmWeb.Controllers
                 {
                     PartId = parturation.Id,
                     RabbitGender = Gender.самец,
-                    RabPartId = 1
+                    RabPartId = 1,
+                    CollorId = 1 //set collor as  'not set'
                 });
             }
             fatt[0].ECaller = parturation.ECaller;
-
+            ViewBag.CageList = RabbitFarmLocal.Start.ConstantsSingelton.GetCageLists();
+            ViewBag.caJson = CageLogic.CageJSON(0, false);
+            ViewBag.CollorList = new SelectList(RabbitFarmLocal.Start.ConstantsSingelton.GetCollors(), "Id", "Name");
             return View(fatt);
         }
         [HttpPost]
@@ -408,6 +488,10 @@ namespace RabbitFarmWeb.Controllers
             {
                 
                 int recordCreated = CreateFatting(fatt);
+                ParturationModel part = LoadParturation(fatt[0].PartId);
+                part.SeparationDate = DateTime.Now;
+                part.Status = parturStatus.separated;
+                EditParturation(part);
                 ConstantsSingelton.UpdateCages();
                 List<FatteningModel> fattToUpdate = LoadFattenigPerPart(fatt[0].PartId);
                 foreach (var F in fattToUpdate)
@@ -416,6 +500,21 @@ namespace RabbitFarmWeb.Controllers
                     F.SetBreedString();
                     EditFattenigBreed(F);
                 }
+                foreach (var ft in fatt)
+                {
+                    if (ft.LastWeight != 0)
+                    {
+                        FattWeightModel wgt = new FattWeightModel()
+                        {
+                            RabId = ft.RabPartId,
+                            PartId = ft.PartId,
+                            Date = DateTime.Now.Date,
+                            Weight = ft.LastWeight
+                        };
+                        int recordCreated2 = FattWeight.Create(wgt);
+                    }
+                }
+                UpdateRabbitsStatus();
                 if (fatt[0].ECaller == Caller.report) return RedirectToAction("Report", "Home");
                 else if (fatt[0].ECaller == Caller.allPartur) return RedirectToAction("AllParturView", "Mate");
             else return RedirectToAction("FatteningView", "Mate", new { partId = fatt[0].PartId });
@@ -471,7 +570,7 @@ namespace RabbitFarmWeb.Controllers
             rab.ECaller = CalledFrom;
             ViewBag.Date = (rab.KillDate!=null)?DateToString(rab.KillDate):null;
             //rab.Weight = ; 
-
+            ViewBag.CollorList = new SelectList(RabbitFarmLocal.Start.ConstantsSingelton.GetCollors(), "Id", "Name",rab.CollorId);
             return PartialView(rab);
          }
         [HttpPost]
@@ -500,6 +599,7 @@ namespace RabbitFarmWeb.Controllers
             FatteningModel rab = fatt.Find(f => f.RabPartId == rabId);
             rab.Status = FatStatus.diedItself;
             rab.KillDate = DateTime.Now;
+
             List<FatteningModel> fattList = new List<FatteningModel>
             {
                 rab
@@ -532,7 +632,26 @@ namespace RabbitFarmWeb.Controllers
             {
                 ft.SetBreedStringToDisplay();
             }
-
+            var parturations = fatt.Select(x => new { partId=x.PartId,mother=x.MotherId,father=x.FatherId }).Distinct();
+            List<RabDescent> allPedigree = new List<RabDescent>();
+            foreach (var part in parturations)
+            {
+                allPedigree.Add(RabbitFarmLocal.BusinessLogic.DescentLogic.GetFattDecent(part.mother, part.father));
+                allPedigree.Last().RabId = part.partId;
+            }
+            JsonSerializerOptions options = new()
+            {
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                WriteIndented = false// change to false in production
+            };
+            foreach (var f in fatt)
+            {
+                RabDescent RBD = new RabDescent();
+                RBD = allPedigree.Find(x => x.RabId == f.PartId);
+                //RBD.RabId = f.RabPartId;
+                f.pedigreeString = System.Text.Json.JsonSerializer.Serialize(RBD,options);
+                f.SetCollorString();
+            }
             
             //Age partAge = new Age(part.Date);
             ViewBag.Message1 = String.Format("Кроликов на откорм {0} ",fatt.Count());

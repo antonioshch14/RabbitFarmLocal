@@ -1,0 +1,25 @@
+﻿@model List<string>
+@for (int i = 0; i < Model.Count(); i++)
+    {
+    <br/>
+    <br/>
+        <div class="chart-container" width="600" height="400">
+            <canvas id="myChart-@i"></canvas>
+        </div>
+    }
+
+
+<script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+             var charList = [];
+            @for (int i=0;i< Model.Count();i++)
+            {
+                @:charList.push(@Html.Raw(Model[i]));
+            }
+            var charts = [];
+            for (var i = 0; i < charList.length; i++)
+            {
+                new Chart(document.getElementById('myChart-'+i), charList[i]);
+             }
+        });
+</script>

@@ -66,6 +66,11 @@ namespace RabbitFarmLocal.Models
         public int Cage { get; set; }
         [DisplayName("Окрас")]
         public string Collor { get; set; }
+        public int CollorId { get; set; }
+        public void SetCollorString()
+        {
+            Collor = Start.ConstantsSingelton.GetCollors().Find(x => x.Id == CollorId).Name;
+        }
         [Display(Name = "Статус")]
         public FatStatus Status { get; set; }=FatStatus.alive ;
         [Display(Name ="Пол (статус)")]        
@@ -84,7 +89,7 @@ namespace RabbitFarmLocal.Models
         public string KillDateString { get { return DateToStringRU(KillDate); } }
         [DisplayName("Выход мяса")]
         [Range(0,15,ErrorMessage ="Выход мяса должен быть от 0 до 15")]
-        public float Weight { get; set; }
+        public float Weight { get; set; }//kill weight
      
         [DisplayName("Вес")]
         public float LastWeight { get; set; }
@@ -93,7 +98,10 @@ namespace RabbitFarmLocal.Models
         [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         public DateTime? WeightDate { get; set; }
         [DisplayName("Расчитанный вес")]
-        public double ProjectedWeight { get {
+        public double ProjectedWeight
+        {
+            get
+            {
                 if (Born.Year != 1)//to avoit calculation if modewl used not for view building
                 {
                     double forecas;
@@ -104,14 +112,25 @@ namespace RabbitFarmLocal.Models
                         DateTime WD = (DateTime)WeightDate;
                         TimeSpan TSWeight = (WD - Born);
                         int daysWeghtMesured = (int)TSWeight.TotalDays;
-                        float riseFactor = RabbitFarmLocal.Start.WeighGrow.GetRiseFactor(daysWeghtMesured, daysRabNow);
+                        float riseFactor = RabbitFarmLocal.Start.WeighGrow.GetRiseFactor(daysWeghtMesured, daysRabNow, Breed);
                         forecas = Math.Round(riseFactor * LastWeight, 1);
+                        AverageWeight= Math.Round((double)RabbitFarmLocal.Start.WeighGrow.GetMeanWeight(daysRabNow, Breed), 1);
+                        DaysSinceWeightMesurment = daysRabNow - daysWeghtMesured;
                     }
-                    else forecas = Math.Round((double)RabbitFarmLocal.Start.WeighGrow.GetMeanWeight(daysRabNow), 1);
+                    else
+                    {
+                        forecas = Math.Round((double)RabbitFarmLocal.Start.WeighGrow.GetMeanWeight(daysRabNow, Breed), 1);
+
+                    }
                     return forecas;
-                } return 0;
-                
-            } }
+                }
+                return 0;
+            }
+        }
+        [DisplayName("Дней от взвешивания")]
+        public int? DaysSinceWeightMesurment { get; set; }
+        [DisplayName("Средний вес кролика в этом возрасте")]
+        public double? AverageWeight { get; set; }
         [DisplayName("Дата взвешивания")]
         public string WeightDateString { get { return DateToStringRU(WeightDate); } }
         [DisplayName("Цена, руб")]
@@ -126,7 +145,7 @@ namespace RabbitFarmLocal.Models
         public int MotherId { get; set; }
         [DisplayName("Отец")]
         public int FatherId { get; set; }
-
+        public string pedigreeString { get; set; }
 
     }
     public enum FatStatus //alive diedItself soldAsMeat eatenByUs left4Bread sold4Bread

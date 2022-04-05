@@ -49,7 +49,7 @@ namespace RabbitFarmLocal.ViewComponents
             //};
             chart.data.datasets[0].borderColor.Add("rgba(255, 0, 0, 1)");
             chart.data.datasets[0].backgroundColor.Add("rgba(0, 0, 0, 0)");
-
+            chart.data.labels = new List<string>();
             int ii = 0;
             for (int i = wgt.Count-1; i >= 0; i--)
             {

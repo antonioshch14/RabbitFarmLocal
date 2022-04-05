@@ -6,82 +6,178 @@
 }
 
 <h2>@ViewBag.Message</h2>
-
-
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="ParturEdit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-            <div class="form-group">
-                <label asp-for="Date" class="control-label"></label>
-                <input asp-for="Date" class="form-control" value="@ViewBag.MateDate" data-date-format="yyyy-MM-dd" type="text" placeholder="yyyy-MM-dd" />
-                <span asp-validation-for="Date" class="text-danger"></span>
-            </div>
-           
-            <div class="form-group">
-                <label asp-for="Children" class="control-label"></label>
-                <input asp-for="Children" class="form-control" />
-                <span asp-validation-for="Children" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Males" class="control-label"></label>
-                <input asp-for="Males" class="form-control" />
-                <span asp-validation-for="Males" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Females" class="control-label"></label>
-                <input asp-for="Females" class="form-control" />
-                <span asp-validation-for="Females" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DiedChild" class="control-label"></label>
-                <input asp-for="DiedChild" class="form-control" />
-                <span asp-validation-for="DiedChild" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="SeparatedView" class="control-label"> Рассажены @ViewBag.SeparationDate </label>
-                @*<input asp-for="Separated" class="form-control" value="@ViewBag.SeparationDate" data-date-format="yyyy-MM-dd" type="text" placeholder="yyyy-MM-dd"/>*@
-                @*<div> @Html.DropDownListFor(model => model.SeparatedView, new SelectList(Enum.GetValues(typeof(YesNo))))</div>*@
-                <select asp-for="SeparatedView" asp-items="Html.GetEnumSelectList<YesNo>()"  ></select>
-
-                <span asp-validation-for="SeparatedView" class="text-danger"></span>
-            </div>
-            
-            <div class="form-group">
-                <label asp-for="NestRemovedView" class="control-label"> гнездо убрано @ViewBag.DateNestRemoval</label>
-                @*<input asp-for="DateNestRemoval" class="form-control" value="@ViewBag.DateNestRemoval" data-date-format="yyyy-MM-dd" type="text" placeholder="yyyy-MM-dd" />*@
-                <select asp-for="NestRemovedView" asp-items="Html.GetEnumSelectList<YesNo>()"></select>
-                <span asp-validation-for="NestRemovedView" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Comment" class="control-label"></label>
-                <input asp-for="Comment" class="form-control" />
-                <span asp-validation-for="Comment" class="text-danger"></span>
-            </div>
-
-            @*@Html.HiddenFor(model => model.SeparationDate)
-        @Html.HiddenFor(model => model.DateNestRemoval)*@
-            @*@Html.TextBoxFor(model => model.SeparationDate, "{0:dd-MM-yyyy}", htmlAttributes: new { @type = "hidden" })
-            @Html.TextBoxFor(model => model.DateNestRemoval, "{0:dd-MM-yyyy}", htmlAttributes: new { @type = "hidden" })*@
-            @Html.HiddenFor(model=>Model.MotherId)
-            @Html.HiddenFor(model=>Model.ECaller)
-            @Html.HiddenFor(model=>Model.SeparationDate)
-            @Html.HiddenFor(model=>Model.DateNestRemoval)
-            <div class="form-group">
-                <input type="submit" value="Сохранить" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
-
-<div>
-    <a asp-controller="Mate" asp-action="ParturView" asp-route-id="@Model.MotherId">Назад к окролам</a>
-</div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+@if (ViewBag.Error != null)
+{
+    <h4 class="text-danger">@ViewBag.Error</h4>
 }
+
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="ParturEdit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label asp-for="Date" class="control-label"></label>
+                    <input asp-for="Date" class="form-control" value="@ViewBag.MateDate" data-date-format="yyyy-MM-dd" type="text" placeholder="yyyy-MM-dd" />
+                    <span asp-validation-for="Date" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Children" class="control-label"></label>
+                    <input asp-for="Children" class="form-control" />
+                    <span asp-validation-for="Children" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Males" class="control-label"></label>
+                    <input asp-for="Males" class="form-control" />
+                    <span asp-validation-for="Males" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Females" class="control-label"></label>
+                    <input asp-for="Females" class="form-control" />
+                    <span asp-validation-for="Females" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="DiedChild" class="control-label"></label>
+                    <input asp-for="DiedChild" class="form-control" />
+                    <span asp-validation-for="DiedChild" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    @{
+                        var selectList = Enum.GetValues(typeof(parturStatus))
+                                             .Cast<parturStatus>()
+                                             .Where(e => e != parturStatus.nestRemovalAwaited && e!=parturStatus.separationAwaited && e!=parturStatus.inDifferentCages )
+                                             .Select(e => new SelectListItem
+                                             {
+                                                 Value = ((int)e).ToString(),
+                                                 Text = GetDisplayAttributesFrom(e, typeof(parturStatus)).Name
+                                             });
+                    }
+                    @*@Html.DropDownListFor(m => m.Status, selectList)*@
+                    <label asp-for="Status" class="control-label"></label>
+                    <a id="oldStatus" class="d-none">@ViewBag.Status</a>
+                    
+                    <select asp-for="Status" asp-items="@selectList" onchange="statusWarning(this)"></select>
+                    @*<select asp-for="Status" asp-items="Html.GetEnumSelectList<parturStatus>()" onchange="statusWarning(this)"></select>*@
+                    @*@Html.DropDownListFor(x => x.Status, ViewBag.StatusList as SelectList, new { onchange = "checkIfNewCollor(this)" })*@
+                    <span asp-validation-for="Status" class="text-danger"></span>
+
+                    <ul id="stausMessages">
+                        <li class="text-danger d-none" id="leftAloneMessage">Мать (@Model.MotherId) будет отмечена как мертвая!</li>
+                        <li class="text-danger d-none" id="feededMessage">Окрол будет отмечен как кормящийся матерью! Крольчата на откорме из данного окрола будут удалены!</li>
+                        <li class="text-danger d-none" id="feededMessageAfterLeftAlone">
+                            Окрол будет отмечен как кормящийся матерью! Крольчата на откорме из данного окрола будут удалены!
+                            Мать (@Model.MotherId) будет отмечена, как живая!
+                        </li>
+                        <li class="text-danger d-none" id="allDeadMessage">Окрол будет отмечен как "Все умерли", колличество крольчат мертвых будет равно рожденным!</li>
+                        <li class="text-danger d-none" id="SeparatedMessage">Окрол не будет отмечен как рассаженый пока вы не рассадите крольчат. Для этого вы будете перенаправлены на рассадку крольчат!</li>
+                    </ul>
+                </div>
+                <script type="text/javascript">
+                    var option;
+
+                    function statusWarning(val) {
+                        $("#stausMessages").children().each(function () {
+                            $(this).addClass('d-none');
+                        });
+                         option = val.options[val.selectedIndex].value;
+                        var odlStatus = $("#oldStatus").text();
+                        
+                        if (option != odlStatus) {
+                            switch (option) {
+                                case "0":
+                                    if (odlStatus == "4" || odlStatus == "5" || odlStatus == "6") break;
+                                    if (odlStatus == '3') $('#feededMessageAfterLeftAlone').removeClass('d-none');
+                                    else $('#feededMessage').removeClass('d-none'); break;
+                                case "3": $('#leftAloneMessage').removeClass('d-none'); break;
+                                case "2": $('#allDeadMessage').removeClass('d-none'); break;
+                                case "1": $('#SeparatedMessage').removeClass('d-none'); break;
+                            }
+                        }
+                    }
+                </script>
+                <div class="form-group">
+
+                    <label asp-for="Cage" class="control-label"></label>
+                    <a id="CageOldNumb" class="d-none">@Model.Cage</a>
+                    <select id="CageList" class="form-control" asp-for="Cage" asp-items="@(new SelectList(ViewBag.CageList, "Id", "OccupancyString",Model.Cage))" onchange="cageWarning(this)">
+                        @*<option value="">Выберите клетку</option>*@
+                    </select>
+                    <span asp-validation-for="Cage" class="text-danger"></span>
+                    <ul>
+                        <li class="text-danger d-none" id="CageMessage">Клетка матери (@Model.Cage) не будет изменена! Это необходимо сделать через редактирование кролика.</li>
+                    </ul>
+                </div>
+                <script type="text/javascript">
+                    function cageWarning(val) {
+
+                        if (val.options[val.selectedIndex].value != parseInt($("#CageOldNumb").text())) $('#CageMessage').removeClass('d-none');
+                        else $('#CageMessage').addClass('d-none');
+                    }
+                </script>
+
+                <div class="form-group">
+                    <label asp-for="NestRemovedView" class="control-label"> гнездо убрано @ViewBag.DateNestRemoval</label>
+                    <select asp-for="NestRemovedView" asp-items="Html.GetEnumSelectList<YesNo>()"></select>
+                    <span asp-validation-for="NestRemovedView" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Comment" class="control-label"></label>
+                    <input asp-for="Comment" class="form-control" />
+                    <span asp-validation-for="Comment" class="text-danger"></span>
+                </div>
+
+                @Html.HiddenFor(model => Model.MotherId)
+                @Html.HiddenFor(model => Model.ECaller)
+                @Html.HiddenFor(model => Model.SeparationDate)
+                @Html.HiddenFor(model => Model.DateNestRemoval)
+                <div class="form-group">
+
+                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#ChangeWarning" onclick="checkStatusWarning()">Сохранить</button>
+                </div>
+                <script type="text/javascript">
+                    var warrning = [];
+                    function checkStatusWarning() {
+                        warrning = [];
+                        $("#warningOnSubmit").children().each(function () {
+                            $(this).remove();
+                        });
+                        $("#stausMessages").children().each(function () {
+                            if (!$(this).hasClass('d-none')) warrning.push($(this).clone());
+                        });
+                        //warrning.push(document.getElementById('stausMessages').querySelectorAll(':not( .d-none ) '));
+                        if (!$('#CageMessage').hasClass('d-none')) warrning.push($('#CageMessage').clone());
+                        console.log(warrning[0]);
+                        if (warrning[0] == undefined) $("form").submit();
+                        else $('#warningOnSubmit').append(warrning);
+                     
+                    }
+                </script>
+                <div class="modal" id="ChangeWarning">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Схранить изменения?</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+                            <ol id="warningOnSubmit"></ol>
+                            <input type="submit" value="Сохранить" class="btn btn-primary" />
+                        </div>
+                    </div>
+                 
+                </div>
+               
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <a asp-controller="Mate" asp-action="ParturView" asp-route-id="@Model.MotherId">Назад к окролам</a>
+    </div>
+
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    }

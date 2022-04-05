@@ -24,12 +24,25 @@ namespace RabbitFarmLocal.BusinessLogic
         public List<float> SortedOutWeight { get; set; }
 
     }
-   
+   public class WeightPerBreed
+    {
+        public WeightPerBreed()
+        {
+            Weights = new float[RabWeightCurve.daysToStoreCurve];
+        }
+        public float[] Weights { get; set; }
+        public string Breed { get; set; }
+        public int RabbitsWithNormWeight { get; set; }
+        public int RabbitsOverWeight { get; set; }
+        public int RabbitsUnderWeight { get; set; }
+
+    }
     public class RabWeightCurve
     {
         public RabWeightCurve() { }
         public int RabId { get; set; }
         public int PartId { get; set; }
+       
         public static int daysToStoreCurve = 30 * 7;
         public GrowStat Status { get; set; }
         public Weight[] WeightArray { get; set; }
@@ -49,14 +62,14 @@ namespace RabbitFarmLocal.BusinessLogic
 
     public class WeightLogic
     {
-        public static Weight[] CreateGrowCurve(out List<RabWeightCurve> RabCurves)
+        public static Weight[] CreateGrowCurve(out List<RabWeightCurve> RabCurves, List<FattWeightModel> weights=null)
         {
-            List<FattWeightModel> weights = FattWeight.LoadAll().OrderBy(a => a.PartId).ThenBy(a => a.RabId).ThenBy(a => a.Date).ToList();
+            if( weights ==null) weights = FattWeight.LoadAll().OrderBy(a => a.PartId).ThenBy(a => a.RabId).ThenBy(a => a.Date).ToList();
 
             int rab;// = weights[0].RabId;
             int part;// = weights[0].PartId;
             int index = 0;//of weights array
-            int rangeToSelect = 10;
+            int rangeToSelect = 10;//applied to both front and end thus *2
             float percentOfMatch = 0.2F;
 
             var range = Enumerable.Range(0, RabWeightCurve.daysToStoreCurve).Select((i) => new List<float>()).ToArray();// range to check boundaries
@@ -78,11 +91,7 @@ namespace RabbitFarmLocal.BusinessLogic
 
                 for (int i = 0; i < rabWeights.Count; i++)//fill out RabCurves per rabbit
                 {
-                    //if (rabWeights[i].days > RabWeightCurve.daysToStoreCurve - 1)
-                    //{
-                    //    int tt = 1;
-                    //}
-                        
+                                           
                     int days = (rabWeights[i].days >= RabWeightCurve.daysToStoreCurve-1) ? RabWeightCurve.daysToStoreCurve-1 : rabWeights[i].days;// boundry check
 
                     RabCurves[^1].WeightArray[days] = new Weight()
@@ -144,11 +153,7 @@ namespace RabbitFarmLocal.BusinessLogic
                     {
                         if (RC.Status == GrowStat.norm)
                         {
-                            //if (RC.WeightArray[i].DayRiseFactor > 0)
-                            //{
-                            //    sumWeitgh[i].DayRiseFactor += RC.WeightArray[i].DayRiseFactor;
-                            //    sumWeightCount[i].DayRiseFactor++;
-                            //}
+                            
                             if (RC.WeightArray[i].MeanWeight > 0)
                             {
                                 sumWeitgh[i].MeanWeight += RC.WeightArray[i].MeanWeight;
@@ -163,36 +168,30 @@ namespace RabbitFarmLocal.BusinessLogic
                     }
                 }
             }
-            foreach (var RC in RabCurves)//summ up all values in weitgh and rise factor arrays
-            {
-                for (int i = 0; i < RC.WeightArray.Length; i++)
-                {
-                    if (RC.WeightArray[i] != null)
-                    {
-                        if (RC.Status == GrowStat.norm)
-                        {
-                            //if (RC.WeightArray[i].DayRiseFactor > 0)
-                            //{
-                            //    sumWeitgh[i].DayRiseFactor += RC.WeightArray[i].DayRiseFactor;
-                            //    sumWeightCount[i].DayRiseFactor++;
-                            //}
-                            if (RC.WeightArray[i].MeanWeight > 0)
-                            {
-                                sumWeitgh[i].MeanWeight += RC.WeightArray[i].MeanWeight;
-                                sumWeightCount[i].MeanWeight++;
-                            }
-                        }
-                        else
-                        {
-                            if (sumWeitgh[i].SortedOutWeight == null) sumWeitgh[i].SortedOutWeight = new List<float>();
-                            sumWeitgh[i].SortedOutWeight.Add(RC.WeightArray[i].MeanWeight);
-                        }
-                    }
-                }
-            }
+            //foreach (var RC in RabCurves)//summ up all values in weitgh and rise factor arrays
+            //{
+            //    for (int i = 0; i < RC.WeightArray.Length; i++)
+            //    {
+            //        if (RC.WeightArray[i] != null)
+            //        {
+            //            if (RC.Status == GrowStat.norm)
+            //            {
+            //                if (RC.WeightArray[i].MeanWeight > 0)
+            //                {
+            //                    sumWeitgh[i].MeanWeight += RC.WeightArray[i].MeanWeight;
+            //                    sumWeightCount[i].MeanWeight++;
+            //                }
+            //            }
+            //            else
+            //            {
+            //                if (sumWeitgh[i].SortedOutWeight == null) sumWeitgh[i].SortedOutWeight = new List<float>();
+            //                sumWeitgh[i].SortedOutWeight.Add(RC.WeightArray[i].MeanWeight);
+            //            }
+            //        }
+            //    }
+            //}
             for (int i = 0; i < RabWeightCurve.daysToStoreCurve; i++)// caclulting the mean value of weight and factor
             {
-                //if (sumWeightCount[i].DayRiseFactor != 0) sumWeitgh[i].DayRiseFactor = sumWeitgh[i].DayRiseFactor / sumWeightCount[i].DayRiseFactor;
                 if (sumWeightCount[i].MeanWeight != 0) sumWeitgh[i].MeanWeight = sumWeitgh[i].MeanWeight / sumWeightCount[i].MeanWeight;
             }
             sumWeitgh[0].MeanWeightWOGaps = 0.062F;//62 gr is a weight of a new born rabbit
@@ -224,7 +223,7 @@ namespace RabbitFarmLocal.BusinessLogic
                     countFromZero = 0;
                 }
             }//fill out weight without gaps
-            for (int i = 1; i < RabWeightCurve.daysToStoreCurve - 1; i++)//steamline curves
+            for (int i = 1; i < RabWeightCurve.daysToStoreCurve - 1; i++)//streamline curves
             {
                 sumWeitgh[i].WeightSteamlighnedPrev = sumWeitgh[i - 1].MeanWeightWOGaps + 2 * (-1 * (sumWeitgh[i + 1].MeanWeightWOGaps - sumWeitgh[i].MeanWeightWOGaps) / 2 + sumWeitgh[i + 1].MeanWeightWOGaps - sumWeitgh[i - 1].MeanWeightWOGaps) / 3;
                 if (i == RabWeightCurve.daysToStoreCurve - 2) sumWeitgh[i + 1].WeightSteamlighnedPrev = sumWeitgh[i].WeightSteamlighnedPrev;
@@ -299,7 +298,23 @@ namespace RabbitFarmLocal.BusinessLogic
 
 
         }
+        public static float GetProjectedWeight(DateTime dateToCalcOn, DateTime Born, DateTime? prevWeightDate, float prevWeight, string breed )
+        {
+            float forecas;
+            TimeSpan ageSpan = dateToCalcOn - Born;
+            int daysRabNow = (int)ageSpan.TotalDays;
+            if (prevWeightDate != null)
+            {
+                DateTime WD = (DateTime)prevWeightDate;
+                TimeSpan TSWeight = (WD - Born);
+                int daysWeghtMesured = (int)TSWeight.TotalDays;
+                float riseFactor = RabbitFarmLocal.Start.WeighGrow.GetRiseFactor(daysWeghtMesured, daysRabNow, breed);
+                forecas = (float)Math.Round(riseFactor * prevWeight, 1);
+            }
+            else forecas = RabbitFarmLocal.Start.WeighGrow.GetMeanWeight(daysRabNow, breed);
 
+            return forecas;
+        }
 
 
     }
