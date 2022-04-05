@@ -6,4 +6,4 @@ The application calculates weight of growing rabbits based on stored values, tak
 The application checks rabbits pedigree to avoid inbreeding.
 And much more.
 The application can be hosted on a Linux server, e.g. raspberry.
-A MySQL server is necessary.![image](https://user-images.githubusercontent.com/47223118/161829390-4fe127d5-6b6f-4bcd-b0f3-731c9eaeb2fe.png)
+A MySQL server is necessary.
